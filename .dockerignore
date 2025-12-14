@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+README.md
+.DS_Store
+*.md
+wordpress-form
+test-*.js
+DEPLOYMENT-STATUS.md
+FRONTEND-FIXES-SUMMARY.md
+E2E-TEST-GUIDE.md

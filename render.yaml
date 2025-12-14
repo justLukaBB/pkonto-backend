@@ -1,15 +1,9 @@
 services:
   - type: web
     name: pkonto-backend
-    env: node
+    env: docker
     region: frankfurt
     plan: free
-    # Install LibreOffice and Node dependencies
-    buildCommand: |
-      apt-get update
-      apt-get install -y libreoffice libreoffice-writer --no-install-recommends
-      npm install
-    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
