@@ -24,11 +24,46 @@ const convertToPdf = async (docxPath) => {
 
     console.log('Converting DOCX to PDF...');
 
+    // Set LibreOffice binary path for Render/Linux
+    // Common LibreOffice paths on Linux
+    const possiblePaths = [
+      '/usr/bin/soffice',           // Debian/Ubuntu via apt
+      '/usr/local/bin/soffice',     // Custom install
+      '/opt/libreoffice/program/soffice',  // Official package
+      '/snap/bin/soffice',          // Snap install
+    ];
+
+    // Find which path exists
+    const { execSync } = require('child_process');
+    let libreOfficePath = null;
+
+    for (const binPath of possiblePaths) {
+      try {
+        execSync(`test -f ${binPath}`, { stdio: 'ignore' });
+        libreOfficePath = binPath;
+        console.log(`Found LibreOffice at: ${binPath}`);
+        break;
+      } catch (e) {
+        // Path doesn't exist, try next
+      }
+    }
+
+    // If still not found, try which command
+    if (!libreOfficePath) {
+      try {
+        libreOfficePath = execSync('which soffice', { encoding: 'utf8' }).trim();
+        console.log(`Found LibreOffice via which: ${libreOfficePath}`);
+      } catch (e) {
+        console.error('Could not locate soffice binary in any standard location');
+      }
+    }
+
     // Read DOCX file
     const docxBuffer = await fs.readFile(docxPath);
 
-    // Convert to PDF
-    const pdfBuffer = await libre.convertAsync(docxBuffer, '.pdf', undefined);
+    // Convert to PDF - pass the binary path if found
+    const convertOptions = libreOfficePath ? { soffice: libreOfficePath } : undefined;
+    const pdfBuffer = await libre.convertAsync(docxBuffer, '.pdf', convertOptions);
 
     // Generate PDF path
     const pdfPath = docxPath.replace('.docx', '.pdf');

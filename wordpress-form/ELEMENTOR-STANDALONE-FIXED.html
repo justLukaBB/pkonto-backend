@@ -1,0 +1,853 @@
+<div class="form-container">
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">01</div>
+            <div class="step-text">Freibetrag berechnen</div>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-number">02</div>
+            <div class="step-text">Freibetrag sichern</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-number">03</div>
+            <div class="step-text">Erforderliche Angaben</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-number">04</div>
+            <div class="step-text">Auftrag erteilen</div>
+        </div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Form Content -->
+        <div class="form-content">
+            <!-- Left Side - Form -->
+            <div class="form-left">
+                <!-- STEP 1: Freibetrag berechnen -->
+                <div class="step-content active" id="step-1">
+                    <!-- Question 1 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Sind Sie verheiratet?</div>
+                            <div class="input-group">
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-yes" name="married" value="yes">
+                                        <label for="married-yes">Ja</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-no" name="married" value="no" checked>
+                                        <label for="married-no">Nein</label>
+                                    </div>
+                                </div>
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Wenn Sie verheiratet sind, erhöht sich Ihr monatlicher Freibetrag. Dies gilt auch für eingetragene Lebenspartnerschaften.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Haben Sie leibliche minderjährige Kinder oder Kinder in der Ausbildung?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="children-count">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie die Anzahl Ihrer unterhaltsberechtigten Kinder an. Dies umfasst minderjährige Kinder und Kinder in Ausbildung bis 25 Jahre.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Beziehen Sie Sozialleistungen z.B. vom Jobcenter für weitere Personen, ausser den oben angegebenen Personen?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="social-benefits">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Falls Sie für weitere Personen (außer Ehepartner und Kinder) Sozialleistungen beziehen, geben Sie bitte die Anzahl an.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Erhalten Sie feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper- und Gesundheitsschäden?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="health-compensation">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie hier feste monatliche Bezüge an, die Sie aufgrund von Körper- oder Gesundheitsschäden erhalten (z.B. Pflegegeld, Behindertenrenten).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges and Calculate Button -->
+                    <div class="badges-button-container">
+                        <div class="trust-badges">
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/ausgezeichnet.png" alt="Ausgezeichnet Badge">
+                            </div>
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/sichere-1.png" alt="SSL Sichere Datenübertragung Badge">
+                            </div>
+                        </div>
+                        <button class="btn-calculate" onclick="nextStep()">Freibetrag berechnen</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Freibetrag sichern -->
+                <div class="step-content" id="step-2">
+                    <!-- Question 1 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Sind Sie verheiratet?</div>
+                            <div class="input-group">
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-yes-2" name="married-2" value="yes">
+                                        <label for="married-yes-2">Ja</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-no-2" name="married-2" value="no" checked>
+                                        <label for="married-no-2">Nein</label>
+                                    </div>
+                                </div>
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Wenn Sie verheiratet sind, erhöht sich Ihr monatlicher Freibetrag. Dies gilt auch für eingetragene Lebenspartnerschaften.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Haben Sie leibliche minderjährige Kinder oder Kinder in der Ausbildung?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="2" min="0" id="children-count-2">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie die Anzahl Ihrer unterhaltsberechtigten Kinder an. Dies umfasst minderjährige Kinder und Kinder in Ausbildung bis 25 Jahre.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Children Details -->
+                    <div class="children-section">
+                        <h4>Geburtsdatum des ersten Kindes</h4>
+                        <div class="date-inputs">
+                            <select class="form-input small">
+                                <option>Tag</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <select class="form-input small">
+                                <option>Monat</option>
+                                <option value="1">Januar</option>
+                                <option value="2">Februar</option>
+                                <option value="3">März</option>
+                            </select>
+                            <select class="form-input small">
+                                <option>Jahr</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                            </select>
+                        </div>
+                        <div class="question-text">Erhalten Sie für dieses Kind Kindergeld auf Ihr Konto?</div>
+                        <div class="input-group">
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="kindergeld-yes-1" name="kindergeld-1" value="yes" checked>
+                                    <label for="kindergeld-yes-1">Ja</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="kindergeld-no-1" name="kindergeld-1" value="no">
+                                    <label for="kindergeld-no-1">Nein</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="children-section">
+                        <h4>Geburtsdatum des zweiten Kindes</h4>
+                        <div class="date-inputs">
+                            <select class="form-input small">
+                                <option>Tag</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <select class="form-input small">
+                                <option>Monat</option>
+                                <option value="1">Januar</option>
+                                <option value="2">Februar</option>
+                                <option value="3">März</option>
+                            </select>
+                            <select class="form-input small">
+                                <option>Jahr</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                            </select>
+                        </div>
+                        <div class="question-text">Erhalten Sie für dieses Kind Kindergeld auf Ihr Konto?</div>
+                        <div class="input-group">
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="kindergeld-yes-2" name="kindergeld-2" value="yes">
+                                    <label for="kindergeld-yes-2">Ja</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="kindergeld-no-2" name="kindergeld-2" value="no" checked>
+                                    <label for="kindergeld-no-2">Nein</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Beziehen Sie Sozialleistungen z.B. vom Jobcenter für weitere Personen, ausser den oben angegebenen Personen?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Falls Sie für weitere Personen (außer Ehepartner und Kinder) Sozialleistungen beziehen, geben Sie bitte die Anzahl an.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Erhalten Sie feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper- und Gesundheitsschäden?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie hier feste monatliche Bezüge an, die Sie aufgrund von Körper- oder Gesundheitsschäden erhalten (z.B. Pflegegeld, Behindertenrenten).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges and Button -->
+                    <div class="badges-button-container">
+                        <div class="trust-badges">
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/ausgezeichnet.png" alt="Ausgezeichnet Badge">
+                            </div>
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/sichere-1.png" alt="SSL Sichere Datenübertragung Badge">
+                            </div>
+                        </div>
+                        <button class="btn-calculate" onclick="nextStep()">Weiter</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Erforderliche Angaben -->
+                <div class="step-content" id="step-3">
+                    <div class="form-section-title">Für welches Konto soll der Freibetrag eingerichtet werden?</div>
+
+                    <label class="section-label">Kontoinhaber</label>
+
+                    <!-- Kontoinhaber -->
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <select class="form-input">
+                                <option value="">Anrede</option>
+                                <option value="herr">Herr</option>
+                                <option value="frau">Frau</option>
+                                <option value="divers">Divers</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <input type="text" class="form-input" placeholder="Vorname">
+                        </div>
+                        <div class="form-field">
+                            <input type="text" class="form-input" placeholder="Name">
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-col" style="margin-top: 15px; margin-bottom: 30px;">
+                        <div class="form-field">
+                            <input type="text" class="form-input" placeholder="Straße">
+                        </div>
+                        <div class="form-field">
+                            <input type="text" class="form-input" placeholder="Haus-Nr.">
+                        </div>
+                    </div>
+
+                    <!-- Two Column Layout for Geburtsdatum and Kontakt -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                        <!-- Geburtsdatum -->
+                        <div class="form-question" style="margin: 0;">
+                            <label class="section-label">Geburtsdatum</label>
+                            <div class="date-inputs">
+                                <select class="form-input small">
+                                    <option>Tag</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                                <select class="form-input small">
+                                    <option>Monat</option>
+                                    <option value="1">Januar</option>
+                                    <option value="2">Februar</option>
+                                    <option value="3">März</option>
+                                </select>
+                                <select class="form-input small">
+                                    <option>Jahr</option>
+                                    <option value="1990">1990</option>
+                                    <option value="1991">1991</option>
+                                    <option value="1992">1992</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Kontakt -->
+                        <div class="form-question" style="margin: 0;">
+                            <label class="section-label">Kontakt</label>
+                            <input type="email" class="form-input" style="width: 100%;" placeholder="E-Mail">
+                        </div>
+                    </div>
+
+                    <!-- Bankverbindung -->
+                    <div class="form-question">
+                        <label class="section-label">Bankverbindung</label>
+                        <div class="form-grid two-col">
+                            <input type="text" class="form-input" placeholder="IBAN">
+                            <input type="text" class="form-input" placeholder="BIC/Swift-Code">
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/ausgezeichnet.png" alt="Ausgezeichnet Badge">
+                        </div>
+                        <div class="trust-badge">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/sichere-1.png" alt="SSL Sichere Datenübertragung Badge">
+                        </div>
+                    </div>
+
+                    <!-- Button Group -->
+                    <div class="button-group">
+                        <a href="#" class="back-link" onclick="previousStep(); return false;">Zurück</a>
+                        <button class="btn-calculate" onclick="nextStep()">Daten prüfen</button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Auftrag erteilen -->
+                <div class="step-content" id="step-4">
+                    <!-- Summary Section 1 -->
+                    <div class="summary-box">
+                        <h3>
+                            Ihre Angaben zur Berechnung des Freibetrages
+                            <a href="#" class="edit-link" onclick="goToStep(1); return false;">Bearbeiten</a>
+                        </h3>
+                        <div class="summary-row">
+                            <div class="cost-label">Verheiratet</div>
+                            <div class="cost-value">Ja</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="cost-label">Kind 1</div>
+                            <div class="cost-value">Geboren am 07.03.2013</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="cost-label">Kinderzuschlag vom Arbeitgeber</div>
+                            <div class="cost-value">0,00 €</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="cost-label">Sozialleistungen für weitere Personen</div>
+                            <div class="cost-value">Ja</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="cost-label">Feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper-/Gesundheitsschäden</div>
+                            <div class="cost-value">0,00 €</div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Section 2 -->
+                    <div class="summary-box">
+                        <h3>
+                            Ihre persönlichen Daten
+                            <a href="#" class="edit-link" onclick="goToStep(3); return false;">Bearbeiten</a>
+                        </h3>
+                        <div class="summary-row" style="border-bottom: none;">
+                            <div>
+                                <div style="margin-bottom: 10px;">Herr Max Mustermann</div>
+                                <div style="margin-bottom: 10px;">Musterstraße 15</div>
+                                <div>40210 Düsseldorf</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="margin-bottom: 5px; font-weight: 600;">Bankverbindung:</div>
+                                <div style="margin-bottom: 5px;">IBAN: DE123456789251455215</div>
+                                <div>BIC/Swift-Code: 215855115</div>
+                            </div>
+                        </div>
+                        <div class="summary-row" style="border-top: 1px solid #f0f0f0;">
+                            <div class="cost-label">Geburtsdatum: 11.05.1964</div>
+                            <div class="cost-value"></div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="cost-label" style="color: #EA5530;">test@test.de</div>
+                            <div class="cost-value"></div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Options -->
+                    <div class="summary-box">
+                        <h3>Wie möchten Sie bezahlen?</h3>
+
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="paypal" checked>
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/PayPal.svg" alt="PayPal" class="payment-logo">
+                            <label for="paypal" class="payment-label">Paypal (Kostenfrei)</label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="klarna">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Klarna_Payment_Badge-1.svg" alt="Klarna" class="payment-logo">
+                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna (Kostenfrei)</label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="amazon">
+                            <img src="https://m.media-amazon.com/images/G/01/amazonpayments/en/lwa_logo._V325470639_.png" alt="Amazon" class="payment-logo">
+                            <label for="amazon" class="payment-label">Amazon Payments (Kostenfrei)</label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="nachnahme">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/dhl2.jpg" alt="DHL" class="payment-logo">
+                            <label for="nachnahme" class="payment-label">Per Nachnahme (zzgl. 5,00 €)</label>
+                        </div>
+                    </div>
+
+                    <!-- Gebühren und Kosten Section -->
+                    <div class="summary-box" style="margin-top: 30px;">
+                        <h3>Gebühren und Kosten</h3>
+                        <div class="cost-row">
+                            <div class="cost-label">Erstellung und Beglaubigung der P-Konto Bescheinigung</div>
+                            <div class="cost-value">29,00 €</div>
+                        </div>
+                        <div class="cost-row">
+                            <div class="cost-label">Versand (per Post)</div>
+                            <div class="cost-value">0,00 €</div>
+                        </div>
+                        <div class="cost-row">
+                            <div class="cost-label">Bezahlart: Sofortüberweisung</div>
+                            <div class="cost-value">0,00 €</div>
+                        </div>
+                        <div class="cost-row total">
+                            <div class="cost-label">Gesamtbetrag (inkl. MwSt.)</div>
+                            <div class="cost-value">29,00 €</div>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox Agreement -->
+                    <div class="checkbox-group" style="margin-top: 30px;">
+                        <input type="checkbox" id="agreement">
+                        <label for="agreement">
+                            Mit Absenden des Formulars bestätige ich die Richtigkeit meiner Angaben und beauftrage Herrn Rechtsanwalt Thomas Scuric, die Bescheinigung nach § 850k ZPO zur Erhöhung des Freibetrages auf meinem Pfändungsschutzkonto zu erstellen und zu beglaubigen. Die <a href="#">AGB</a> und <a href="#">Widerrufsbelehrung</a> habe ich gelesen und stimme ihnen zu. Mir ist außerdem bekannt, dass die Verwendung einer durch Falschangaben erstellte Bescheinigung strafbar ist.
+                        </label>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/ausgezeichnet.png" alt="Ausgezeichnet Badge">
+                        </div>
+                        <div class="trust-badge">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/sichere-1.png" alt="SSL Sichere Datenübertragung Badge">
+                        </div>
+                    </div>
+
+                    <!-- Final Submit Button -->
+                    <button class="btn-calculate" style="margin-top: 30px;" onclick="submitForm()">Jetzt kostenpflichtig beauftragen</button>
+                </div>
+            </div>
+
+            <!-- Right Side - Result Box -->
+            <div class="form-right">
+                <!-- Result Box -->
+                <div class="result-box">
+                    <div class="result-label">Ihr montl. Freibetrag<br><br>Nach der Umwandlung ergibt sich folgender Freibetrag:</div>
+                    <div class="result-amount" id="result-amount">1.410,64 €</div>
+                    <div class="result-sub-label" id="result-sub-label"></div>
+                </div>
+
+                <!-- Review Badge -->
+                <div class="review-badge">
+                    <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Siegel.png" alt="Sehr Gut 4.98/5.00 - 204 Bewertungen">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer" id="disclaimer-text">
+        Beziehen Sie zusätzlich einmalige Sozialleistungen wie z.B. Zuschüsse zu Klassenfahrten, Darlehen für Umzugshilfen oder Kautionen vom Jobcenter etc., dann legen Sie den Bewilligungsbescheid Ihrer Bank vor. Ihre Bank wird dann einen einmaligen zusätzlichen Freibetrag für den entsprechenden Monat gewähren.
+    </div>
+</div>
+
+<script>
+// P-Konto Form JavaScript
+console.log('P-Konto Form wird geladen...');
+
+// Configuration
+const PKONTO_FORM_CONFIG = {
+    backendUrl: 'https://pkonto-backend.onrender.com',
+    productId: 123344, // ANPASSEN: Deine WooCommerce Product ID
+    baseFreibetrag: 1410.64
+};
+
+// Global State
+window.pkontoFormData = {
+    calculationData: {
+        married: false,
+        childrenCount: 0,
+        children: [],
+        socialBenefitsCount: 0,
+        healthCompensation: 0
+    },
+    personalData: {
+        salutation: '',
+        firstName: '',
+        lastName: '',
+        street: '',
+        houseNumber: '',
+        zipCode: '',
+        city: '',
+        birthdate: { day: '', month: '', year: '' },
+        email: '',
+        phone: ''
+    },
+    bankData: {
+        iban: '',
+        bic: ''
+    },
+    calculatedFreibetrag: {
+        amount: 0,
+        details: ''
+    },
+    payment: {
+        method: 'paypal',
+        amount: 29.00,
+        status: 'pending'
+    }
+};
+
+window.pkontoCurrentStep = 1;
+
+// Navigate to step
+window.goToStep = function(step) {
+    console.log('goToStep:', step);
+    if (step < 1 || step > 4) return;
+
+    for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById('step-' + i);
+        if (stepEl) stepEl.classList.remove('active');
+
+        const progressStep = document.querySelector('[data-step="' + i + '"]');
+        if (progressStep) {
+            progressStep.classList.remove('active');
+            if (i < step) {
+                progressStep.classList.add('completed');
+            } else {
+                progressStep.classList.remove('completed');
+            }
+        }
+    }
+
+    const currentStepEl = document.getElementById('step-' + step);
+    if (currentStepEl) currentStepEl.classList.add('active');
+
+    const currentProgressStep = document.querySelector('[data-step="' + step + '"]');
+    if (currentProgressStep) currentProgressStep.classList.add('active');
+
+    window.pkontoCurrentStep = step;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Next step
+window.nextStep = function() {
+    console.log('nextStep from:', window.pkontoCurrentStep);
+    collectStepData();
+
+    if (!validateCurrentStep()) return;
+
+    if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
+        calculateFreibetrag();
+    }
+
+    if (window.pkontoCurrentStep === 3) {
+        updateSummary();
+    }
+
+    if (window.pkontoCurrentStep < 4) {
+        goToStep(window.pkontoCurrentStep + 1);
+    }
+};
+
+// Previous step
+window.previousStep = function() {
+    if (window.pkontoCurrentStep > 1) {
+        goToStep(window.pkontoCurrentStep - 1);
+    }
+};
+
+// Collect data
+function collectStepData() {
+    const step = window.pkontoCurrentStep;
+    const data = window.pkontoFormData;
+
+    if (step === 1) {
+        const marriedYes = document.getElementById('married-yes');
+        const childrenCount = document.getElementById('children-count');
+        const socialBenefits = document.getElementById('social-benefits');
+        const healthComp = document.getElementById('health-compensation');
+
+        data.calculationData.married = marriedYes ? marriedYes.checked : false;
+        data.calculationData.childrenCount = childrenCount ? parseInt(childrenCount.value) || 0 : 0;
+        data.calculationData.socialBenefitsCount = socialBenefits ? parseInt(socialBenefits.value) || 0 : 0;
+        data.calculationData.healthCompensation = healthComp ? parseFloat(healthComp.value) || 0 : 0;
+    }
+
+    if (step === 2) {
+        const marriedYes2 = document.getElementById('married-yes-2');
+        const childrenCount2 = document.getElementById('children-count-2');
+
+        data.calculationData.married = marriedYes2 ? marriedYes2.checked : false;
+        data.calculationData.childrenCount = childrenCount2 ? parseInt(childrenCount2.value) || 0 : 0;
+    }
+
+    if (step === 3) {
+        const step3 = document.getElementById('step-3');
+        if (!step3) return;
+
+        const selects = step3.querySelectorAll('select');
+        const inputs = step3.querySelectorAll('input[type="text"], input[type="email"]');
+
+        if (selects.length > 0) data.personalData.salutation = selects[0].value;
+        if (inputs.length > 0) data.personalData.firstName = inputs[0].value;
+        if (inputs.length > 1) data.personalData.lastName = inputs[1].value;
+        if (inputs.length > 2) data.personalData.street = inputs[2].value;
+        if (inputs.length > 3) data.personalData.houseNumber = inputs[3].value;
+
+        const emailInput = step3.querySelector('input[type="email"]');
+        if (emailInput) data.personalData.email = emailInput.value;
+
+        if (selects.length >= 4) {
+            data.personalData.birthdate.day = selects[1].value;
+            data.personalData.birthdate.month = selects[2].value;
+            data.personalData.birthdate.year = selects[3].value;
+        }
+
+        const ibanInput = step3.querySelector('input[placeholder="IBAN"]');
+        const bicInput = step3.querySelector('input[placeholder="BIC/Swift-Code"]');
+        if (ibanInput) data.bankData.iban = ibanInput.value;
+        if (bicInput) data.bankData.bic = bicInput.value;
+    }
+
+    console.log('Data collected:', data);
+}
+
+// Validate
+function validateCurrentStep() {
+    const step = window.pkontoCurrentStep;
+
+    if (step === 3) {
+        const step3 = document.getElementById('step-3');
+        if (!step3) return false;
+
+        const salutationSelect = step3.querySelector('select');
+        const inputs = step3.querySelectorAll('input[type="text"]');
+        const emailInput = step3.querySelector('input[type="email"]');
+        const ibanInput = step3.querySelector('input[placeholder="IBAN"]');
+
+        if (!salutationSelect || !salutationSelect.value) {
+            alert('Bitte wählen Sie eine Anrede.');
+            return false;
+        }
+
+        if (!inputs[0] || !inputs[0].value.trim()) {
+            alert('Bitte geben Sie Ihren Vornamen ein.');
+            return false;
+        }
+
+        if (!inputs[1] || !inputs[1].value.trim()) {
+            alert('Bitte geben Sie Ihren Nachnamen ein.');
+            return false;
+        }
+
+        if (!emailInput || !emailInput.value.trim()) {
+            alert('Bitte geben Sie Ihre E-Mail-Adresse ein.');
+            return false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value)) {
+            alert('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+            return false;
+        }
+
+        if (!ibanInput || !ibanInput.value.trim()) {
+            alert('Bitte geben Sie Ihre IBAN ein.');
+            return false;
+        }
+    }
+
+    if (step === 4) {
+        const checkbox = document.getElementById('agreement');
+        if (!checkbox || !checkbox.checked) {
+            alert('Bitte bestätigen Sie die AGB und Widerrufsbelehrung.');
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Calculate Freibetrag
+function calculateFreibetrag() {
+    const data = window.pkontoFormData;
+    let amount = PKONTO_FORM_CONFIG.baseFreibetrag;
+
+    if (data.calculationData.married) {
+        amount += 529.99;
+    }
+
+    if (data.calculationData.childrenCount > 0) {
+        amount += data.calculationData.childrenCount * 592.87;
+    }
+
+    if (data.calculationData.socialBenefitsCount > 0) {
+        amount += data.calculationData.socialBenefitsCount * 529.99;
+    }
+
+    if (data.calculationData.healthCompensation > 0) {
+        amount += data.calculationData.healthCompensation;
+    }
+
+    data.calculatedFreibetrag.amount = amount;
+    updateResultBox();
+
+    console.log('Calculated:', amount.toFixed(2), '€');
+}
+
+// Update result box
+function updateResultBox() {
+    const resultAmount = document.getElementById('result-amount');
+    if (resultAmount) {
+        const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+        resultAmount.textContent = amount.toFixed(2).replace('.', ',') + ' €';
+    }
+}
+
+// Update summary
+function updateSummary() {
+    console.log('Summary updated');
+}
+
+// Submit form
+window.submitForm = async function() {
+    console.log('submitForm called');
+
+    if (!validateCurrentStep()) return;
+
+    collectStepData();
+
+    const paymentRadio = document.querySelector('input[name="payment"]:checked');
+    if (paymentRadio) {
+        window.pkontoFormData.payment.method = paymentRadio.id;
+    }
+
+    const submitBtn = event.target;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird bearbeitet...';
+
+    try {
+        console.log('Submitting:', window.pkontoFormData);
+
+        if (typeof PKONTO_CONFIG !== 'undefined' && PKONTO_CONFIG.ajax_url) {
+            const formDataFlat = new FormData();
+            formDataFlat.append('action', 'pkonto_add_to_cart');
+
+            const data = window.pkontoFormData;
+            formDataFlat.append('_pkonto_salutation', data.personalData.salutation);
+            formDataFlat.append('_pkonto_firstName', data.personalData.firstName);
+            formDataFlat.append('_pkonto_lastName', data.personalData.lastName);
+            formDataFlat.append('_pkonto_street', data.personalData.street);
+            formDataFlat.append('_pkonto_houseNumber', data.personalData.houseNumber);
+            formDataFlat.append('_pkonto_email', data.personalData.email);
+            formDataFlat.append('_pkonto_birthdate_day', data.personalData.birthdate.day);
+            formDataFlat.append('_pkonto_birthdate_month', data.personalData.birthdate.month);
+            formDataFlat.append('_pkonto_birthdate_year', data.personalData.birthdate.year);
+            formDataFlat.append('_pkonto_iban', data.bankData.iban);
+            formDataFlat.append('_pkonto_bic', data.bankData.bic);
+            formDataFlat.append('_pkonto_married', data.calculationData.married ? 'yes' : 'no');
+            formDataFlat.append('_pkonto_childrenCount', data.calculationData.childrenCount);
+            formDataFlat.append('_pkonto_socialBenefitsCount', data.calculationData.socialBenefitsCount);
+            formDataFlat.append('_pkonto_healthCompensation', data.calculationData.healthCompensation);
+            formDataFlat.append('_pkonto_freibetrag', data.calculatedFreibetrag.amount);
+
+            const response = await fetch(PKONTO_CONFIG.ajax_url, {
+                method: 'POST',
+                body: formDataFlat
+            });
+
+            const result = await response.json();
+            console.log('Response:', result);
+
+            if (result.success && result.data && result.data.checkout_url) {
+                window.location.href = result.data.checkout_url;
+            } else {
+                throw new Error(result.data || 'Failed to add to cart');
+            }
+
+        } else {
+            const response = await fetch(PKONTO_FORM_CONFIG.backendUrl + '/api/applications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(window.pkontoFormData)
+            });
+
+            if (!response.ok) throw new Error('Backend submission failed');
+
+            const result = await response.json();
+            alert('Antrag erfolgreich! ID: ' + result.data._id);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Fehler: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Jetzt kostenpflichtig beauftragen';
+    }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('P-Konto Form initialized');
+    updateResultBox();
+});
+</script>

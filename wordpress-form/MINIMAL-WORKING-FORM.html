@@ -1,0 +1,192 @@
+<div class="form-container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    <h2 id="current-step-title">Schritt 1: Freibetrag berechnen</h2>
+
+    <div id="step-1" class="step-content">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Sind Sie verheiratet?</label>
+            <input type="radio" id="married-yes" name="married" value="yes"> <label for="married-yes">Ja</label>
+            <input type="radio" id="married-no" name="married" value="no" checked style="margin-left: 20px;"> <label for="married-no">Nein</label>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Anzahl Kinder:</label>
+            <input type="number" id="children-count" value="0" min="0" style="padding: 10px; width: 100px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Sozialleistungen für weitere Personen:</label>
+            <input type="number" id="social-benefits" value="0" min="0" style="padding: 10px; width: 100px;">
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Gesundheitsschäden (€/Monat):</label>
+            <input type="number" id="health-compensation" value="0" min="0" style="padding: 10px; width: 100px;">
+        </div>
+
+        <div style="background: #EA5530; color: white; padding: 30px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+            <div style="font-size: 14px; margin-bottom: 10px;">Ihr monatlicher Freibetrag:</div>
+            <div id="result-amount" style="font-size: 36px; font-weight: 700;">1.410,64 €</div>
+        </div>
+
+        <button onclick="nextStep()" style="width: 100%; padding: 15px; background: #EA5530; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer;">
+            Freibetrag berechnen
+        </button>
+    </div>
+
+    <div id="step-2" class="step-content" style="display: none;">
+        <h3>Schritt 2: Ihre Daten</h3>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Anrede:</label>
+            <select id="salutation" style="width: 100%; padding: 10px;">
+                <option value="">Bitte wählen</option>
+                <option value="herr">Herr</option>
+                <option value="frau">Frau</option>
+                <option value="divers">Divers</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Vorname:</label>
+            <input type="text" id="firstName" style="width: 100%; padding: 10px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Nachname:</label>
+            <input type="text" id="lastName" style="width: 100%; padding: 10px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">E-Mail:</label>
+            <input type="email" id="email" style="width: 100%; padding: 10px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">IBAN:</label>
+            <input type="text" id="iban" style="width: 100%; padding: 10px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <input type="checkbox" id="agreement">
+            <label for="agreement">Ich bestätige die Richtigkeit meiner Angaben und akzeptiere die AGB.</label>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+            <button onclick="previousStep()" style="flex: 1; padding: 15px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Zurück
+            </button>
+            <button onclick="submitForm()" style="flex: 2; padding: 15px; background: #EA5530; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">
+                Jetzt bestellen (29,00 €)
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+console.log('Minimal Form geladen');
+
+var currentStep = 1;
+var formData = {
+    married: false,
+    childrenCount: 0,
+    socialBenefitsCount: 0,
+    healthCompensation: 0,
+    freibetrag: 1410.64
+};
+
+function nextStep() {
+    console.log('nextStep called');
+
+    // Sammle Daten
+    formData.married = document.getElementById('married-yes').checked;
+    formData.childrenCount = parseInt(document.getElementById('children-count').value) || 0;
+    formData.socialBenefitsCount = parseInt(document.getElementById('social-benefits').value) || 0;
+    formData.healthCompensation = parseFloat(document.getElementById('health-compensation').value) || 0;
+
+    // Berechne Freibetrag
+    var amount = 1410.64;
+    if (formData.married) amount += 529.99;
+    if (formData.childrenCount > 0) amount += formData.childrenCount * 592.87;
+    if (formData.socialBenefitsCount > 0) amount += formData.socialBenefitsCount * 529.99;
+    if (formData.healthCompensation > 0) amount += formData.healthCompensation;
+
+    formData.freibetrag = amount;
+
+    console.log('Berechnet:', amount.toFixed(2), '€');
+
+    // Zeige Schritt 2
+    document.getElementById('step-1').style.display = 'none';
+    document.getElementById('step-2').style.display = 'block';
+    document.getElementById('current-step-title').textContent = 'Schritt 2: Ihre Daten';
+
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function previousStep() {
+    document.getElementById('step-2').style.display = 'none';
+    document.getElementById('step-1').style.display = 'block';
+    document.getElementById('current-step-title').textContent = 'Schritt 1: Freibetrag berechnen';
+}
+
+function submitForm() {
+    console.log('submitForm called');
+
+    // Validierung
+    var salutation = document.getElementById('salutation').value;
+    var firstName = document.getElementById('firstName').value;
+    var lastName = document.getElementById('lastName').value;
+    var email = document.getElementById('email').value;
+    var iban = document.getElementById('iban').value;
+    var agreement = document.getElementById('agreement').checked;
+
+    if (!salutation || !firstName || !lastName || !email || !iban) {
+        alert('Bitte füllen Sie alle Felder aus.');
+        return;
+    }
+
+    if (!agreement) {
+        alert('Bitte bestätigen Sie die AGB.');
+        return;
+    }
+
+    // Sende zu WordPress/WooCommerce
+    if (typeof PKONTO_CONFIG !== 'undefined') {
+        var formDataToSend = new FormData();
+        formDataToSend.append('action', 'pkonto_add_to_cart');
+        formDataToSend.append('_pkonto_salutation', salutation);
+        formDataToSend.append('_pkonto_firstName', firstName);
+        formDataToSend.append('_pkonto_lastName', lastName);
+        formDataToSend.append('_pkonto_email', email);
+        formDataToSend.append('_pkonto_iban', iban);
+        formDataToSend.append('_pkonto_married', formData.married ? 'yes' : 'no');
+        formDataToSend.append('_pkonto_childrenCount', formData.childrenCount);
+        formDataToSend.append('_pkonto_freibetrag', formData.freibetrag);
+
+        fetch(PKONTO_CONFIG.ajax_url, {
+            method: 'POST',
+            body: formDataToSend
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+            console.log('Response:', result);
+            if (result.success && result.data.checkout_url) {
+                window.location.href = result.data.checkout_url;
+            } else {
+                alert('Fehler beim Hinzufügen zum Warenkorb');
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            alert('Fehler: ' + error.message);
+        });
+    } else {
+        alert('PKONTO_CONFIG nicht gefunden. Bitte prüfen Sie die functions.php');
+    }
+}
+
+// Initialisierung
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready');
+    console.log('PKONTO_CONFIG vorhanden?', typeof PKONTO_CONFIG !== 'undefined');
+});
+</script>

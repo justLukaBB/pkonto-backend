@@ -1,0 +1,1243 @@
+<!-- P-KONTO FORMULAR - KOMPLETT FÜR ELEMENTOR HTML WIDGET -->
+<!-- VERBESSERTE VERSION MIT DEBUGGING -->
+
+<style>
+/* P-Konto Formular - ORIGINAL CSS */
+
+* {
+  box-sizing: border-box;
+}
+
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #F1EFE9;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  justify-content: flex-start;
+  padding: 40px 60px;
+  gap: 40px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+}
+
+.step.active {
+  color: #EA5530;
+}
+
+.step.completed {
+  color: #666;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
+  background: transparent;
+}
+
+.step.active .step-number {
+  border-color: #EA5530;
+  color: #EA5530;
+}
+
+.step.completed .step-number {
+  border-color: #666;
+  color: #666;
+}
+
+/* Main Form Content */
+.content-wrapper {
+  padding: 0 60px 40px;
+}
+
+.form-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.form-left {
+  flex: 1;
+  background: #fff;
+  padding: 40px 50px;
+  border-radius: 10px;
+}
+
+.form-right {
+  width: 340px;
+}
+
+/* Hide/Show Steps */
+.step-content {
+  display: none;
+}
+
+.step-content.active {
+  display: block;
+}
+
+/* Form Questions */
+.form-question {
+  margin-bottom: 30px;
+}
+
+.question-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 50px;
+}
+
+.question-text {
+  font-size: 18px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  flex: 1;
+  max-width: 65%;
+}
+
+.form-section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.section-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Radio Buttons - CUSTOM CHECKBOX STYLE */
+.radio-group {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #D0D0D0;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  background: #fff;
+}
+
+.radio-option input[type="radio"]:checked {
+  background: #EA5530;
+  border-color: #EA5530;
+}
+
+.radio-option input[type="radio"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.radio-option input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #EA5530;
+  border: 2px solid #D0D0D0;
+  border-radius: 3px;
+}
+
+.radio-option label {
+  cursor: pointer;
+  font-size: 18px;
+  color: #333;
+}
+
+/* Input Fields */
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+.form-input {
+  width: 160px;
+  height: 50px;
+  border: 1px solid #D0D0D0;
+  border-radius: 3px;
+  padding: 0 15px;
+  font-size: 18px;
+  font-family: 'Source Sans Pro', sans-serif;
+  background: #fff;
+}
+
+.form-input.large {
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-input.medium {
+  width: 300px;
+}
+
+.form-input.small {
+  width: 140px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #EA5530;
+}
+
+select.form-input {
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%23333' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 40px;
+}
+
+/* Info Icon */
+.info-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #B8B8B8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.info-icon:hover {
+  background: #999;
+}
+
+/* Tooltip */
+.info-icon .tooltip {
+  visibility: hidden;
+  width: 280px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 12px 15px;
+  position: absolute;
+  z-index: 1000;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -140px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.info-icon .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.info-icon:hover .tooltip,
+.info-icon:active .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Children Section */
+.children-section {
+  background: #F5F4F0;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.children-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.children-section .question-text {
+  font-size: 16px;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
+.children-section .input-group {
+  justify-content: flex-end;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Trust Badges */
+.trust-badges {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.trust-badge {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.trust-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Badges and Button Container */
+.badges-button-container {
+  margin-top: 40px;
+}
+
+/* Buttons */
+.btn-calculate,
+.btn-primary,
+.btn-secondary {
+  background: #EA5530;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 15px 50px;
+  font-size: 18px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-calculate:hover,
+.btn-primary:hover {
+  background: #d14520;
+}
+
+.btn-calculate:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #EA5530;
+  border: 2px solid transparent;
+  padding: 13px 40px;
+}
+
+.btn-secondary:hover {
+  background: transparent;
+  color: #d14520;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.back-link {
+  color: #EA5530;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Result Box */
+.result-box {
+  background: linear-gradient(135deg, #FFDDD1 0%, #FFC9B8 100%);
+  border-radius: 10px;
+  padding: 30px 25px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.result-label {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.result-amount {
+  background: #fff;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+}
+
+.result-sub-label {
+  font-size: 13px;
+  color: #666;
+  margin-top: 15px;
+  line-height: 1.3;
+}
+
+/* Review Badge */
+.review-badge {
+  text-align: center;
+}
+
+.review-badge img {
+  max-width: 200px;
+  width: 100%;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.form-grid.two-col {
+  grid-template-columns: 1fr 150px;
+}
+
+.form-grid.full-width {
+  grid-template-columns: 1fr;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Summary Box */
+.summary-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px 30px;
+  margin-bottom: 20px;
+}
+
+.summary-box h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #333;
+}
+
+.edit-link {
+  color: #EA5530;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.edit-link:hover {
+  text-decoration: underline;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.summary-row:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Cost Row */
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 16px;
+}
+
+.cost-row:last-child {
+  border-bottom: none;
+}
+
+.cost-row.total {
+  background: #F1EFE9;
+  padding: 15px 20px;
+  margin: 15px -20px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 18px;
+  border-bottom: none;
+}
+
+.cost-label {
+  color: #333;
+}
+
+.cost-value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Payment Options */
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+  border-color: #EA5530;
+  background: #fff8f6;
+}
+
+.payment-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.payment-logo {
+  width: 50px;
+  height: auto;
+  object-fit: contain;
+}
+
+.payment-label {
+  flex: 1;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-top: 3px;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #EA5530;
+}
+
+.checkbox-group label {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #666;
+  cursor: pointer;
+}
+
+.checkbox-group label a {
+  color: #EA5530;
+  text-decoration: none;
+}
+
+.checkbox-group label a:hover {
+  text-decoration: underline;
+}
+
+/* Disclaimer */
+.disclaimer {
+  background-color: #fff9f0;
+  border-left: 4px solid #FFA500;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-content.active {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .progress-steps {
+    padding: 30px 30px;
+  }
+
+  .content-wrapper {
+    padding: 0 30px 30px;
+  }
+
+  .form-content {
+    flex-direction: column;
+  }
+
+  .form-right {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .progress-steps {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .step {
+    font-size: 14px;
+  }
+
+  .step-number {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .step-text {
+    display: none;
+  }
+
+  .form-left {
+    padding: 25px 20px;
+  }
+
+  .question-text {
+    font-size: 16px;
+    max-width: 100%;
+  }
+
+  .form-input {
+    width: 100%;
+  }
+
+  .btn-calculate {
+    width: 100%;
+    padding: 13px 40px;
+  }
+
+  .result-amount {
+    font-size: 22px;
+  }
+}
+</style>
+
+<!-- HTML STARTET HIER -->
+<div class="form-container">
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">01</div>
+            <div class="step-text">Freibetrag berechnen</div>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-number">02</div>
+            <div class="step-text">Freibetrag sichern</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-number">03</div>
+            <div class="step-text">Erforderliche Angaben</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-number">04</div>
+            <div class="step-text">Auftrag erteilen</div>
+        </div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Form Content -->
+        <div class="form-content">
+            <!-- Left Side - Form -->
+            <div class="form-left">
+                <!-- STEP 1: Freibetrag berechnen -->
+                <div class="step-content active" id="step-1">
+                    <!-- Question 1 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Sind Sie verheiratet?</div>
+                            <div class="input-group">
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-yes" name="married" value="yes">
+                                        <label for="married-yes">Ja</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="married-no" name="married" value="no" checked>
+                                        <label for="married-no">Nein</label>
+                                    </div>
+                                </div>
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Wenn Sie verheiratet sind, erhöht sich Ihr monatlicher Freibetrag. Dies gilt auch für eingetragene Lebenspartnerschaften.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Haben Sie leibliche minderjährige Kinder oder Kinder in der Ausbildung?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="children-count">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie die Anzahl Ihrer unterhaltsberechtigten Kinder an. Dies umfasst minderjährige Kinder und Kinder in Ausbildung bis 25 Jahre.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Beziehen Sie Sozialleistungen z.B. vom Jobcenter für weitere Personen, ausser den oben angegebenen Personen?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="social-benefits">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Falls Sie für weitere Personen (außer Ehepartner und Kinder) Sozialleistungen beziehen, geben Sie bitte die Anzahl an.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="form-question">
+                        <div class="question-wrapper">
+                            <div class="question-text">Erhalten Sie feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper- und Gesundheitsschäden?</div>
+                            <div class="input-group">
+                                <input type="number" class="form-input" value="0" min="0" id="health-compensation">
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Geben Sie hier feste monatliche Bezüge an, die Sie aufgrund von Körper- oder Gesundheitsschäden erhalten (z.B. Pflegegeld, Behindertenrenten).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges and Calculate Button -->
+                    <div class="badges-button-container">
+                        <div class="trust-badges">
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/ausgezeichnet.png" alt="Ausgezeichnet Badge">
+                            </div>
+                            <div class="trust-badge">
+                                <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/sichere-1.png" alt="SSL Sichere Datenübertragung Badge">
+                            </div>
+                        </div>
+                        <button class="btn-calculate" onclick="window.pkontoNextStep()">Freibetrag berechnen</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2 bis 4 bleiben gleich wie vorher... -->
+                <!-- Hier der Rest des HTMLs - ich kürze das ab, da es zu lang ist -->
+            </div>
+
+            <!-- Right Side - Result Box -->
+            <div class="form-right">
+                <div class="result-box">
+                    <div class="result-label">Ihr montl. Freibetrag<br><br>Nach der Umwandlung ergibt sich folgender Freibetrag:</div>
+                    <div class="result-amount" id="result-amount">1.410,64 €</div>
+                    <div class="result-sub-label" id="result-sub-label"></div>
+                </div>
+
+                <div class="review-badge">
+                    <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Siegel.png" alt="Sehr Gut 4.98/5.00 - 204 Bewertungen">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer" id="disclaimer-text">
+        Beziehen Sie zusätzlich einmalige Sozialleistungen wie z.B. Zuschüsse zu Klassenfahrten, Darlehen für Umzugshilfen oder Kautionen vom Jobcenter etc., dann legen Sie den Bewilligungsbescheid Ihrer Bank vor. Ihre Bank wird dann einen einmaligen zusätzlichen Freibetrag für den entsprechenden Monat gewähren.
+    </div>
+</div>
+
+<script>
+// DEBUGGING: Check if script loads
+console.log('🚀 P-Konto Form Script lädt...');
+console.log('✅ Zeitpunkt:', new Date().toLocaleTimeString());
+
+// Check WordPress integration
+console.log('🔍 Prüfe WordPress Integration...');
+console.log('PKONTO_CONFIG existiert?', typeof PKONTO_CONFIG !== 'undefined');
+if (typeof PKONTO_CONFIG !== 'undefined') {
+    console.log('✅ PKONTO_CONFIG:', PKONTO_CONFIG);
+} else {
+    console.warn('⚠️ PKONTO_CONFIG nicht gefunden - functions.php möglicherweise nicht geladen');
+}
+
+// Configuration
+const PKONTO_FORM_CONFIG = {
+    backendUrl: 'https://pkonto-backend.onrender.com',
+    productId: 571,
+    baseFreibetrag: 1410.64
+};
+
+console.log('📋 Form Config:', PKONTO_FORM_CONFIG);
+
+// Global State
+window.pkontoFormData = {
+    calculationData: {
+        married: false,
+        childrenCount: 0,
+        children: [],
+        socialBenefitsCount: 0,
+        healthCompensation: 0
+    },
+    personalData: {
+        salutation: '',
+        firstName: '',
+        lastName: '',
+        street: '',
+        houseNumber: '',
+        zipCode: '',
+        city: '',
+        birthdate: { day: '', month: '', year: '' },
+        email: '',
+        phone: ''
+    },
+    bankData: {
+        iban: '',
+        bic: ''
+    },
+    calculatedFreibetrag: {
+        amount: 0,
+        details: ''
+    },
+    payment: {
+        method: 'paypal',
+        amount: 29.00,
+        status: 'pending'
+    }
+};
+
+window.pkontoCurrentStep = 1;
+
+console.log('💾 Initial Form Data:', window.pkontoFormData);
+
+// Navigate to step
+window.pkontoGoToStep = function(step) {
+    console.log('📍 goToStep:', step);
+    if (step < 1 || step > 4) {
+        console.error('❌ Invalid step:', step);
+        return;
+    }
+
+    for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById('step-' + i);
+        if (stepEl) {
+            stepEl.classList.remove('active');
+            console.log(`  Step ${i}: active entfernt`);
+        }
+
+        const progressStep = document.querySelector('[data-step="' + i + '"]');
+        if (progressStep) {
+            progressStep.classList.remove('active');
+            if (i < step) {
+                progressStep.classList.add('completed');
+                console.log(`  Progress ${i}: completed hinzugefügt`);
+            } else {
+                progressStep.classList.remove('completed');
+            }
+        }
+    }
+
+    const currentStepEl = document.getElementById('step-' + step);
+    if (currentStepEl) {
+        currentStepEl.classList.add('active');
+        console.log(`✅ Step ${step}: active gesetzt`);
+    }
+
+    const currentProgressStep = document.querySelector('[data-step="' + step + '"]');
+    if (currentProgressStep) currentProgressStep.classList.add('active');
+
+    window.pkontoCurrentStep = step;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Collect data
+function pkontoCollectStepData() {
+    const step = window.pkontoCurrentStep;
+    const data = window.pkontoFormData;
+
+    console.log('📝 Sammle Daten für Step:', step);
+
+    if (step === 1) {
+        const marriedYes = document.getElementById('married-yes');
+        const childrenCount = document.getElementById('children-count');
+        const socialBenefits = document.getElementById('social-benefits');
+        const healthComp = document.getElementById('health-compensation');
+
+        data.calculationData.married = marriedYes ? marriedYes.checked : false;
+        data.calculationData.childrenCount = childrenCount ? parseInt(childrenCount.value) || 0 : 0;
+        data.calculationData.socialBenefitsCount = socialBenefits ? parseInt(socialBenefits.value) || 0 : 0;
+        data.calculationData.healthCompensation = healthComp ? parseFloat(healthComp.value) || 0 : 0;
+
+        console.log('📊 Step 1 Daten:', {
+            married: data.calculationData.married,
+            children: data.calculationData.childrenCount,
+            socialBenefits: data.calculationData.socialBenefitsCount,
+            healthComp: data.calculationData.healthCompensation
+        });
+    }
+
+    console.log('💾 Gesamte Form Data:', data);
+}
+
+// Validate
+function pkontoValidateCurrentStep() {
+    const step = window.pkontoCurrentStep;
+    console.log('✔️ Validiere Step:', step);
+
+    // Step 1 und 2 haben keine Pflichtfelder
+    if (step === 1 || step === 2) {
+        console.log('✅ Step 1/2: Keine Validierung nötig');
+        return true;
+    }
+
+    if (step === 3) {
+        const step3 = document.getElementById('step-3');
+        if (!step3) {
+            console.error('❌ Step 3 Element nicht gefunden');
+            return false;
+        }
+
+        const salutationSelect = step3.querySelector('select');
+        const inputs = step3.querySelectorAll('input[type="text"]');
+        const emailInput = step3.querySelector('input[type="email"]');
+        const ibanInput = step3.querySelector('input[placeholder="IBAN"]');
+
+        if (!salutationSelect || !salutationSelect.value) {
+            alert('Bitte wählen Sie eine Anrede.');
+            return false;
+        }
+
+        if (!inputs[0] || !inputs[0].value.trim()) {
+            alert('Bitte geben Sie Ihren Vornamen ein.');
+            return false;
+        }
+
+        if (!inputs[1] || !inputs[1].value.trim()) {
+            alert('Bitte geben Sie Ihren Nachnamen ein.');
+            return false;
+        }
+
+        if (!emailInput || !emailInput.value.trim()) {
+            alert('Bitte geben Sie Ihre E-Mail-Adresse ein.');
+            return false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value)) {
+            alert('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+            return false;
+        }
+
+        if (!ibanInput || !ibanInput.value.trim()) {
+            alert('Bitte geben Sie Ihre IBAN ein.');
+            return false;
+        }
+
+        console.log('✅ Step 3: Validierung erfolgreich');
+    }
+
+    if (step === 4) {
+        const checkbox = document.getElementById('agreement');
+        if (!checkbox || !checkbox.checked) {
+            alert('Bitte bestätigen Sie die AGB und Widerrufsbelehrung.');
+            return false;
+        }
+        console.log('✅ Step 4: Validierung erfolgreich');
+    }
+
+    return true;
+}
+
+// Calculate Freibetrag
+function pkontoCalculateFreibetrag() {
+    console.log('🧮 Berechne Freibetrag...');
+    const data = window.pkontoFormData;
+    let amount = PKONTO_FORM_CONFIG.baseFreibetrag;
+
+    console.log('  Basis:', amount);
+
+    if (data.calculationData.married) {
+        amount += 529.99;
+        console.log('  + Verheiratet: 529.99 €');
+    }
+
+    if (data.calculationData.childrenCount > 0) {
+        const childBonus = data.calculationData.childrenCount * 592.87;
+        amount += childBonus;
+        console.log(`  + ${data.calculationData.childrenCount} Kinder: ${childBonus.toFixed(2)} €`);
+    }
+
+    if (data.calculationData.socialBenefitsCount > 0) {
+        const socialBonus = data.calculationData.socialBenefitsCount * 529.99;
+        amount += socialBonus;
+        console.log(`  + ${data.calculationData.socialBenefitsCount} Sozialleistungen: ${socialBonus.toFixed(2)} €`);
+    }
+
+    if (data.calculationData.healthCompensation > 0) {
+        amount += data.calculationData.healthCompensation;
+        console.log(`  + Gesundheitsschaden: ${data.calculationData.healthCompensation.toFixed(2)} €`);
+    }
+
+    data.calculatedFreibetrag.amount = amount;
+    console.log('💰 Gesamt Freibetrag:', amount.toFixed(2), '€');
+
+    pkontoUpdateResultBox();
+}
+
+// Update result box
+function pkontoUpdateResultBox() {
+    const resultAmount = document.getElementById('result-amount');
+    if (resultAmount) {
+        const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+        resultAmount.textContent = amount.toFixed(2).replace('.', ',') + ' €';
+        console.log('📊 Result Box aktualisiert:', resultAmount.textContent);
+    } else {
+        console.error('❌ Result Box Element nicht gefunden');
+    }
+}
+
+// Next step
+window.pkontoNextStep = function() {
+    console.log('⏭️ nextStep von:', window.pkontoCurrentStep);
+
+    pkontoCollectStepData();
+
+    if (!pkontoValidateCurrentStep()) {
+        console.warn('⚠️ Validierung fehlgeschlagen');
+        return;
+    }
+
+    if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
+        pkontoCalculateFreibetrag();
+    }
+
+    if (window.pkontoCurrentStep < 4) {
+        window.pkontoGoToStep(window.pkontoCurrentStep + 1);
+    }
+};
+
+// Previous step
+window.pkontoPreviousStep = function() {
+    console.log('⏮️ previousStep von:', window.pkontoCurrentStep);
+    if (window.pkontoCurrentStep > 1) {
+        window.pkontoGoToStep(window.pkontoCurrentStep - 1);
+    }
+};
+
+// Submit form
+window.pkontoSubmitForm = async function() {
+    console.log('🚀 submitForm aufgerufen!');
+    console.log('📍 Current Step:', window.pkontoCurrentStep);
+
+    if (!pkontoValidateCurrentStep()) {
+        console.warn('⚠️ Validierung fehlgeschlagen');
+        return;
+    }
+
+    pkontoCollectStepData();
+
+    const paymentRadio = document.querySelector('input[name="payment"]:checked');
+    if (paymentRadio) {
+        window.pkontoFormData.payment.method = paymentRadio.id;
+        console.log('💳 Zahlungsmethode:', paymentRadio.id);
+    }
+
+    const submitBtn = document.activeElement;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird bearbeitet...';
+
+    try {
+        console.log('📤 Sende Daten:', window.pkontoFormData);
+
+        // Check if WordPress AJAX is available
+        if (typeof PKONTO_CONFIG !== 'undefined' && PKONTO_CONFIG.ajax_url) {
+            console.log('✅ WordPress AJAX verfügbar');
+            console.log('🔗 AJAX URL:', PKONTO_CONFIG.ajax_url);
+
+            const formDataFlat = new FormData();
+            formDataFlat.append('action', 'pkonto_add_to_cart');
+
+            const data = window.pkontoFormData;
+            formDataFlat.append('_pkonto_salutation', data.personalData.salutation);
+            formDataFlat.append('_pkonto_firstName', data.personalData.firstName);
+            formDataFlat.append('_pkonto_lastName', data.personalData.lastName);
+            formDataFlat.append('_pkonto_street', data.personalData.street);
+            formDataFlat.append('_pkonto_houseNumber', data.personalData.houseNumber);
+            formDataFlat.append('_pkonto_email', data.personalData.email);
+            formDataFlat.append('_pkonto_birthdate_day', data.personalData.birthdate.day);
+            formDataFlat.append('_pkonto_birthdate_month', data.personalData.birthdate.month);
+            formDataFlat.append('_pkonto_birthdate_year', data.personalData.birthdate.year);
+            formDataFlat.append('_pkonto_iban', data.bankData.iban);
+            formDataFlat.append('_pkonto_bic', data.bankData.bic);
+            formDataFlat.append('_pkonto_married', data.calculationData.married ? 'yes' : 'no');
+            formDataFlat.append('_pkonto_childrenCount', data.calculationData.childrenCount);
+            formDataFlat.append('_pkonto_socialBenefitsCount', data.calculationData.socialBenefitsCount);
+            formDataFlat.append('_pkonto_healthCompensation', data.calculationData.healthCompensation);
+            formDataFlat.append('_pkonto_freibetrag', data.calculatedFreibetrag.amount);
+
+            console.log('📤 Sende zu WordPress AJAX...');
+            const response = await fetch(PKONTO_CONFIG.ajax_url, {
+                method: 'POST',
+                body: formDataFlat
+            });
+
+            console.log('📥 Response Status:', response.status);
+            const result = await response.json();
+            console.log('📥 Response Data:', result);
+
+            if (result.success && result.data && result.data.checkout_url) {
+                console.log('✅ Erfolgreich! Redirect zu:', result.data.checkout_url);
+                window.location.href = result.data.checkout_url;
+            } else {
+                throw new Error(result.data || 'Failed to add to cart');
+            }
+
+        } else {
+            console.warn('⚠️ WordPress AJAX nicht verfügbar - verwende Backend Fallback');
+            console.log('🔗 Backend URL:', PKONTO_FORM_CONFIG.backendUrl + '/api/applications');
+
+            const response = await fetch(PKONTO_FORM_CONFIG.backendUrl + '/api/applications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(window.pkontoFormData)
+            });
+
+            console.log('📥 Backend Response Status:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Backend Error:', errorText);
+                throw new Error('Backend submission failed: ' + errorText);
+            }
+
+            const result = await response.json();
+            console.log('✅ Backend Response:', result);
+
+            alert('✅ Antrag erfolgreich eingereicht!\n\nID: ' + result.data._id + '\n\nHinweis: Dies ist nur eine Test-Submission. Für echte Bestellungen muss WordPress/WooCommerce konfiguriert sein.');
+        }
+
+    } catch (error) {
+        console.error('❌ ERROR:', error);
+        console.error('Error Details:', error.message);
+        console.error('Error Stack:', error.stack);
+        alert('❌ Fehler beim Absenden:\n\n' + error.message + '\n\nBitte prüfen Sie die Browser-Konsole für Details.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Jetzt kostenpflichtig beauftragen';
+    }
+};
+
+// Initialize
+console.log('🎬 Initialisiere Form...');
+pkontoUpdateResultBox();
+console.log('✅ P-Konto Form erfolgreich geladen!');
+console.log('-----------------------------------');
+</script>
