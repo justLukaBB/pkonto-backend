@@ -4,8 +4,11 @@ services:
     env: node
     region: frankfurt
     plan: free
-    # Note: LibreOffice is installed via Aptfile in repository root
-    buildCommand: npm install
+    # Install LibreOffice and Node dependencies
+    buildCommand: |
+      apt-get update
+      apt-get install -y libreoffice libreoffice-writer --no-install-recommends
+      npm install
     startCommand: npm start
     healthCheckPath: /health
     envVars:
