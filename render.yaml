@@ -4,6 +4,7 @@ services:
     env: node
     region: frankfurt
     plan: free
+    # Note: LibreOffice is installed via Aptfile in repository root
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
