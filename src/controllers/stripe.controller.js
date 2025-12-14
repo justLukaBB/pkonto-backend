@@ -65,8 +65,8 @@ const createCheckoutSession = async (req, res) => {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/cancel`,
+      success_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/?payment=cancel`,
       metadata: {
         applicationId: application._id.toString(),
         email: personalData.email
