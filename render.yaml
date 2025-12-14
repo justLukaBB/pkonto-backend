@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: pkonto-backend
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: WORDPRESS_URL
+        sync: false
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: WOOCOMMERCE_WEBHOOK_SECRET
+        sync: false
+      - key: CERTIFICATE_PRICE
+        value: "29.00"
+      - key: LAWYER_NAME
+        value: Thomas Scuric
+      - key: LAWYER_TITLE
+        value: Rechtsanwalt
+      - key: STAMP_IMAGE_PATH
+        value: ./src/templates/stamp.png

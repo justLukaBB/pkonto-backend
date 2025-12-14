@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# Generated files
+uploads/*
+!uploads/.gitkeep
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp files
+tmp/
+temp/
+
+# Testing
+coverage/
+
+# Build files
+dist/
+build/
+
+# Templates (if sensitive)
+# Uncomment if your stamp contains sensitive information
+# src/templates/stamp.png
+# src/templates/certificate-template.pdf

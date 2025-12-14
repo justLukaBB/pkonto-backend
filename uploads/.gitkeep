@@ -1,0 +1,2 @@
+# This directory will store generated PDF certificates
+# Generated PDFs are ignored by git (see .gitignore)
