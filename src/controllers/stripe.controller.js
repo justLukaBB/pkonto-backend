@@ -8,6 +8,95 @@ if (process.env.STRIPE_SECRET_KEY) {
 }
 
 /**
+ * Create Stripe Checkout Session
+ * POST /api/stripe/create-checkout-session
+ */
+const createCheckoutSession = async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        message: 'Stripe ist nicht konfiguriert. Bitte nutzen Sie WooCommerce zur Zahlung.'
+      });
+    }
+
+    const { calculationData, personalData, bankData, calculatedFreibetrag, payment } = req.body;
+
+    // Validate required data
+    if (!personalData || !bankData || !calculatedFreibetrag) {
+      return res.status(400).json({
+        success: false,
+        message: 'Fehlende Formulardaten'
+      });
+    }
+
+    // Create Application in MongoDB with status "pending"
+    const application = new Application({
+      calculationData: calculationData || {},
+      personalData,
+      bankData,
+      calculatedFreibetrag,
+      payment: {
+        method: 'stripe',
+        amount: payment?.amount || 29.00,
+        status: 'pending'
+      },
+      status: 'pending',
+      submittedAt: new Date()
+    });
+
+    await application.save();
+
+    console.log(`Created application ${application._id} for checkout session`);
+
+    // Create Stripe Checkout Session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: 'P-Konto Bescheinigung',
+            description: `Freibetrag: ${calculatedFreibetrag.amount.toFixed(2)} EUR`
+          },
+          unit_amount: Math.round((payment?.amount || 29.00) * 100), // Amount in cents
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/cancel`,
+      metadata: {
+        applicationId: application._id.toString(),
+        email: personalData.email
+      }
+    });
+
+    // Save Checkout Session ID to Application
+    application.payment.stripeCheckoutSessionId = session.id;
+    await application.save();
+
+    console.log(`Created Stripe checkout session ${session.id} for application ${application._id}`);
+
+    res.json({
+      success: true,
+      data: {
+        checkoutUrl: session.url,
+        sessionId: session.id,
+        applicationId: application._id
+      }
+    });
+  } catch (error) {
+    console.error('Create checkout session error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Fehler beim Erstellen der Checkout-Session',
+      error: error.message
+    });
+  }
+};
+
+/**
  * Create Stripe Payment Intent
  * POST /api/stripe/create-payment-intent
  */
@@ -91,6 +180,10 @@ const handleWebhook = async (req, res) => {
 
   // Handle the event
   switch (event.type) {
+    case 'checkout.session.completed':
+      await handleCheckoutSessionCompleted(event.data.object);
+      break;
+
     case 'payment_intent.succeeded':
       await handlePaymentSuccess(event.data.object);
       break;
@@ -104,6 +197,42 @@ const handleWebhook = async (req, res) => {
   }
 
   res.json({ received: true });
+};
+
+/**
+ * Handle completed checkout session
+ */
+const handleCheckoutSessionCompleted = async (session) => {
+  try {
+    const applicationId = session.metadata.applicationId;
+
+    console.log(`Checkout session completed for application ${applicationId}`);
+
+    // Find and update application
+    const application = await Application.findById(applicationId);
+
+    if (!application) {
+      console.error('Application not found:', applicationId);
+      return;
+    }
+
+    // Update payment status
+    application.payment.status = 'completed';
+    application.payment.paidAt = new Date();
+    application.payment.stripePaymentIntentId = session.payment_intent; // Store payment intent from session
+    application.status = 'paid';
+    await application.save();
+
+    console.log(`Application ${applicationId} marked as paid via checkout session`);
+
+    // Trigger PDF generation and email sending
+    await processApplication(applicationId);
+
+    console.log(`Application ${applicationId} processed successfully`);
+  } catch (error) {
+    console.error('Error handling checkout session completion:', error);
+    // Note: In production, you might want to implement retry logic or alert admins
+  }
 };
 
 /**
@@ -187,6 +316,7 @@ const getConfig = (req, res) => {
 };
 
 module.exports = {
+  createCheckoutSession,
   createPaymentIntent,
   handleWebhook,
   getConfig

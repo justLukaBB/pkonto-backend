@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+  createCheckoutSession,
   createPaymentIntent,
   handleWebhook,
   getConfig
@@ -11,6 +12,12 @@ const {
  * Get Stripe public key configuration
  */
 router.get('/config', getConfig);
+
+/**
+ * POST /api/stripe/create-checkout-session
+ * Create a new Stripe Checkout Session (redirects to Stripe payment page)
+ */
+router.post('/create-checkout-session', createCheckoutSession);
 
 /**
  * POST /api/stripe/create-payment-intent
