@@ -1,6 +1,11 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Application = require('../models/Application.model');
 const { processApplication } = require('../services/processing.service');
+
+// Only initialize Stripe if API key is provided
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+}
 
 /**
  * Create Stripe Payment Intent
@@ -8,6 +13,13 @@ const { processApplication } = require('../services/processing.service');
  */
 const createPaymentIntent = async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        message: 'Stripe ist nicht konfiguriert. Bitte nutzen Sie WooCommerce zur Zahlung.'
+      });
+    }
+
     const { applicationId } = req.body;
 
     // Find application
@@ -57,6 +69,13 @@ const createPaymentIntent = async (req, res) => {
  * POST /api/stripe/webhook
  */
 const handleWebhook = async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({
+      success: false,
+      message: 'Stripe ist nicht konfiguriert'
+    });
+  }
+
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -152,6 +171,13 @@ const handlePaymentFailure = async (paymentIntent) => {
  * GET /api/stripe/config
  */
 const getConfig = (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({
+      success: false,
+      message: 'Stripe ist nicht konfiguriert. Bitte nutzen Sie WooCommerce zur Zahlung.'
+    });
+  }
+
   res.json({
     success: true,
     data: {
