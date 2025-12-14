@@ -14,6 +14,14 @@ libre.convertAsync = require('util').promisify(libre.convert);
  */
 const convertToPdf = async (docxPath) => {
   try {
+    // Check if running on Vercel (serverless)
+    const isVercel = process.env.VERCEL === '1';
+
+    if (isVercel) {
+      console.warn('⚠️  Running on Vercel - LibreOffice not available. Skipping PDF conversion.');
+      throw new Error('PDF conversion not available on Vercel serverless. Sending DOCX instead.');
+    }
+
     console.log('Converting DOCX to PDF...');
 
     // Read DOCX file

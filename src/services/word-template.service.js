@@ -15,7 +15,10 @@ const PizZip = require('pizzip');
 const generateFromWordTemplate = async (application) => {
   try {
     const templatePath = path.join(__dirname, '../templates/certificate-template.docx');
-    const outputDir = path.join(__dirname, '../../uploads');
+
+    // Use /tmp for Vercel serverless, local uploads otherwise
+    const isVercel = process.env.VERCEL === '1';
+    const outputDir = isVercel ? '/tmp' : path.join(__dirname, '../../uploads');
     const outputPath = path.join(outputDir, `certificate-${application._id}.docx`);
 
     // Ensure output directory exists

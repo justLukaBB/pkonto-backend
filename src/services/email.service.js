@@ -68,7 +68,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
 
               <p><strong>Nächste Schritte:</strong></p>
               <ol>
-                <li>Öffnen Sie die angehängte PDF-Bescheinigung</li>
+                <li>Öffnen Sie die angehängte Bescheinigung${pdfPath.endsWith('.pdf') ? ' (PDF)' : ' (Word-Dokument)'}</li>
                 <li>Drucken Sie die Bescheinigung aus</li>
                 <li>Legen Sie diese Bescheinigung Ihrer Bank vor (persönlich, per Post oder digital)</li>
                 <li>Die Bank wird Ihren erhöhten Freibetrag einrichten</li>
@@ -103,7 +103,7 @@ vielen Dank für Ihren Auftrag. Ihre P-Konto Bescheinigung nach § 850k ZPO wurd
 Ihr monatlicher Freibetrag: ${application.calculatedFreibetrag.amount.toFixed(2)} €
 
 Nächste Schritte:
-1. Öffnen Sie die angehängte PDF-Bescheinigung
+1. Öffnen Sie die angehängte Bescheinigung${pdfPath.endsWith('.pdf') ? ' (PDF)' : ' (Word-Dokument)'}
 2. Legen Sie diese Bescheinigung Ihrer Bank vor (persönlich, per Post oder digital)
 3. Die Bank wird Ihren erhöhten Freibetrag einrichten
 
