@@ -61,9 +61,8 @@ const convertToPdf = async (docxPath) => {
     // Read DOCX file
     const docxBuffer = await fs.readFile(docxPath);
 
-    // Convert to PDF - pass the binary path if found
-    const convertOptions = libreOfficePath ? { soffice: libreOfficePath } : undefined;
-    const pdfBuffer = await libre.convertAsync(docxBuffer, '.pdf', convertOptions);
+    // Convert to PDF - just pass format, library will use system soffice
+    const pdfBuffer = await libre.convertAsync(docxBuffer, '.pdf', undefined);
 
     // Generate PDF path
     const pdfPath = docxPath.replace('.docx', '.pdf');
