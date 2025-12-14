@@ -30,7 +30,7 @@ const createCheckoutSession = async (req, res) => {
       });
     }
 
-    // Create Application in MongoDB with status "pending"
+    // Create Application in MongoDB with status "payment_pending"
     const application = new Application({
       calculationData: calculationData || {},
       personalData,
@@ -41,8 +41,9 @@ const createCheckoutSession = async (req, res) => {
         amount: payment?.amount || 29.00,
         status: 'pending'
       },
-      status: 'pending',
-      submittedAt: new Date()
+      status: 'payment_pending',
+      agreementAccepted: true, // User accepted in Step 4
+      ipAddress: req.ip || req.connection.remoteAddress
     });
 
     await application.save();
