@@ -100,6 +100,11 @@ const prepareTemplateData = (application) => {
     year: 'numeric'
   });
 
+  // Determine if issuing entity is "Person" or "Stelle"
+  // Default: Always "geeignete Stelle" (suitable entity) for lawyer/law firm
+  const isGeeignetePerson = false; // Set to true if individual person, false for entity/firm
+  const isGeeigneteStelle = true;  // Always true for Rechtsanwalt (law firm/office)
+
   // Base data
   const data = {
     // Personal Information (English names)
@@ -150,6 +155,14 @@ const prepareTemplateData = (application) => {
       currency: 'EUR'
     }).format(calculatedFreibetrag.amount),
     freibetragDetails: calculatedFreibetrag.details,
+
+    // Issuing Entity Checkboxes (for "Die Bescheinigung wird erteilt als")
+    geeignetePersonCheck: isGeeignetePerson ? '☑' : '☐',
+    geeigneteStelleCheck: isGeeigneteStelle ? '☑' : '☐',
+
+    // Additional checkboxes for various fields
+    hasHealthCompensationCheck: calculationData.healthCompensation > 0 ? '☑' : '☐',
+    noHealthCompensationCheck: calculationData.healthCompensation === 0 ? '☑' : '☐',
 
     // Lawyer Information
     lawyerTitle: process.env.LAWYER_TITLE || 'Rechtsanwalt',

@@ -3,6 +3,7 @@ const path = require('path');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const Application = require('../models/Application.model');
 const { generateFromWordTemplate } = require('./word-template.service');
+const { fillPdfForm } = require('./pdf-form.service');
 const libre = require('libreoffice-convert');
 libre.convertAsync = require('util').promisify(libre.convert);
 
@@ -81,47 +82,68 @@ const convertToPdf = async (docxPath) => {
 
 /**
  * Generate P-Konto certificate
- * Uses Word template to generate certificate and converts to PDF
+ * Can use either PDF form template or Word template + conversion
  *
  * @param {Object} application - Application document from MongoDB
  * @param {Object} options - Generation options
- * @param {boolean} options.convertToPdf - Whether to convert to PDF (default: true)
- * @param {boolean} options.keepDocx - Whether to keep DOCX file after conversion (default: false)
+ * @param {string} options.method - 'pdf-form' or 'word-template' (default: 'pdf-form')
+ * @param {boolean} options.convertToPdf - Whether to convert to PDF (default: true, only for word-template)
+ * @param {boolean} options.keepDocx - Whether to keep DOCX file after conversion (default: false, only for word-template)
  * @returns {string} - Path to generated document (PDF or DOCX)
  */
 const generateCertificate = async (application, options = {}) => {
   try {
     const {
+      method = 'pdf-form', // Default to PDF form (faster, no LibreOffice needed)
       convertToPdf: shouldConvertToPdf = true,
       keepDocx = false
     } = options;
 
-    console.log('Generating certificate using Word template...');
+    // ============================================================
+    // METHOD 1: PDF Form Template (RECOMMENDED - Fast & No Dependencies)
+    // ============================================================
+    if (method === 'pdf-form') {
+      console.log('Generating certificate using PDF form template...');
 
-    // Use Word template service to generate document
-    const docxPath = await generateFromWordTemplate(application);
+      const pdfPath = await fillPdfForm(application);
 
-    console.log('Certificate generated (DOCX):', docxPath);
-
-    // Convert to PDF if requested
-    if (shouldConvertToPdf) {
-      try {
-        const pdfPath = await convertToPdf(docxPath);
-
-        // Delete DOCX file if not needed
-        if (!keepDocx) {
-          await fs.unlink(docxPath);
-          console.log('DOCX file removed (PDF created)');
-        }
-
-        return pdfPath;
-      } catch (pdfError) {
-        console.warn('PDF conversion failed, returning DOCX instead:', pdfError.message);
-        return docxPath;
-      }
+      console.log('Certificate generated (PDF):', pdfPath);
+      return pdfPath;
     }
 
-    return docxPath;
+    // ============================================================
+    // METHOD 2: Word Template + LibreOffice Conversion (Legacy)
+    // ============================================================
+    if (method === 'word-template') {
+      console.log('Generating certificate using Word template...');
+
+      // Use Word template service to generate document
+      const docxPath = await generateFromWordTemplate(application);
+
+      console.log('Certificate generated (DOCX):', docxPath);
+
+      // Convert to PDF if requested
+      if (shouldConvertToPdf) {
+        try {
+          const pdfPath = await convertToPdf(docxPath);
+
+          // Delete DOCX file if not needed
+          if (!keepDocx) {
+            await fs.unlink(docxPath);
+            console.log('DOCX file removed (PDF created)');
+          }
+
+          return pdfPath;
+        } catch (pdfError) {
+          console.warn('PDF conversion failed, returning DOCX instead:', pdfError.message);
+          return docxPath;
+        }
+      }
+
+      return docxPath;
+    }
+
+    throw new Error(`Unknown certificate generation method: ${method}`);
 
   } catch (error) {
     console.error('Certificate generation error:', error);

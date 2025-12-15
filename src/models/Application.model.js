@@ -62,7 +62,7 @@ const applicationSchema = new mongoose.Schema({
   payment: {
     method: {
       type: String,
-      enum: ['paypal', 'klarna', 'amazon', 'nachnahme', 'woocommerce', 'stripe'],
+      enum: ['paypal', 'klarna', 'amazon', 'applepay', 'woocommerce', 'stripe'],
       required: true
     },
     amount: { type: Number, required: true },
@@ -72,6 +72,7 @@ const applicationSchema = new mongoose.Schema({
       default: 'pending'
     },
     stripePaymentIntentId: { type: String },
+    stripeCheckoutSessionId: { type: String },
     woocommerceOrderId: { type: String },
     paidAt: { type: Date }
   },

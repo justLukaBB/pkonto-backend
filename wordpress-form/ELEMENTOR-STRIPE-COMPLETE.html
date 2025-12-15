@@ -1,5 +1,6 @@
 <!-- P-KONTO FORMULAR - KOMPLETT FÜR ELEMENTOR HTML WIDGET -->
 <!-- Einfach ALLES kopieren und in ein Elementor HTML Widget einfügen -->
+<!-- VERSION: 2024-12-15-DIREKT-DOM-UPDATE-V3-PERSISTENT -->
 
 <style>
 /* P-Konto Formular - ORIGINAL CSS */
@@ -44,7 +45,7 @@
 }
 
 .step.completed {
-  color: #666;
+  color: #EA5530;
 }
 
 .step-number {
@@ -66,8 +67,8 @@
 }
 
 .step.completed .step-number {
-  border-color: #666;
-  color: #666;
+  border-color: #EA5530;
+  color: #EA5530;
 }
 
 /* Main Form Content */
@@ -213,6 +214,7 @@
   font-size: 18px;
   font-family: 'Source Sans Pro', sans-serif;
   background: #fff;
+  color: #000;
 }
 
 .form-input.large {
@@ -242,6 +244,8 @@ select.form-input {
   background-repeat: no-repeat;
   background-position: right 15px center;
   padding-right: 40px;
+  width: 100%;
+  max-width: 350px;
 }
 
 /* Info Icon */
@@ -686,8 +690,12 @@ select.form-input {
 }
 
 @media (max-width: 768px) {
+  .content-wrapper {
+    padding: 0 10px 30px;
+  }
+
   .progress-steps {
-    padding: 20px;
+    padding: 20px 10px;
     gap: 15px;
   }
 
@@ -706,16 +714,88 @@ select.form-input {
   }
 
   .form-left {
-    padding: 25px 20px;
+    padding: 25px 15px;
+    order: 2;
+  }
+
+  .form-right {
+    order: 1;
+    margin-bottom: 0px;
+    width: 100%;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .result-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    padding: 20px;
+    background: #f6d4c2;
+    margin-bottom: 0;
+  }
+
+  .result-label {
+    font-size: 0;
+    margin-bottom: 0;
+    flex: 1;
+    padding-right: 15px;
+    line-height: 1.3;
+  }
+
+  .result-label br {
+    display: none;
+  }
+
+  .result-label::before {
+    content: "Ihr monatlicher Freibetrag nach der Umwandlung";
+    display: block;
+    font-size: 14px;
+  }
+
+  .result-amount {
+    font-size: 20px;
+    white-space: nowrap;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .review-badge {
+    display: none;
+  }
+
+  .question-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .question-text {
     font-size: 16px;
     max-width: 100%;
+    text-align: left;
+    width: 100%;
+  }
+
+  .input-group {
+    width: 100%;
   }
 
   .form-input {
     width: 100%;
+  }
+
+  .trust-badges {
+    padding-top: 25px;
+    border-top: 1px solid #E0E0E0;
+    margin-left: -25px;
+    margin-right: -25px;
+    padding-left: 25px;
+    padding-right: 25px;
   }
 
   .btn-calculate {
@@ -759,24 +839,40 @@ select.form-input {
             <div class="form-left">
                 <!-- STEP 1: Freibetrag berechnen -->
                 <div class="step-content active" id="step-1">
+                    <div class="form-section-title">Jetzt online beantragen – bundesweit gültig.</div>
+
                     <!-- Question 1 -->
                     <div class="form-question">
                         <div class="question-wrapper">
-                            <div class="question-text">Sind Sie verheiratet?</div>
+                            <div class="question-text">Familienstand</div>
                             <div class="input-group">
-                                <div class="radio-group">
-                                    <div class="radio-option">
-                                        <input type="radio" id="married-yes" name="married" value="yes">
-                                        <label for="married-yes">Ja</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="married-no" name="married" value="no" checked>
-                                        <label for="married-no">Nein</label>
-                                    </div>
-                                </div>
+                                <select class="form-input" id="familienstand">
+                                    <option value="ledig">Ledig</option>
+                                    <option value="verheiratet">Verheiratet</option>
+                                    <option value="lebenspartnerschaft">Eingetragene Lebenspartnerschaft</option>
+                                    <option value="geschieden">Geschieden / getrennt lebend</option>
+                                    <option value="verwitwet">Verwitwet</option>
+                                </select>
                                 <div class="info-icon">
                                     i
-                                    <span class="tooltip">Wenn Sie verheiratet sind, erhöht sich Ihr monatlicher Freibetrag. Dies gilt auch für eingetragene Lebenspartnerschaften.</span>
+                                    <span class="tooltip">Wenn Sie verheiratet sind oder in einer eingetragenen Lebenspartnerschaft leben, erhöht sich Ihr monatlicher Freibetrag.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1b: Unterhalt (conditional) -->
+                    <div class="form-question" id="unterhalt-question" style="display: none;">
+                        <div class="question-wrapper">
+                            <div class="question-text">Leben Sie mit Ihrem Ehepartner zusammen oder zahlen Sie an Ihren getrennt lebenden Ehepartner Unterhalt?</div>
+                            <div class="input-group">
+                                <select class="form-input" id="unterhalt-zahlung">
+                                    <option value="ja">Ja</option>
+                                    <option value="nein">Nein</option>
+                                </select>
+                                <div class="info-icon">
+                                    i
+                                    <span class="tooltip">Wenn Sie zusammenleben oder Unterhalt zahlen, wird dies bei der Berechnung berücksichtigt.</span>
                                 </div>
                             </div>
                         </div>
@@ -787,7 +883,14 @@ select.form-input {
                         <div class="question-wrapper">
                             <div class="question-text">Haben Sie leibliche minderjährige Kinder oder Kinder in der Ausbildung?</div>
                             <div class="input-group">
-                                <input type="number" class="form-input" value="0" min="0" id="children-count">
+                                <select class="form-input" id="children-count">
+                                    <option value="0">0 Kinder</option>
+                                    <option value="1">1 Kind</option>
+                                    <option value="2">2 Kinder</option>
+                                    <option value="3">3 Kinder</option>
+                                    <option value="4">4 Kinder</option>
+                                    <option value="5">5 und mehr Kinder</option>
+                                </select>
                                 <div class="info-icon">
                                     i
                                     <span class="tooltip">Geben Sie die Anzahl Ihrer unterhaltsberechtigten Kinder an. Dies umfasst minderjährige Kinder und Kinder in Ausbildung bis 25 Jahre.</span>
@@ -796,33 +899,8 @@ select.form-input {
                         </div>
                     </div>
 
-                    <!-- Question 3 -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Beziehen Sie Sozialleistungen z.B. vom Jobcenter für weitere Personen, ausser den oben angegebenen Personen?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" value="0" min="0" id="social-benefits">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Falls Sie für weitere Personen (außer Ehepartner und Kinder) Sozialleistungen beziehen, geben Sie bitte die Anzahl an.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Question 4 -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Erhalten Sie feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper- und Gesundheitsschäden?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" value="0" min="0" id="health-compensation">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Geben Sie hier feste monatliche Bezüge an, die Sie aufgrund von Körper- oder Gesundheitsschäden erhalten (z.B. Pflegegeld, Behindertenrenten).</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Dynamic Children Details Container (Step 1) -->
+                    <div id="children-details-container"></div>
 
                     <!-- Trust Badges and Calculate Button -->
                     <div class="badges-button-container">
@@ -840,141 +918,20 @@ select.form-input {
 
                 <!-- STEP 2: Freibetrag sichern -->
                 <div class="step-content" id="step-2">
-                    <!-- Question 1 -->
+                    <div class="form-section-title">Weitere Angaben für Ihren individuellen Freibetrag</div>
+
+                    <!-- Dynamic Kindergeld Details Container (Step 2) -->
+                    <div id="kindergeld-details-container-step2"></div>
+
+                    <!-- Gesundheitsschaden Question -->
                     <div class="form-question">
                         <div class="question-wrapper">
-                            <div class="question-text">Sind Sie verheiratet?</div>
+                            <div class="question-text">Erhalten Sie Leistungen zum Ausgleich für Mehraufwand bei Körper- oder Gesundheitsschaden?</div>
                             <div class="input-group">
-                                <div class="radio-group">
-                                    <div class="radio-option">
-                                        <input type="radio" id="married-yes-2" name="married-2" value="yes">
-                                        <label for="married-yes-2">Ja</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="married-no-2" name="married-2" value="no" checked>
-                                        <label for="married-no-2">Nein</label>
-                                    </div>
-                                </div>
+                                <input type="number" class="form-input" placeholder="Betrag in EUR (z.B. 150)" min="0" step="0.01" id="health-compensation" value="0">
                                 <div class="info-icon">
                                     i
-                                    <span class="tooltip">Wenn Sie verheiratet sind, erhöht sich Ihr monatlicher Freibetrag. Dies gilt auch für eingetragene Lebenspartnerschaften.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Question 2 -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Haben Sie leibliche minderjährige Kinder oder Kinder in der Ausbildung?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" value="2" min="0" id="children-count-2">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Geben Sie die Anzahl Ihrer unterhaltsberechtigten Kinder an. Dies umfasst minderjährige Kinder und Kinder in Ausbildung bis 25 Jahre.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Children Details -->
-                    <div class="children-section">
-                        <h4>Geburtsdatum des ersten Kindes</h4>
-                        <div class="date-inputs">
-                            <select class="form-input small">
-                                <option>Tag</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                            <select class="form-input small">
-                                <option>Monat</option>
-                                <option value="1">Januar</option>
-                                <option value="2">Februar</option>
-                                <option value="3">März</option>
-                            </select>
-                            <select class="form-input small">
-                                <option>Jahr</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2021">2021</option>
-                            </select>
-                        </div>
-                        <div class="question-text">Erhalten Sie für dieses Kind Kindergeld auf Ihr Konto?</div>
-                        <div class="input-group">
-                            <div class="radio-group">
-                                <div class="radio-option">
-                                    <input type="radio" id="kindergeld-yes-1" name="kindergeld-1" value="yes" checked>
-                                    <label for="kindergeld-yes-1">Ja</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="kindergeld-no-1" name="kindergeld-1" value="no">
-                                    <label for="kindergeld-no-1">Nein</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="children-section">
-                        <h4>Geburtsdatum des zweiten Kindes</h4>
-                        <div class="date-inputs">
-                            <select class="form-input small">
-                                <option>Tag</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                            <select class="form-input small">
-                                <option>Monat</option>
-                                <option value="1">Januar</option>
-                                <option value="2">Februar</option>
-                                <option value="3">März</option>
-                            </select>
-                            <select class="form-input small">
-                                <option>Jahr</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2021">2021</option>
-                            </select>
-                        </div>
-                        <div class="question-text">Erhalten Sie für dieses Kind Kindergeld auf Ihr Konto?</div>
-                        <div class="input-group">
-                            <div class="radio-group">
-                                <div class="radio-option">
-                                    <input type="radio" id="kindergeld-yes-2" name="kindergeld-2" value="yes">
-                                    <label for="kindergeld-yes-2">Ja</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="kindergeld-no-2" name="kindergeld-2" value="no" checked>
-                                    <label for="kindergeld-no-2">Nein</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Question 3 -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Beziehen Sie Sozialleistungen z.B. vom Jobcenter für weitere Personen, ausser den oben angegebenen Personen?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" value="0" min="0">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Falls Sie für weitere Personen (außer Ehepartner und Kinder) Sozialleistungen beziehen, geben Sie bitte die Anzahl an.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Question 4 -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Erhalten Sie feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper- und Gesundheitsschäden?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" value="0" min="0">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Geben Sie hier feste monatliche Bezüge an, die Sie aufgrund von Körper- oder Gesundheitsschäden erhalten (z.B. Pflegegeld, Behindertenrenten).</span>
+                                    <span class="tooltip">Falls Sie monatliche Leistungen zum Ausgleich von Mehraufwand bei Körper- oder Gesundheitsschäden erhalten, geben Sie hier den Betrag in Euro an.</span>
                                 </div>
                             </div>
                         </div>
@@ -1047,18 +1004,140 @@ select.form-input {
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
                                 </select>
                                 <select class="form-input small">
                                     <option>Monat</option>
                                     <option value="1">Januar</option>
                                     <option value="2">Februar</option>
                                     <option value="3">März</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mai</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Dezember</option>
                                 </select>
                                 <select class="form-input small">
                                     <option>Jahr</option>
-                                    <option value="1990">1990</option>
-                                    <option value="1991">1991</option>
+                                    <option value="2007">2007</option>
+                                    <option value="2006">2006</option>
+                                    <option value="2005">2005</option>
+                                    <option value="2004">2004</option>
+                                    <option value="2003">2003</option>
+                                    <option value="2002">2002</option>
+                                    <option value="2001">2001</option>
+                                    <option value="2000">2000</option>
+                                    <option value="1999">1999</option>
+                                    <option value="1998">1998</option>
+                                    <option value="1997">1997</option>
+                                    <option value="1996">1996</option>
+                                    <option value="1995">1995</option>
+                                    <option value="1994">1994</option>
+                                    <option value="1993">1993</option>
                                     <option value="1992">1992</option>
+                                    <option value="1991">1991</option>
+                                    <option value="1990">1990</option>
+                                    <option value="1989">1989</option>
+                                    <option value="1988">1988</option>
+                                    <option value="1987">1987</option>
+                                    <option value="1986">1986</option>
+                                    <option value="1985">1985</option>
+                                    <option value="1984">1984</option>
+                                    <option value="1983">1983</option>
+                                    <option value="1982">1982</option>
+                                    <option value="1981">1981</option>
+                                    <option value="1980">1980</option>
+                                    <option value="1979">1979</option>
+                                    <option value="1978">1978</option>
+                                    <option value="1977">1977</option>
+                                    <option value="1976">1976</option>
+                                    <option value="1975">1975</option>
+                                    <option value="1974">1974</option>
+                                    <option value="1973">1973</option>
+                                    <option value="1972">1972</option>
+                                    <option value="1971">1971</option>
+                                    <option value="1970">1970</option>
+                                    <option value="1969">1969</option>
+                                    <option value="1968">1968</option>
+                                    <option value="1967">1967</option>
+                                    <option value="1966">1966</option>
+                                    <option value="1965">1965</option>
+                                    <option value="1964">1964</option>
+                                    <option value="1963">1963</option>
+                                    <option value="1962">1962</option>
+                                    <option value="1961">1961</option>
+                                    <option value="1960">1960</option>
+                                    <option value="1959">1959</option>
+                                    <option value="1958">1958</option>
+                                    <option value="1957">1957</option>
+                                    <option value="1956">1956</option>
+                                    <option value="1955">1955</option>
+                                    <option value="1954">1954</option>
+                                    <option value="1953">1953</option>
+                                    <option value="1952">1952</option>
+                                    <option value="1951">1951</option>
+                                    <option value="1950">1950</option>
+                                    <option value="1949">1949</option>
+                                    <option value="1948">1948</option>
+                                    <option value="1947">1947</option>
+                                    <option value="1946">1946</option>
+                                    <option value="1945">1945</option>
+                                    <option value="1944">1944</option>
+                                    <option value="1943">1943</option>
+                                    <option value="1942">1942</option>
+                                    <option value="1941">1941</option>
+                                    <option value="1940">1940</option>
+                                    <option value="1939">1939</option>
+                                    <option value="1938">1938</option>
+                                    <option value="1937">1937</option>
+                                    <option value="1936">1936</option>
+                                    <option value="1935">1935</option>
+                                    <option value="1934">1934</option>
+                                    <option value="1933">1933</option>
+                                    <option value="1932">1932</option>
+                                    <option value="1931">1931</option>
+                                    <option value="1930">1930</option>
+                                    <option value="1929">1929</option>
+                                    <option value="1928">1928</option>
+                                    <option value="1927">1927</option>
+                                    <option value="1926">1926</option>
+                                    <option value="1925">1925</option>
+                                    <option value="1924">1924</option>
+                                    <option value="1923">1923</option>
+                                    <option value="1922">1922</option>
+                                    <option value="1921">1921</option>
+                                    <option value="1920">1920</option>
                                 </select>
                             </div>
                         </div>
@@ -1104,25 +1183,8 @@ select.form-input {
                             Ihre Angaben zur Berechnung des Freibetrages
                             <a href="#" class="edit-link" onclick="window.goToStep(1); return false;">Bearbeiten</a>
                         </h3>
-                        <div class="summary-row">
-                            <div class="cost-label">Verheiratet</div>
-                            <div class="cost-value">Ja</div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="cost-label">Kind 1</div>
-                            <div class="cost-value">Geboren am 07.03.2013</div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="cost-label">Kinderzuschlag vom Arbeitgeber</div>
-                            <div class="cost-value">0,00 €</div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="cost-label">Sozialleistungen für weitere Personen</div>
-                            <div class="cost-value">Ja</div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="cost-label">Feste monatliche Bezüge zum Ausgleich von Mehraufwand durch Körper-/Gesundheitsschäden</div>
-                            <div class="cost-value">0,00 €</div>
+                        <div id="summary-calculation-details">
+                            <!-- Will be filled dynamically -->
                         </div>
                     </div>
 
@@ -1134,22 +1196,22 @@ select.form-input {
                         </h3>
                         <div class="summary-row" style="border-bottom: none;">
                             <div>
-                                <div style="margin-bottom: 10px;">Herr Max Mustermann</div>
-                                <div style="margin-bottom: 10px;">Musterstraße 15</div>
-                                <div>40210 Düsseldorf</div>
+                                <div style="margin-bottom: 10px;" id="summary-name">Herr Max Mustermann</div>
+                                <div style="margin-bottom: 10px;" id="summary-address">Musterstraße 15</div>
+                                <div id="summary-city">40210 Düsseldorf</div>
                             </div>
                             <div style="text-align: right;">
                                 <div style="margin-bottom: 5px; font-weight: 600;">Bankverbindung:</div>
-                                <div style="margin-bottom: 5px;">IBAN: DE123456789251455215</div>
-                                <div>BIC/Swift-Code: 215855115</div>
+                                <div style="margin-bottom: 5px;" id="summary-iban">IBAN: DE123456789251455215</div>
+                                <div id="summary-bic">BIC/Swift-Code: 215855115</div>
                             </div>
                         </div>
                         <div class="summary-row" style="border-top: 1px solid #f0f0f0;">
-                            <div class="cost-label">Geburtsdatum: 11.05.1964</div>
+                            <div class="cost-label" id="summary-birthdate">Geburtsdatum: 11.05.1964</div>
                             <div class="cost-value"></div>
                         </div>
                         <div class="summary-row">
-                            <div class="cost-label" style="color: #EA5530;">test@test.de</div>
+                            <div class="cost-label" style="color: #EA5530;" id="summary-email">test@test.de</div>
                             <div class="cost-value"></div>
                         </div>
                     </div>
@@ -1172,14 +1234,14 @@ select.form-input {
 
                         <div class="payment-option">
                             <input type="radio" name="payment" id="amazon">
-                            <img src="https://m.media-amazon.com/images/G/01/amazonpayments/en/lwa_logo._V325470639_.png" alt="Amazon" class="payment-logo">
+                            <img src="https://solutionshelf-cdn.oxid-esales.com/provider_121/module_203/4d3a4b0a57c07c0f89e84784df718fff.png" alt="Amazon" class="payment-logo">
                             <label for="amazon" class="payment-label">Amazon Payments (Kostenfrei)</label>
                         </div>
 
                         <div class="payment-option">
-                            <input type="radio" name="payment" id="nachnahme">
-                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/dhl2.jpg" alt="DHL" class="payment-logo">
-                            <label for="nachnahme" class="payment-label">Per Nachnahme (zzgl. 5,00 €)</label>
+                            <input type="radio" name="payment" id="applepay">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/1024px-Apple_Pay_logo.svg.png" alt="Apple Pay" class="payment-logo">
+                            <label for="applepay" class="payment-label">Apple Pay (Kostenfrei)</label>
                         </div>
                     </div>
 
@@ -1267,7 +1329,7 @@ if (typeof PKONTO_CONFIG === 'undefined') {
         product_id: 571,
         ajax_url: window.location.origin + '/wp-admin/admin-ajax.php',
         checkout_url: window.location.origin + '/?page_id=520',
-        backend_url: 'https://pkonto-backend.onrender.com'
+        backend_url: 'https://pkonto-backend-1.onrender.com'
     };
     console.log('  OK - PKONTO_CONFIG erstellt:', PKONTO_CONFIG);
 } else {
@@ -1276,9 +1338,9 @@ if (typeof PKONTO_CONFIG === 'undefined') {
 
 // Config
 const PKONTO_FORM_CONFIG = {
-    backendUrl: 'https://pkonto-backend.onrender.com',
+    backendUrl: 'https://pkonto-backend-1.onrender.com',
     productId: 571,
-    baseFreibetrag: 1410.64
+    baseFreibetrag: 1560.00
 };
 
 console.log('Form Config:', PKONTO_FORM_CONFIG);
@@ -1286,6 +1348,8 @@ console.log('Form Config:', PKONTO_FORM_CONFIG);
 // Global State
 window.pkontoFormData = {
     calculationData: {
+        familienstand: 'ledig',
+        unterhalt: 'nein',
         married: false,
         childrenCount: 0,
         children: [],
@@ -1322,6 +1386,32 @@ window.pkontoFormData = {
 window.pkontoCurrentStep = 1;
 
 console.log('Initial FormData erstellt');
+
+// Familienstand Change Handler - Show/Hide Unterhalt Question
+function handleFamilienstandChange() {
+    const familienstand = document.getElementById('familienstand');
+    const unterhaltQuestion = document.getElementById('unterhalt-question');
+
+    if (familienstand && unterhaltQuestion) {
+        const value = familienstand.value;
+        // Show question for verheiratet, lebenspartnerschaft, geschieden
+        if (value === 'verheiratet' || value === 'lebenspartnerschaft' || value === 'geschieden') {
+            unterhaltQuestion.style.display = 'block';
+        } else {
+            unterhaltQuestion.style.display = 'none';
+        }
+    }
+}
+
+// Attach event listener to familienstand dropdown
+setTimeout(function() {
+    const familienstand = document.getElementById('familienstand');
+    if (familienstand) {
+        familienstand.addEventListener('change', handleFamilienstandChange);
+        // Check initial state
+        handleFamilienstandChange();
+    }
+}, 100);
 
 // Navigate to step
 window.goToStep = function(step) {
@@ -1363,7 +1453,30 @@ window.goToStep = function(step) {
     if (currentProgressStep) currentProgressStep.classList.add('active');
 
     window.pkontoCurrentStep = step;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Generate Kindergeld details when navigating to Step 2
+    if (step === 2) {
+        console.log('DEBUG: Step 2 Navigation detected');
+        const kindergeldCountSelect = document.getElementById('kindergeld-count');
+        console.log('DEBUG: kindergeld-count element:', kindergeldCountSelect);
+        const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+        console.log(`DEBUG: Kindergeld Count = ${kindergeldCount}`);
+
+        // Check if container exists
+        const container = document.getElementById('kindergeld-details-container-step2');
+        console.log('DEBUG: Container found:', container);
+
+        console.log(`Step 2 aktiviert - generiere Geburtsdatum-Eingaben für ${kindergeldCount} Kind(er) mit Kindergeld`);
+        generateKindergeldDetails(kindergeldCount);
+    }
+
+    // Update summary when navigating to Step 4
+    if (step === 4) {
+        console.log('DEBUG: Step 4 Navigation detected - updating summary');
+        updateSummary();
+    }
+
+    // Kein Auto-Scroll - Nutzer bleibt an aktueller Position
 
     console.log('OK - Navigation abgeschlossen');
 };
@@ -1378,33 +1491,72 @@ function collectStepData() {
     const data = window.pkontoFormData;
 
     if (step === 1) {
-        const marriedYes = document.getElementById('married-yes');
+        const familienstand = document.getElementById('familienstand');
+        const unterhaltZahlung = document.getElementById('unterhalt-zahlung');
         const childrenCount = document.getElementById('children-count');
-        const socialBenefits = document.getElementById('social-benefits');
-        const healthComp = document.getElementById('health-compensation');
 
-        data.calculationData.married = marriedYes ? marriedYes.checked : false;
+        // Familienstand auslesen und married-Status setzen
+        const familienstandValue = familienstand ? familienstand.value : 'ledig';
+        data.calculationData.familienstand = familienstandValue;
+
+        // Unterhalt-Zahlung auslesen (nur relevant wenn Frage sichtbar war)
+        const unterhaltValue = unterhaltZahlung ? unterhaltZahlung.value : 'nein';
+        data.calculationData.unterhalt = unterhaltValue;
+
+        // Verheiratet oder Lebenspartnerschaft erhöhen Freibetrag (nur wenn zusammenlebend oder Unterhalt gezahlt wird)
+        const showsUnterhaltQuestion = (familienstandValue === 'verheiratet' || familienstandValue === 'lebenspartnerschaft' || familienstandValue === 'geschieden');
+        if (showsUnterhaltQuestion && unterhaltValue === 'ja') {
+            data.calculationData.married = true;
+        } else {
+            data.calculationData.married = false;
+        }
+
         data.calculationData.childrenCount = childrenCount ? parseInt(childrenCount.value) || 0 : 0;
-        data.calculationData.socialBenefitsCount = socialBenefits ? parseInt(socialBenefits.value) || 0 : 0;
-        data.calculationData.healthCompensation = healthComp ? parseFloat(healthComp.value) || 0 : 0;
 
         console.log('Step 1 Daten gesammelt:');
-        console.log('  Verheiratet:', data.calculationData.married ? 'JA' : 'NEIN');
-        console.log('  Kinder:', data.calculationData.childrenCount);
-        console.log('  Sozialleistungen:', data.calculationData.socialBenefitsCount);
-        console.log('  Gesundheitskomp:', data.calculationData.healthCompensation);
+        console.log('  Familienstand:', data.calculationData.familienstand);
+        console.log('  Unterhalt:', data.calculationData.unterhalt);
+        console.log('  Verheiratet/Lebenspartnerschaft (Freibetrag):', data.calculationData.married ? 'JA' : 'NEIN');
+        console.log('  Kinder gesamt:', data.calculationData.childrenCount);
+        console.log('  (Kindergeld-Details werden auf Step 2 gesammelt)');
     }
 
     if (step === 2) {
-        const marriedYes2 = document.getElementById('married-yes-2');
-        const childrenCount2 = document.getElementById('children-count-2');
+        // Collect Kindergeld count and children details (NOW on Step 2)
+        data.calculationData.children = [];
 
-        data.calculationData.married = marriedYes2 ? marriedYes2.checked : false;
-        data.calculationData.childrenCount = childrenCount2 ? parseInt(childrenCount2.value) || 0 : 0;
+        const kindergeldCountSelect = document.getElementById('kindergeld-count');
+        const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+        console.log(`  Kinder mit Kindergeld: ${kindergeldCount}`);
+
+        // Collect details only for children with Kindergeld
+        for (let i = 1; i <= kindergeldCount; i++) {
+            const daySelect = document.getElementById(`kindergeld-child-${i}-day`);
+            const monthSelect = document.getElementById(`kindergeld-child-${i}-month`);
+            const yearSelect = document.getElementById(`kindergeld-child-${i}-year`);
+
+            const child = {
+                birthdate: {
+                    day: daySelect ? parseInt(daySelect.value) || 0 : 0,
+                    month: monthSelect ? parseInt(monthSelect.value) || 0 : 0,
+                    year: yearSelect ? parseInt(yearSelect.value) || 0 : 0
+                },
+                receivesKindergeld: true  // All these children receive Kindergeld
+            };
+
+            data.calculationData.children.push(child);
+            console.log(`  Kind ${i} (mit Kindergeld):`, child.birthdate);
+        }
+
+        // Collect health compensation
+        const healthCompensationInput = document.getElementById('health-compensation');
+        data.calculationData.healthCompensation = healthCompensationInput ? parseFloat(healthCompensationInput.value) || 0 : 0;
 
         console.log('Step 2 Daten gesammelt:');
-        console.log('  Verheiratet:', data.calculationData.married ? 'JA' : 'NEIN');
-        console.log('  Kinder:', data.calculationData.childrenCount);
+        console.log('  Kinder mit Kindergeld:', kindergeldCount);
+        console.log('  Kinder-Details:', data.calculationData.children);
+        console.log('  Gesundheitsschaden-Ausgleich:', data.calculationData.healthCompensation);
     }
 
     if (step === 3) {
@@ -1460,8 +1612,44 @@ function validateCurrentStep() {
     console.log('validateCurrentStep() - Step:', step);
     console.log('-----------------------------------------------');
 
-    if (step === 1 || step === 2) {
-        console.log('OK - Keine Validierung fuer Step', step);
+    if (step === 1) {
+        console.log('OK - Keine Validierung fuer Step 1');
+        return true;
+    }
+
+    if (step === 2) {
+        // Validate Kindergeld details if any children with Kindergeld were selected
+        const kindergeldCountSelect = document.getElementById('kindergeld-count');
+        const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+        if (kindergeldCount > 0) {
+            console.log(`Validiere Eingaben für ${kindergeldCount} Kind(er) mit Kindergeld...`);
+
+            for (let i = 1; i <= kindergeldCount; i++) {
+                const daySelect = document.getElementById(`kindergeld-child-${i}-day`);
+                const monthSelect = document.getElementById(`kindergeld-child-${i}-month`);
+                const yearSelect = document.getElementById(`kindergeld-child-${i}-year`);
+
+                if (!daySelect || !daySelect.value) {
+                    alert(`Bitte geben Sie den Tag des Geburtstags für Kind ${i} (mit Kindergeld) an.`);
+                    return false;
+                }
+
+                if (!monthSelect || !monthSelect.value) {
+                    alert(`Bitte geben Sie den Monat des Geburtstags für Kind ${i} (mit Kindergeld) an.`);
+                    return false;
+                }
+
+                if (!yearSelect || !yearSelect.value) {
+                    alert(`Bitte geben Sie das Jahr des Geburtstags für Kind ${i} (mit Kindergeld) an.`);
+                    return false;
+                }
+
+                console.log(`✓ Kind ${i} mit Kindergeld validiert`);
+            }
+        }
+
+        console.log('OK - Step 2 validiert');
         return true;
     }
 
@@ -1587,25 +1775,19 @@ function calculateFreibetrag() {
     console.log('  Basis:', amount.toFixed(2), 'EUR');
 
     if (data.calculationData.married) {
-        amount += 529.99;
-        console.log('  + Verheiratet: 529.99 EUR');
+        amount += 585.23;
+        console.log('  + Verheiratet/Lebenspartnerschaft: 585.23 EUR');
     }
 
     if (data.calculationData.childrenCount > 0) {
-        const childBonus = data.calculationData.childrenCount * 592.87;
+        const childBonus = data.calculationData.childrenCount * 326.04;
         amount += childBonus;
-        console.log('  +', data.calculationData.childrenCount, 'Kinder:', childBonus.toFixed(2), 'EUR');
-    }
-
-    if (data.calculationData.socialBenefitsCount > 0) {
-        const socialBonus = data.calculationData.socialBenefitsCount * 529.99;
-        amount += socialBonus;
-        console.log('  +', data.calculationData.socialBenefitsCount, 'Sozialleistungen:', socialBonus.toFixed(2), 'EUR');
+        console.log('  +', data.calculationData.childrenCount, 'Kind(er):', childBonus.toFixed(2), 'EUR');
     }
 
     if (data.calculationData.healthCompensation > 0) {
         amount += data.calculationData.healthCompensation;
-        console.log('  + Gesundheitskomp:', data.calculationData.healthCompensation.toFixed(2), 'EUR');
+        console.log('  + Gesundheitsschaden:', data.calculationData.healthCompensation.toFixed(2), 'EUR');
     }
 
     data.calculatedFreibetrag.amount = amount;
@@ -1619,20 +1801,148 @@ function calculateFreibetrag() {
 
 // Update result box
 function updateResultBox() {
+    console.log('🔍 updateResultBox() called');
     const resultAmount = document.getElementById('result-amount');
+    console.log('🔍 resultAmount element:', resultAmount);
     if (resultAmount) {
         const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+        console.log('🔍 Amount from data:', amount);
         const formatted = amount.toFixed(2).replace('.', ',') + ' EUR';
+        console.log('🔍 Formatted amount:', formatted);
+        console.log('🔍 Current textContent before update:', resultAmount.textContent);
         resultAmount.textContent = formatted;
-        console.log('Result Box aktualisiert:', formatted);
+        console.log('🔍 textContent after setting:', resultAmount.textContent);
+        console.log('✅ Result Box aktualisiert:', formatted);
     } else {
-        console.error('FEHLER - Result Box Element nicht gefunden!');
+        console.error('❌ FEHLER - Result Box Element mit ID "result-amount" nicht gefunden!');
+        console.log('🔍 Alle Elemente mit class "result-amount":', document.querySelectorAll('.result-amount'));
     }
 }
 
 // Update summary
 function updateSummary() {
-    console.log('Summary wird aktualisiert...');
+    console.log('===============================================');
+    console.log('updateSummary() - Fülle Step 4 mit echten Daten');
+    console.log('===============================================');
+
+    const data = window.pkontoFormData;
+
+    // ========== SECTION 1: Berechnung des Freibetrages ==========
+    const summaryCalcDetails = document.getElementById('summary-calculation-details');
+    if (summaryCalcDetails) {
+        let html = '';
+
+        // Familienstand/Verheiratet
+        const marriedText = data.calculationData.married ? 'Ja' : 'Nein';
+        html += `
+            <div class="summary-row">
+                <div class="cost-label">Verheiratet/Lebenspartnerschaft</div>
+                <div class="cost-value">${marriedText}</div>
+            </div>
+        `;
+
+        // Kinder mit Kindergeld
+        if (data.calculationData.childrenCount > 0) {
+            data.calculationData.children.forEach((child, index) => {
+                const birthdate = `${child.birthdate.day}.${child.birthdate.month}.${child.birthdate.year}`;
+                const kindergeldText = child.receivesKindergeld ? 'Ja' : 'Nein';
+                html += `
+                    <div class="summary-row">
+                        <div class="cost-label">Kind ${index + 1} - Geboren am ${birthdate}</div>
+                        <div class="cost-value">Kindergeld: ${kindergeldText}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Anzahl weiterer Personen mit Sozialleistungen
+        if (data.calculationData.socialBenefitsCount > 0) {
+            html += `
+                <div class="summary-row">
+                    <div class="cost-label">Weitere Personen mit Sozialleistungen</div>
+                    <div class="cost-value">${data.calculationData.socialBenefitsCount}</div>
+                </div>
+            `;
+        }
+
+        // Gesundheitsschaden
+        if (data.calculationData.healthCompensation > 0) {
+            html += `
+                <div class="summary-row">
+                    <div class="cost-label">Gesundheitsschaden (Mehraufwand)</div>
+                    <div class="cost-value">${data.calculationData.healthCompensation.toFixed(2).replace('.', ',')} €</div>
+                </div>
+            `;
+        }
+
+        summaryCalcDetails.innerHTML = html;
+        console.log('✓ Berechnungs-Details aktualisiert');
+    }
+
+    // ========== SECTION 2: Persönliche Daten ==========
+
+    // Name mit Anrede
+    const summaryName = document.getElementById('summary-name');
+    if (summaryName) {
+        const salutationMap = {
+            'herr': 'Herr',
+            'frau': 'Frau',
+            'divers': ''
+        };
+        const salutation = salutationMap[data.personalData.salutation] || '';
+        const fullName = `${salutation} ${data.personalData.firstName} ${data.personalData.lastName}`.trim();
+        summaryName.textContent = fullName;
+        console.log('✓ Name aktualisiert:', fullName);
+    }
+
+    // Adresse
+    const summaryAddress = document.getElementById('summary-address');
+    if (summaryAddress) {
+        const address = `${data.personalData.street} ${data.personalData.houseNumber}`;
+        summaryAddress.textContent = address;
+        console.log('✓ Adresse aktualisiert:', address);
+    }
+
+    // Stadt
+    const summaryCity = document.getElementById('summary-city');
+    if (summaryCity) {
+        const city = `${data.personalData.zipCode} ${data.personalData.city}`;
+        summaryCity.textContent = city;
+        console.log('✓ Stadt aktualisiert:', city);
+    }
+
+    // IBAN
+    const summaryIban = document.getElementById('summary-iban');
+    if (summaryIban) {
+        summaryIban.textContent = `IBAN: ${data.bankData.iban}`;
+        console.log('✓ IBAN aktualisiert');
+    }
+
+    // BIC
+    const summaryBic = document.getElementById('summary-bic');
+    if (summaryBic) {
+        summaryBic.textContent = `BIC/Swift-Code: ${data.bankData.bic}`;
+        console.log('✓ BIC aktualisiert');
+    }
+
+    // Geburtsdatum
+    const summaryBirthdate = document.getElementById('summary-birthdate');
+    if (summaryBirthdate) {
+        const birthdate = `${data.personalData.birthdate.day}.${data.personalData.birthdate.month}.${data.personalData.birthdate.year}`;
+        summaryBirthdate.textContent = `Geburtsdatum: ${birthdate}`;
+        console.log('✓ Geburtsdatum aktualisiert:', birthdate);
+    }
+
+    // Email
+    const summaryEmail = document.getElementById('summary-email');
+    if (summaryEmail) {
+        summaryEmail.textContent = data.personalData.email;
+        console.log('✓ Email aktualisiert:', data.personalData.email);
+    }
+
+    console.log('===============================================');
+    console.log('✓ Summary erfolgreich aktualisiert!');
+    console.log('===============================================');
 }
 
 // Next step
@@ -1651,6 +1961,13 @@ window.nextStep = function() {
 
     if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
         calculateFreibetrag();
+        // DIREKT UPDATE - BYPASS CACHE
+        const resultAmountEl = document.getElementById('result-amount');
+        if (resultAmountEl) {
+            const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+            resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+            console.log('💥 DIREKT AKTUALISIERT (nextStep):', amount.toFixed(2), 'EUR');
+        }
     }
 
     if (window.pkontoCurrentStep === 3) {
@@ -1705,7 +2022,7 @@ window.submitForm = async function() {
         console.log('FormData:', window.pkontoFormData);
 
         // Call backend to create Stripe Checkout Session
-        const backendUrl = 'https://pkonto-backend.onrender.com';
+        const backendUrl = 'https://pkonto-backend-1.onrender.com';
         console.log('Backend URL:', backendUrl + '/api/stripe/create-checkout-session');
 
         const response = await fetch(backendUrl + '/api/stripe/create-checkout-session', {
@@ -1757,14 +2074,135 @@ window.submitForm = async function() {
     }
 };
 
+// Generate dynamic children input fields based on count
+function generateChildrenInputs(count) {
+    const container = document.getElementById('children-details-container');
+    if (!container) return;
+
+    // Clear existing content
+    container.innerHTML = '';
+
+    if (count === 0) {
+        console.log('Keine Kinder ausgewählt - Container leer');
+        return;
+    }
+
+    console.log(`User hat ${count} Kind(er) - zeige Kindergeld-Frage...`);
+
+    // Only show: "Für wie viele Kinder erhalten Sie Kindergeld?" on Step 1
+    // Details will be shown on Step 2
+    const kindergeldQuestion = `
+        <div class="form-question" id="kindergeld-count-question">
+            <div class="question-wrapper">
+                <div class="question-text">Für wie viele Kinder erhalten Sie Kindergeld auf Ihr Konto?</div>
+                <div class="input-group">
+                    <select class="form-input" id="kindergeld-count">
+                        <option value="0">0 Kinder</option>
+                        <option value="1">1 Kind</option>
+                        <option value="2">2 Kinder</option>
+                        <option value="3">3 Kinder</option>
+                        <option value="4">4 Kinder</option>
+                        <option value="5">5 Kinder</option>
+                        <option value="6">Mehr als 5 Kinder</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = kindergeldQuestion;
+
+    console.log('✓ Kindergeld-Frage angezeigt (Details kommen auf Step 2)');
+}
+
+// Generate birthdate inputs for children with Kindergeld (on Step 2)
+function generateKindergeldDetails(count) {
+    const detailsContainer = document.getElementById('kindergeld-details-container-step2');
+    if (!detailsContainer) {
+        console.warn('kindergeld-details-container-step2 not found!');
+        return;
+    }
+
+    // Clear existing details
+    detailsContainer.innerHTML = '';
+
+    if (count === 0) {
+        console.log('Kein Kindergeld - keine Details nötig');
+        return;
+    }
+
+    console.log(`Generiere Geburtsdatum-Eingaben für ${count} Kind(er) mit Kindergeld...`);
+
+    // Helper: Get ordinal number names
+    const ordinalNames = ['', 'ersten', 'zweiten', 'dritten', 'vierten', 'fünften', 'sechsten'];
+
+    // Helper: Generate all days (1-31)
+    const generateDayOptions = () => {
+        let options = '<option value="">Tag</option>';
+        for (let d = 1; d <= 31; d++) {
+            options += `<option value="${d}">${d}</option>`;
+        }
+        return options;
+    };
+
+    // Helper: Generate all months
+    const generateMonthOptions = () => {
+        const months = ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        let options = '<option value="">Monat</option>';
+        for (let m = 1; m <= 12; m++) {
+            options += `<option value="${m}">${months[m]}</option>`;
+        }
+        return options;
+    };
+
+    // Helper: Generate years (current year back 25 years)
+    const generateYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        let options = '<option value="">Jahr</option>';
+        for (let y = currentYear; y >= currentYear - 25; y--) {
+            options += `<option value="${y}">${y}</option>`;
+        }
+        return options;
+    };
+
+    // Generate section for each child with Kindergeld
+    for (let i = 1; i <= count; i++) {
+        const ordinalName = i <= 6 ? ordinalNames[i] : `${i}.`;
+
+        const childSection = `
+            <div class="children-section" id="kindergeld-child-section-${i}">
+                <h4>Geburtsdatum des ${ordinalName} Kindes</h4>
+                <div class="date-inputs">
+                    <select class="form-input small" id="kindergeld-child-${i}-day">
+                        ${generateDayOptions()}
+                    </select>
+                    <select class="form-input small" id="kindergeld-child-${i}-month">
+                        ${generateMonthOptions()}
+                    </select>
+                    <select class="form-input small" id="kindergeld-child-${i}-year">
+                        ${generateYearOptions()}
+                    </select>
+                </div>
+            </div>
+        `;
+
+        detailsContainer.innerHTML += childSection;
+    }
+
+    console.log(`✓ ${count} Kindergeld-Kind(er) Eingaben generiert`);
+}
+
 // Initialize
 console.log('===============================================');
 console.log('Initialisiere Form...');
 console.log('===============================================');
 
+// Initial display only - real calculation happens after AGGRESSIVE OVERRIDE
 updateResultBox();
 
-console.log('OK - P-Konto Form erfolgreich initialisiert!');
+console.log('Warte auf AGGRESSIVE OVERRIDE (500ms)...');
+console.log('Event Listeners werden dann registriert.');
 console.log('===============================================');
 
 // WICHTIG: Globale Aliase fuer onclick-Handler (Elementor Kompatibilitaet)
@@ -1859,7 +2297,55 @@ setTimeout(function() {
         }
 
         window.pkontoCurrentStep = step;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Generate Kindergeld details when navigating to Step 2 (OVERRIDE VERSION)
+        if (step === 2) {
+            console.log('DEBUG (OVERRIDE): Step 2 Navigation detected');
+            const kindergeldCountSelect = document.getElementById('kindergeld-count');
+            console.log('DEBUG (OVERRIDE): kindergeld-count element:', kindergeldCountSelect);
+            const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+            console.log(`DEBUG (OVERRIDE): Kindergeld Count = ${kindergeldCount}`);
+
+            // Check if container exists
+            const container = document.getElementById('kindergeld-details-container-step2');
+            console.log('DEBUG (OVERRIDE): Container found:', container);
+
+            console.log(`Step 2 aktiviert (OVERRIDE) - generiere Geburtsdatum-Eingaben für ${kindergeldCount} Kind(er) mit Kindergeld`);
+            generateKindergeldDetails(kindergeldCount);
+
+            // Add event listener for health compensation field on Step 2
+            setTimeout(function() {
+                const healthCompensationInput = document.getElementById('health-compensation');
+                if (healthCompensationInput) {
+                    // Remove any existing listeners
+                    const newInput = healthCompensationInput.cloneNode(true);
+                    healthCompensationInput.parentNode.replaceChild(newInput, healthCompensationInput);
+
+                    newInput.addEventListener('input', function() {
+                        console.log('Gesundheitsschaden-Betrag geändert:', this.value);
+                        const data = window.pkontoFormData;
+                        data.calculationData.healthCompensation = parseFloat(this.value) || 0;
+                        calculateFreibetrag();
+                        // DIREKT UPDATE - BYPASS CACHE
+                        const resultAmountEl = document.getElementById('result-amount');
+                        if (resultAmountEl) {
+                            const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                            resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                            console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                        }
+                    });
+                    console.log('✓ Event Listener für Gesundheitsschaden auf Step 2 hinzugefügt');
+                }
+            }, 100);
+        }
+
+        // Update summary when navigating to Step 4 (OVERRIDE VERSION)
+        if (step === 4) {
+            console.log('DEBUG (OVERRIDE): Step 4 Navigation detected - updating summary');
+            updateSummary();
+        }
+
+        // Kein Auto-Scroll - Nutzer bleibt an aktueller Position
     };
 
     // Redefine nextStep
@@ -1878,6 +2364,13 @@ setTimeout(function() {
 
         if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
             calculateFreibetrag();
+            // DIREKT UPDATE - BYPASS CACHE
+            const resultAmountEl = document.getElementById('result-amount');
+            if (resultAmountEl) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                console.log('💥 DIREKT AKTUALISIERT (nextStep):', amount.toFixed(2), 'EUR');
+            }
         }
 
         if (window.pkontoCurrentStep === 3) {
@@ -1929,7 +2422,7 @@ setTimeout(function() {
             console.log('FormData:', window.pkontoFormData);
 
             // Call backend to create Stripe Checkout Session
-            const backendUrl = 'https://pkonto-backend.onrender.com';
+            const backendUrl = 'https://pkonto-backend-1.onrender.com';
             console.log('Backend URL:', backendUrl + '/api/stripe/create-checkout-session');
 
             const response = await fetch(backendUrl + '/api/stripe/create-checkout-session', {
@@ -1988,5 +2481,126 @@ setTimeout(function() {
     console.log('  typeof window.previousStep:', typeof window.previousStep);
     console.log('  typeof window.submitForm:', typeof window.submitForm);
     console.log('===============================================');
+
+    // Re-attach event listeners after override
+    console.log('Event Listeners werden neu registriert...');
+
+    // Familienstand
+    const familienstandSelect = document.getElementById('familienstand');
+    if (familienstandSelect) {
+        console.log('DEBUG: Familienstand Element gefunden:', familienstandSelect);
+        familienstandSelect.addEventListener('change', function() {
+            console.log('🔥 EVENT FIRED: Familienstand geändert:', this.value);
+            const data = window.pkontoFormData;
+            const familienstandValue = this.value;
+            data.calculationData.familienstand = familienstandValue;
+
+            // Check married status
+            const unterhaltZahlung = document.getElementById('unterhalt-zahlung');
+            const unterhaltValue = unterhaltZahlung ? unterhaltZahlung.value : 'nein';
+            const showsUnterhaltQuestion = (familienstandValue === 'verheiratet' || familienstandValue === 'lebenspartnerschaft' || familienstandValue === 'geschieden');
+            if (showsUnterhaltQuestion && unterhaltValue === 'ja') {
+                data.calculationData.married = true;
+            } else {
+                data.calculationData.married = false;
+            }
+
+            console.log('Calling calculateFreibetrag...');
+            calculateFreibetrag();
+            // DIREKT UPDATE - BYPASS CACHE
+            const resultAmountEl = document.getElementById('result-amount');
+            if (resultAmountEl) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            }
+            console.log('calculateFreibetrag finished');
+        });
+        console.log('✓ Event Listener für Familienstand hinzugefügt');
+    } else {
+        console.error('❌ Familienstand Element NICHT gefunden!');
+    }
+
+    // Unterhalt
+    const unterhaltSelect = document.getElementById('unterhalt-zahlung');
+    if (unterhaltSelect) {
+        unterhaltSelect.addEventListener('change', function() {
+            console.log('Unterhalt geändert:', this.value);
+            const data = window.pkontoFormData;
+            const familienstand = document.getElementById('familienstand');
+            const familienstandValue = familienstand ? familienstand.value : 'ledig';
+            const showsUnterhaltQuestion = (familienstandValue === 'verheiratet' || familienstandValue === 'lebenspartnerschaft' || familienstandValue === 'geschieden');
+
+            if (showsUnterhaltQuestion && this.value === 'ja') {
+                data.calculationData.married = true;
+            } else {
+                data.calculationData.married = false;
+            }
+
+            calculateFreibetrag();
+            // DIREKT UPDATE - BYPASS CACHE
+            const resultAmountEl = document.getElementById('result-amount');
+            if (resultAmountEl) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            }
+        });
+        console.log('✓ Event Listener für Unterhalt hinzugefügt');
+    }
+
+    // Kinderanzahl
+    const childrenCountSelect = document.getElementById('children-count');
+    if (childrenCountSelect) {
+        childrenCountSelect.addEventListener('change', function() {
+            const count = parseInt(this.value) || 0;
+            console.log('Kinderanzahl geändert auf:', count);
+            const data = window.pkontoFormData;
+            data.calculationData.childrenCount = count;
+            generateChildrenInputs(count);
+            calculateFreibetrag();
+            // DIREKT UPDATE - BYPASS CACHE
+            const resultAmountEl = document.getElementById('result-amount');
+            if (resultAmountEl) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            }
+        });
+        console.log('✓ Event Listener für Kinderanzahl hinzugefügt');
+    }
+
+    // Health compensation
+    const healthCompensationInput = document.getElementById('health-compensation');
+    if (healthCompensationInput) {
+        healthCompensationInput.addEventListener('input', function() {
+            console.log('Gesundheitsschaden-Betrag geändert:', this.value);
+            const data = window.pkontoFormData;
+            data.calculationData.healthCompensation = parseFloat(this.value) || 0;
+            calculateFreibetrag();
+            // DIREKT UPDATE - BYPASS CACHE
+            const resultAmountEl = document.getElementById('result-amount');
+            if (resultAmountEl) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            }
+        });
+        console.log('✓ Event Listener für Gesundheitsschaden-Eingabe hinzugefügt');
+    }
+
+    console.log('✓ Alle Event Listeners neu registriert (nach OVERRIDE)');
+
+    // Führe initiale Berechnung durch
+    console.log('Führe initiale Freibetrags-Berechnung durch...');
+    calculateFreibetrag();
+    // DIREKT UPDATE - BYPASS CACHE
+    const resultAmountEl = document.getElementById('result-amount');
+    if (resultAmountEl) {
+        const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+        resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+        console.log('💥 DIREKT AKTUALISIERT (initial):', amount.toFixed(2), 'EUR');
+    }
+    console.log('✓ P-Konto Form vollständig initialisiert!');
 }, 500);
 </script>
