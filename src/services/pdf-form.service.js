@@ -164,6 +164,14 @@ const fillPdfForm = async (application) => {
 
     // Children birthdays and Kindergeld checkboxes
     if (calculationData.children && calculationData.children.length > 0) {
+      // Check if any child receives Kindergeld
+      const hasKindergeld = calculationData.children.some(child => child.receivesKindergeld);
+
+      // Set main checkbox "undefined_2" if any child receives Kindergeld
+      if (hasKindergeld) {
+        setCheckBox('undefined_2', true);
+      }
+
       calculationData.children.forEach((child, index) => {
         if (index < 5) { // Only first 5 children have fields
           const childNum = index + 1;
