@@ -1992,10 +1992,10 @@ window.previousStep = function() {
     }
 };
 
-// Submit form - STRIPE CHECKOUT SESSION
+// Submit form - MOLLIE PAYMENT
 window.submitForm = async function() {
     console.log('===============================================');
-    console.log('submitForm() AUFGERUFEN! - STRIPE CHECKOUT SESSION');
+    console.log('submitForm() AUFGERUFEN! - MOLLIE PAYMENT');
     console.log('===============================================');
 
     if (!validateCurrentStep()) {
@@ -2392,10 +2392,10 @@ setTimeout(function() {
         }
     };
 
-    // Redefine submitForm with Stripe Checkout
+    // Redefine submitForm with Mollie Payment
     window.submitForm = async function() {
         console.log('===============================================');
-        console.log('submitForm() AUFGERUFEN! - STRIPE CHECKOUT SESSION (OVERRIDE VERSION)');
+        console.log('submitForm() AUFGERUFEN! - MOLLIE PAYMENT (OVERRIDE VERSION)');
         console.log('===============================================');
 
         if (!validateCurrentStep()) {
@@ -2418,14 +2418,14 @@ setTimeout(function() {
         }
 
         try {
-            console.log('Bereite Stripe Checkout Session vor...');
+            console.log('Bereite Mollie Payment vor...');
             console.log('FormData:', window.pkontoFormData);
 
-            // Call backend to create Stripe Checkout Session
+            // Call backend to create Mollie Payment
             const backendUrl = 'https://pkonto-backend-1.onrender.com';
-            console.log('Backend URL:', backendUrl + '/api/stripe/create-checkout-session');
+            console.log('Backend URL:', backendUrl + '/api/mollie/create-payment');
 
-            const response = await fetch(backendUrl + '/api/stripe/create-checkout-session', {
+            const response = await fetch(backendUrl + '/api/mollie/create-payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2447,10 +2447,10 @@ setTimeout(function() {
             if (result.success && result.data && result.data.checkoutUrl) {
                 console.log('ERFOLGREICH!');
                 console.log('Application ID:', result.data.applicationId);
-                console.log('Session ID:', result.data.sessionId);
-                console.log('Redirect zu Stripe Checkout:', result.data.checkoutUrl);
+                console.log('Payment ID:', result.data.paymentId);
+                console.log('Redirect zu Mollie Checkout:', result.data.checkoutUrl);
 
-                // Redirect to Stripe Checkout page
+                // Redirect to Mollie Checkout page
                 window.location.href = result.data.checkoutUrl;
             } else {
                 throw new Error('No checkout URL received');
