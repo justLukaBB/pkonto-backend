@@ -73,7 +73,19 @@ const createPayment = async (req, res) => {
       console.log(`Using payment method: ${payment.method}`);
     }
 
-    const molliePayment = await mollieClient.payments.create(paymentData);
+    let molliePayment;
+    try {
+      molliePayment = await mollieClient.payments.create(paymentData);
+    } catch (methodError) {
+      // If specific method is not active in profile, retry without method
+      if (methodError.statusCode === 422 && methodError.field === 'method' && paymentData.method) {
+        console.warn(`Payment method ${paymentData.method} not active in profile, retrying without method`);
+        delete paymentData.method;
+        molliePayment = await mollieClient.payments.create(paymentData);
+      } else {
+        throw methodError;
+      }
+    }
 
     // Save Mollie Payment ID to Application
     application.payment.molliePaymentId = molliePayment.id;
@@ -259,14 +271,24 @@ const getPaymentMethods = async (req, res) => {
         currency: 'EUR'
       },
       locale: 'de_DE',
-      includeWallets: 'applepay'
+      resource: 'payments'
     });
 
     console.log('Available payment methods:', methods);
 
+    // Filter out methods that might not be fully activated
+    // Apple Pay and other wallet methods often require special activation
+    const filteredMethods = methods.filter(method => {
+      // Exclude wallet methods that commonly cause activation issues
+      const walletMethods = ['applepay'];
+      return !walletMethods.includes(method.id);
+    });
+
+    console.log(`Filtered methods: ${filteredMethods.length} of ${methods.length}`);
+
     res.json({
       success: true,
-      data: methods
+      data: filteredMethods
     });
   } catch (error) {
     console.error('Get payment methods error:', error);
