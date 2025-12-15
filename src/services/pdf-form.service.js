@@ -130,9 +130,7 @@ const fillPdfForm = async (application) => {
     setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if married
-    if (calculationData.married) {
-      setTextField('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', 'X');
-    }
+    setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', calculationData.married);
 
     // Additional persons checkboxes
     const additionalPersons = calculationData.childrenCount;
@@ -146,9 +144,7 @@ const fillPdfForm = async (application) => {
     setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
-    if (additionalPersons > 0) {
-      setTextField('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', 'X');
-    }
+    setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', additionalPersons > 0);
 
     // ============================================================
     // SECTION IV: Additional Monthly Benefits
