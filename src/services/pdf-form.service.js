@@ -100,9 +100,9 @@ const fillPdfForm = async (application) => {
     setTextField('Ort', 'Bochum');
     setTextField('Ansprechpartnerin', `${lawyerTitle} ${lawyerName}; Tel: ${lawyerPhone}; E-mail: ${lawyerEmail}`);
 
-    // Checkboxes: "geeignete Stelle" is ALWAYS checked for law firm
+    // Checkboxes: Law firm is "geeignete Stelle" but we don't check it here
     setCheckBox('geeignete Person gemäß  305 Abs 1 Nr 1 InsO', false);
-    setCheckBox('geeignete Stelle gemäß  305 Abs 1 Nr 1 InsO', true);
+    setCheckBox('geeignete Stelle gemäß  305 Abs 1 Nr 1 InsO', false);
 
     // ============================================================
     // SECTION II: Customer Information
@@ -129,6 +129,11 @@ const fillPdfForm = async (application) => {
     const erhöhungErsteerson = calculationData.married ? '585,23' : '';
     setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
 
+    // Check "a) aufgrund gesetzlicher Verpflichtung" if married
+    if (calculationData.married) {
+      setTextField('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', 'X');
+    }
+
     // Additional persons checkboxes
     const additionalPersons = calculationData.childrenCount;
     setCheckBox('eine', additionalPersons === 1);
@@ -139,6 +144,11 @@ const fillPdfForm = async (application) => {
     // Children amount
     const childrenAmount = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
     setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
+
+    // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
+    if (additionalPersons > 0) {
+      setTextField('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', 'X');
+    }
 
     // ============================================================
     // SECTION IV: Additional Monthly Benefits
@@ -181,20 +191,19 @@ const fillPdfForm = async (application) => {
     // ============================================================
     // SECTION V: Entity Type (Arbeitgeber, Sozialleistungsträger, etc.)
     // ============================================================
-    // Always check "Familienkasse" for P-Konto certificates
+    // Leave all unchecked - law firm issues the certificate
     setCheckBox('Arbeitgeber', false);
     setCheckBox('Sozialleistungsträger', false);
     setCheckBox('sonstiger Leistungsträger  902 ZPO', false);
-    setCheckBox('Familienkasse', true);
+    setCheckBox('Familienkasse', false);
 
     // ============================================================
     // Date and Signature
     // ============================================================
     setTextField('Ort Datum', `Bochum, ${today}`);
 
-    // Signature/stamp field - can be left empty or add text
-    setTextField('Unterschrift  Stempel der bescheinigenden Person oder Stelle',
-      `${lawyerTitle} ${lawyerName}`);
+    // Signature/stamp field - leave empty (will be signed manually)
+    // setTextField('Unterschrift  Stempel der bescheinigenden Person oder Stelle', '');
 
     // Footer note about annual adjustment
     setTextField('die Freibeträge werden jährlich zum 0107 angepasst',
