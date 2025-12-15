@@ -276,15 +276,13 @@ const getPaymentMethods = async (req, res) => {
 
     console.log('Available payment methods:', methods);
 
-    // Filter out methods that might not be fully activated
-    // Apple Pay and other wallet methods often require special activation
+    // Only show confirmed working payment methods
+    const allowedMethods = ['paypal', 'creditcard'];
     const filteredMethods = methods.filter(method => {
-      // Exclude wallet methods that commonly cause activation issues
-      const walletMethods = ['applepay'];
-      return !walletMethods.includes(method.id);
+      return allowedMethods.includes(method.id);
     });
 
-    console.log(`Filtered methods: ${filteredMethods.length} of ${methods.length}`);
+    console.log(`Filtered methods: ${filteredMethods.length} of ${methods.length} (showing only: ${allowedMethods.join(', ')})`);
 
     res.json({
       success: true,
