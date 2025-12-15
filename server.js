@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/applications', require('./src/routes/application.routes'));
 app.use('/api/calculate', require('./src/routes/calculate.routes'));
 app.use('/api/stripe', require('./src/routes/stripe.routes'));
+app.use('/api/mollie', require('./src/routes/mollie.routes'));
 app.use('/api/woocommerce', require('./src/routes/woocommerce.routes'));
 
 // Health check
