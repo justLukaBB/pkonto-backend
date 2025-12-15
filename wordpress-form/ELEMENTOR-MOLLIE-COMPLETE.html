@@ -40,6 +40,12 @@
   cursor: pointer;
 }
 
+.step.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .step.active {
   color: #EA5530;
 }
@@ -735,6 +741,7 @@ select.form-input {
     padding: 20px;
     background: #f6d4c2;
     margin-bottom: 0;
+    border-radius: 10px;
   }
 
   .result-label {
@@ -790,12 +797,21 @@ select.form-input {
   }
 
   .trust-badges {
+    position: relative;
     padding-top: 25px;
-    border-top: 1px solid #E0E0E0;
     margin-left: -25px;
     margin-right: -25px;
     padding-left: 25px;
     padding-right: 25px;
+  }
+
+  .trust-badges::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 30%;
+    right: 30%;
+    border-top: 1px solid #E0E0E0;
   }
 
   .btn-calculate {
@@ -806,6 +822,54 @@ select.form-input {
   .result-amount {
     font-size: 22px;
   }
+
+  .summary-box {
+    padding: 20px 15px;
+  }
+
+  .cost-row.total {
+    margin: 15px -15px 0;
+    padding: 15px;
+  }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-overlay.active {
+  display: flex;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #EA5530;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: white;
+  font-size: 18px;
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
 
@@ -993,12 +1057,10 @@ select.form-input {
                         </div>
                     </div>
 
-                    <!-- Two Column Layout for Geburtsdatum and Kontakt -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                        <!-- Geburtsdatum -->
-                        <div class="form-question" style="margin: 0;">
-                            <label class="section-label">Geburtsdatum</label>
-                            <div class="date-inputs">
+                    <!-- Geburtsdatum -->
+                    <div class="form-question">
+                        <label class="section-label">Geburtsdatum</label>
+                        <div class="date-inputs">
                                 <select class="form-input small">
                                     <option>Tag</option>
                                     <option value="1">1</option>
@@ -1140,13 +1202,12 @@ select.form-input {
                                     <option value="1920">1920</option>
                                 </select>
                             </div>
-                        </div>
+                    </div>
 
-                        <!-- Kontakt -->
-                        <div class="form-question" style="margin: 0;">
-                            <label class="section-label">Kontakt</label>
-                            <input type="email" class="form-input" style="width: 100%;" placeholder="E-Mail">
-                        </div>
+                    <!-- Kontakt -->
+                    <div class="form-question">
+                        <label class="section-label">Kontakt</label>
+                        <input type="email" class="form-input" style="width: 100%;" placeholder="E-Mail">
                     </div>
 
                     <!-- Bankverbindung -->
@@ -1311,6 +1372,14 @@ select.form-input {
         Beziehen Sie zusätzlich einmalige Sozialleistungen wie z.B. Zuschüsse zu Klassenfahrten, Darlehen für Umzugshilfen oder Kautionen vom Jobcenter etc., dann legen Sie den Bewilligungsbescheid Ihrer Bank vor. Ihre Bank wird dann einen einmaligen zusätzlichen Freibetrag für den entsprechenden Monat gewähren.
     </div>
 </div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div style="text-align: center;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Zahlung wird vorbereitet...<br>Bitte warten Sie einen Moment.</div>
+    </div>
+</div>
 <script>
 // P-KONTO FORM - DEBUG VERSION (ohne Emojis für bessere Kompatibilität)
 console.log('===============================================');
@@ -1384,8 +1453,23 @@ window.pkontoFormData = {
 };
 
 window.pkontoCurrentStep = 1;
+window.pkontoMaxStep = 1; // Tracks the maximum reached step
 
 console.log('Initial FormData erstellt');
+
+// Add click handlers to progress steps
+setTimeout(function() {
+    const progressSteps = document.querySelectorAll('.progress-steps .step');
+    progressSteps.forEach(function(stepEl) {
+        stepEl.addEventListener('click', function() {
+            const targetStep = parseInt(stepEl.getAttribute('data-step'));
+            if (targetStep && targetStep <= window.pkontoMaxStep) {
+                window.goToStep(targetStep);
+            }
+        });
+    });
+    console.log('✓ Step click handlers added');
+}, 100);
 
 // Familienstand Change Handler - Show/Hide Unterhalt Question
 function handleFamilienstandChange() {
@@ -1424,6 +1508,11 @@ window.goToStep = function(step) {
         return;
     }
 
+    // Update max step if moving forward
+    if (step > window.pkontoMaxStep) {
+        window.pkontoMaxStep = step;
+    }
+
     for (let i = 1; i <= 4; i++) {
         const stepEl = document.getElementById('step-' + i);
         if (stepEl) {
@@ -1433,10 +1522,17 @@ window.goToStep = function(step) {
         const progressStep = document.querySelector('[data-step="' + i + '"]');
         if (progressStep) {
             progressStep.classList.remove('active');
+            progressStep.classList.remove('disabled');
+
             if (i < step) {
                 progressStep.classList.add('completed');
             } else {
                 progressStep.classList.remove('completed');
+            }
+
+            // Disable steps that haven't been reached yet
+            if (i > window.pkontoMaxStep) {
+                progressStep.classList.add('disabled');
             }
         }
     }
@@ -1476,7 +1572,13 @@ window.goToStep = function(step) {
         updateSummary();
     }
 
-    // Kein Auto-Scroll - Nutzer bleibt an aktueller Position
+    // Auto-Scroll zum Formular nach Step-Wechsel
+    setTimeout(function() {
+        const formContainer = document.querySelector('.form-container');
+        if (formContainer) {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 100);
 
     console.log('OK - Navigation abgeschlossen');
 };
@@ -2003,6 +2105,12 @@ window.submitForm = async function() {
         return;
     }
 
+    // Show loading overlay
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('active');
+    }
+
     collectStepData();
 
     const paymentRadio = document.querySelector('input[name="payment"]:checked');
@@ -2064,6 +2172,12 @@ window.submitForm = async function() {
         console.error('Message:', error.message);
         console.error('Stack:', error.stack);
         console.error('===============================================');
+
+        // Hide loading overlay on error
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+        }
 
         alert('Fehler beim Erstellen der Zahlung: ' + error.message + '\n\nBitte pruefen Sie die Browser-Konsole (F12) fuer Details.');
 
@@ -2262,6 +2376,11 @@ setTimeout(function() {
             return;
         }
 
+        // Update max step if moving forward
+        if (step > window.pkontoMaxStep) {
+            window.pkontoMaxStep = step;
+        }
+
         // Remove active from all steps
         for (let i = 1; i <= 4; i++) {
             const stepEl = document.getElementById('step-' + i);
@@ -2273,11 +2392,18 @@ setTimeout(function() {
             const progressStep = document.querySelector('[data-step="' + i + '"]');
             if (progressStep) {
                 progressStep.classList.remove('active');
+                progressStep.classList.remove('disabled');
+
                 if (i < step) {
                     progressStep.classList.add('completed');
                     console.log('  Step', i, 'marked as completed');
                 } else {
                     progressStep.classList.remove('completed');
+                }
+
+                // Disable steps that haven't been reached yet
+                if (i > window.pkontoMaxStep) {
+                    progressStep.classList.add('disabled');
                 }
             }
         }
@@ -2345,7 +2471,13 @@ setTimeout(function() {
             updateSummary();
         }
 
-        // Kein Auto-Scroll - Nutzer bleibt an aktueller Position
+        // Auto-Scroll zum Formular nach Step-Wechsel
+        setTimeout(function() {
+            const formContainer = document.querySelector('.form-container');
+            if (formContainer) {
+                formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
     };
 
     // Redefine nextStep
@@ -2401,6 +2533,12 @@ setTimeout(function() {
         if (!validateCurrentStep()) {
             console.warn('WARNUNG - Validierung fehlgeschlagen');
             return;
+        }
+
+        // Show loading overlay
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('active');
         }
 
         collectStepData();
@@ -2465,6 +2603,12 @@ setTimeout(function() {
             console.error('Stack:', error.stack);
             console.error('===============================================');
 
+            // Hide loading overlay on error
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('active');
+            }
+
             alert('Fehler beim Erstellen der Zahlung: ' + error.message + '\n\nBitte pruefen Sie die Browser-Konsole (F12) fuer Details.');
 
             if (submitBtn && submitBtn.tagName === 'BUTTON') {
@@ -2484,6 +2628,18 @@ setTimeout(function() {
 
     // Re-attach event listeners after override
     console.log('Event Listeners werden neu registriert...');
+
+    // Progress Steps - Click handlers
+    const progressSteps = document.querySelectorAll('.progress-steps .step');
+    progressSteps.forEach(function(stepEl) {
+        stepEl.addEventListener('click', function() {
+            const targetStep = parseInt(stepEl.getAttribute('data-step'));
+            if (targetStep && targetStep <= window.pkontoMaxStep) {
+                window.goToStep(targetStep);
+            }
+        });
+    });
+    console.log('✓ Step click handlers added (OVERRIDE)');
 
     // Familienstand
     const familienstandSelect = document.getElementById('familienstand');
