@@ -38,7 +38,7 @@ const createPayment = async (req, res) => {
       bankData,
       calculatedFreibetrag,
       payment: {
-        method: 'mollie',
+        method: payment?.method || 'mollie',
         amount: payment?.amount || 29.00,
         status: 'pending'
       },
@@ -52,7 +52,7 @@ const createPayment = async (req, res) => {
     console.log(`Created application ${application._id} for Mollie payment`);
 
     // Create Mollie Payment
-    const molliePayment = await mollieClient.payments.create({
+    const paymentData = {
       amount: {
         currency: 'EUR',
         value: (payment?.amount || 29.00).toFixed(2) // Mollie requires string format like "29.00"
@@ -65,7 +65,15 @@ const createPayment = async (req, res) => {
         email: personalData.email,
         name: `${personalData.firstName} ${personalData.lastName}`
       }
-    });
+    };
+
+    // Include payment method if specified by user
+    if (payment?.method) {
+      paymentData.method = payment.method;
+      console.log(`Using payment method: ${payment.method}`);
+    }
+
+    const molliePayment = await mollieClient.payments.create(paymentData);
 
     // Save Mollie Payment ID to Application
     application.payment.molliePaymentId = molliePayment.id;
@@ -229,8 +237,50 @@ const getPaymentStatus = async (req, res) => {
   }
 };
 
+/**
+ * Get available payment methods
+ * GET /api/mollie/methods
+ */
+const getPaymentMethods = async (req, res) => {
+  try {
+    if (!mollieClient) {
+      return res.status(503).json({
+        success: false,
+        message: 'Mollie ist nicht konfiguriert'
+      });
+    }
+
+    const { amount } = req.query;
+
+    // Get all available payment methods
+    const methods = await mollieClient.methods.list({
+      amount: {
+        value: amount || '29.00',
+        currency: 'EUR'
+      },
+      locale: 'de_DE',
+      includeWallets: 'applepay'
+    });
+
+    console.log('Available payment methods:', methods);
+
+    res.json({
+      success: true,
+      data: methods
+    });
+  } catch (error) {
+    console.error('Get payment methods error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Fehler beim Abrufen der Zahlungsmethoden',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createPayment,
   handleWebhook,
-  getPaymentStatus
+  getPaymentStatus,
+  getPaymentMethods
 };

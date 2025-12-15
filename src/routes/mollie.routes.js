@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createPayment, handleWebhook, getPaymentStatus } = require('../controllers/mollie.controller');
+const { createPayment, handleWebhook, getPaymentStatus, getPaymentMethods } = require('../controllers/mollie.controller');
+
+// Get available payment methods
+router.get('/methods', getPaymentMethods);
 
 // Create Mollie Payment
 router.post('/create-payment', createPayment);
