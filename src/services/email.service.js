@@ -52,7 +52,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
 
     <p style="font-size: 15px; color: #374151; line-height: 1.6; margin: 0 0 20px 0;">
       Sehr geehrte/r <strong>${fullName}</strong>,<br><br>
-      vielen Dank für Ihren Auftrag. Ihre P-Konto Bescheinigung wurde erfolgreich erstellt und von ${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME} beglaubigt.
+      vielen Dank für Ihren Auftrag. Ihre P-Konto Bescheinigung wurde erfolgreich erstellt.
     </p>
 
     <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 16px 0;">
@@ -110,7 +110,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
       text: `
 Sehr geehrte/r ${fullName},
 
-vielen Dank für Ihren Auftrag. Ihre P-Konto Bescheinigung nach § 850k ZPO wurde erfolgreich erstellt und beglaubigt.
+vielen Dank für Ihren Auftrag. Ihre P-Konto Bescheinigung nach § 850k ZPO wurde erfolgreich erstellt.
 
 Ihr monatlicher Freibetrag: ${application.calculatedFreibetrag.amount.toFixed(2)} €
 
@@ -120,7 +120,6 @@ Nächste Schritte:
 3. Die Bank wird Ihren erhöhten Freibetrag einrichten
 
 Wichtige Hinweise:
-- Die Bescheinigung ist von ${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME} beglaubigt
 - Die Umwandlung zum P-Konto erfolgt durch Ihre Bank
 - Der erhöhte Freibetrag gilt ab Vorlage der Bescheinigung
 - Bei einmaligen Sozialleistungen legen Sie bitte zusätzlich den Bewilligungsbescheid vor

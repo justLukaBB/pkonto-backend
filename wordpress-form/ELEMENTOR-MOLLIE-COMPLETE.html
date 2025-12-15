@@ -728,9 +728,10 @@ select.form-input {
     order: 1;
     margin-bottom: 0px;
     width: 100%;
-    max-width: 380px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 15px;
   }
 
   .result-box {
@@ -870,6 +871,241 @@ select.form-input {
   font-size: 18px;
   margin-top: 20px;
   text-align: center;
+}
+
+.loading-overlay > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Success Page Styles */
+#step-success {
+  background: #f1efe9;
+  min-height: 100vh;
+  padding: 60px 30px;
+}
+
+.success-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 30px;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  animation: successSlideIn 0.6s ease-out;
+}
+
+@keyframes successSlideIn {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.success-icon svg {
+  width: 100px;
+  height: 100px;
+  fill: #16a34a;
+}
+
+.success-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 15px;
+}
+
+.success-message {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.success-info-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.success-info-box h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.success-info-box li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.success-info-box li:last-child {
+  border-bottom: none;
+}
+
+.success-info-box li::before {
+  content: "✓";
+  background: #16a34a;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.success-contact {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 20px 0;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.success-contact strong {
+  color: #374151;
+}
+
+.success-contact a {
+  color: #EA5530 !important;
+  text-decoration: none !important;
+  font-weight: 600;
+}
+
+.success-contact a:hover {
+  text-decoration: underline !important;
+}
+
+.success-back-btn {
+  background: #EA5530;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 20px;
+}
+
+.success-back-btn:hover {
+  background: #d64420;
+}
+
+/* Hide progress steps on success page */
+.form-container.success-mode .progress-steps {
+  display: none;
+}
+
+.form-container.success-mode .disclaimer {
+  display: none;
+}
+
+.form-container.success-mode .form-left {
+  background: transparent;
+  padding: 0;
+}
+
+.form-container.success-mode {
+  background: #f1efe9;
+}
+
+.form-container.success-mode .content-wrapper {
+  background: #f1efe9;
+}
+
+@media (max-width: 768px) {
+  #step-success {
+    padding: 30px 0;
+  }
+
+  .success-container {
+    width: calc(100% - 30px);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px 20px;
+    border-radius: 15px;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+  }
+
+  .success-icon svg {
+    width: 80px;
+    height: 80px;
+  }
+
+  .success-title {
+    font-size: 24px;
+  }
+
+  .success-message {
+    font-size: 15px;
+  }
+
+  .success-info-box {
+    padding: 20px;
+  }
+
+  .success-info-box h3 {
+    font-size: 16px;
+  }
+
+  .success-info-box li {
+    font-size: 14px;
+  }
+
+  .success-contact {
+    font-size: 13px;
+  }
 }
 </style>
 
@@ -1348,6 +1584,58 @@ select.form-input {
                     <!-- Final Submit Button -->
                     <button class="btn-calculate" style="margin-top: 30px;" onclick="window.submitForm()">Jetzt kostenpflichtig beauftragen</button>
                 </div>
+
+                <!-- STEP 5: Success Page -->
+                <div class="step-content" id="step-success" style="display: none;">
+                    <div class="success-container">
+                        <!-- Success Icon - Document with Checkmark Badge -->
+                        <div class="success-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Document -->
+                                <path d="M25 10 L60 10 L75 25 L75 90 L25 90 Z" fill="#f3f4f6" stroke="#d1d5db" stroke-width="2"/>
+                                <!-- Folded Corner -->
+                                <path d="M60 10 L60 25 L75 25" fill="#e5e7eb" stroke="#d1d5db" stroke-width="2"/>
+                                <!-- Document Lines -->
+                                <line x1="35" y1="35" x2="65" y2="35" stroke="#9ca3af" stroke-width="2"/>
+                                <line x1="35" y1="45" x2="65" y2="45" stroke="#9ca3af" stroke-width="2"/>
+                                <line x1="35" y1="55" x2="55" y2="55" stroke="#9ca3af" stroke-width="2"/>
+                                <!-- Green Success Badge -->
+                                <circle cx="70" cy="70" r="18" fill="#16a34a"/>
+                                <!-- White Checkmark -->
+                                <path d="M63 70 L68 75 L78 65" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Success Title -->
+                        <h1 class="success-title">Auftrag erfolgreich abgeschlossen!</h1>
+
+                        <!-- Success Message -->
+                        <p class="success-message">
+                            Vielen Dank für Ihren Auftrag! Ihre Zahlung wurde erfolgreich verarbeitet und Ihre P-Konto Bescheinigung wird nun erstellt.
+                        </p>
+
+                        <!-- Info Box -->
+                        <div class="success-info-box">
+                            <h3>📧 Wie geht es weiter?</h3>
+                            <ul>
+                                <li>Sie erhalten in Kürze eine E-Mail mit Ihrer beglaubigten P-Konto Bescheinigung</li>
+                                <li>Bitte prüfen Sie auch Ihren Spam-Ordner, falls die E-Mail nicht innerhalb von 10 Minuten eintrifft</li>
+                                <li>Legen Sie die Bescheinigung Ihrer Bank vor, um den erhöhten Freibetrag einzurichten</li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="success-contact">
+                            <strong>Fragen oder Probleme?</strong><br>
+                            Kontaktieren Sie uns unter: <a href="mailto:info@ra-scuric.de" style="color: #1e3a8a; text-decoration: underline;">info@ra-scuric.de</a> oder Tel: 0234 913 681 0
+                        </div>
+
+                        <!-- Back to Homepage Button -->
+                        <button class="success-back-btn" onclick="window.location.href='https://p-konto-bescheinigung.com'">
+                            Zurück zur Startseite
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Side - Result Box -->
@@ -1413,6 +1701,84 @@ const PKONTO_FORM_CONFIG = {
 };
 
 console.log('Form Config:', PKONTO_FORM_CONFIG);
+
+// ============================================================
+// CHECK FOR SUCCESS PAGE (after payment redirect from Mollie)
+// ============================================================
+(function checkForSuccessPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const applicationId = urlParams.get('application_id');
+
+    console.log('URL Parameters:', {
+        paymentStatus: paymentStatus,
+        applicationId: applicationId
+    });
+
+    if (paymentStatus === 'success' && applicationId) {
+        console.log('SUCCESS PAGE DETECTED! Showing success view...');
+
+        // Wait for DOM to be ready
+        setTimeout(function() {
+            // Hide all step-content
+            const allSteps = document.querySelectorAll('.step-content');
+            allSteps.forEach(step => step.style.display = 'none');
+
+            // Show success page
+            const successPage = document.getElementById('step-success');
+            if (successPage) {
+                successPage.style.display = 'block';
+                console.log('Success page shown');
+            }
+
+            // Add success-mode class to form-container
+            const formContainer = document.querySelector('.form-container');
+            if (formContainer) {
+                formContainer.classList.add('success-mode');
+                console.log('success-mode class added to form-container');
+            }
+
+            // Hide form-right (result box)
+            const formRight = document.querySelector('.form-right');
+            if (formRight) {
+                formRight.style.display = 'none';
+                console.log('form-right hidden');
+            }
+
+            // Make form-left full width
+            const formLeft = document.querySelector('.form-left');
+            if (formLeft) {
+                formLeft.style.flex = '1';
+                formLeft.style.maxWidth = '100%';
+                console.log('form-left set to full width');
+            }
+
+            // Make content-wrapper centered
+            const contentWrapper = document.querySelector('.content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.style.maxWidth = '900px';
+                contentWrapper.style.margin = '0 auto';
+                console.log('content-wrapper centered');
+            }
+
+            // Scroll to form container
+            setTimeout(function() {
+                const formContainer = document.querySelector('.form-container');
+                if (formContainer) {
+                    formContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    console.log('Scrolled to form container');
+                }
+            }, 200);
+        }, 100);
+
+        return true; // Success page is active
+    }
+
+    return false; // Normal form flow
+})();
 
 // Global State
 window.pkontoFormData = {
