@@ -719,10 +719,6 @@ select.form-input {
     display: none;
   }
 
-  .step.active .step-text {
-    display: block;
-  }
-
   .form-left {
     padding: 25px 15px;
     order: 2;
@@ -1517,23 +1513,32 @@ select.form-input {
                         </div>
                     </div>
 
-                    <!-- Payment Options (Dynamic from Mollie) -->
+                    <!-- Payment Options -->
                     <div class="summary-box">
                         <h3>Wie möchten Sie bezahlen?</h3>
 
-                        <!-- Loading State -->
-                        <div id="payment-methods-loading" style="text-align: center; padding: 20px;">
-                            <div style="font-size: 16px; color: #666;">Lade Zahlungsmethoden...</div>
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="paypal" checked>
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/PayPal.svg" alt="PayPal" class="payment-logo">
+                            <label for="paypal" class="payment-label">Paypal (Kostenfrei)</label>
                         </div>
 
-                        <!-- Payment Methods Container -->
-                        <div id="payment-methods-container" style="display: none;">
-                            <!-- Will be filled dynamically with Mollie payment methods -->
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="klarna">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Klarna_Payment_Badge-1.svg" alt="Klarna" class="payment-logo">
+                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna (Kostenfrei)</label>
                         </div>
 
-                        <!-- Error State -->
-                        <div id="payment-methods-error" style="display: none; padding: 15px; background: #fee; border-radius: 8px; color: #c00;">
-                            Fehler beim Laden der Zahlungsmethoden. Bitte versuchen Sie es erneut.
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="amazon">
+                            <img src="https://solutionshelf-cdn.oxid-esales.com/provider_121/module_203/4d3a4b0a57c07c0f89e84784df718fff.png" alt="Amazon" class="payment-logo">
+                            <label for="amazon" class="payment-label">Amazon Payments (Kostenfrei)</label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="applepay">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/1024px-Apple_Pay_logo.svg.png" alt="Apple Pay" class="payment-logo">
+                            <label for="applepay" class="payment-label">Apple Pay (Kostenfrei)</label>
                         </div>
                     </div>
 
@@ -1931,8 +1936,6 @@ window.goToStep = function(step) {
     if (step === 4) {
         console.log('DEBUG: Step 4 Navigation detected - updating summary');
         updateSummary();
-        // Load Mollie payment methods
-        loadPaymentMethods();
     }
 
     // Auto-Scroll zum Formular nach Step-Wechsel
@@ -2457,70 +2460,6 @@ window.previousStep = function() {
     }
 };
 
-// Load Mollie Payment Methods
-async function loadPaymentMethods() {
-    console.log('Loading Mollie payment methods...');
-
-    const loadingEl = document.getElementById('payment-methods-loading');
-    const containerEl = document.getElementById('payment-methods-container');
-    const errorEl = document.getElementById('payment-methods-error');
-
-    try {
-        // Show loading
-        if (loadingEl) loadingEl.style.display = 'block';
-        if (containerEl) containerEl.style.display = 'none';
-        if (errorEl) errorEl.style.display = 'none';
-
-        const backendUrl = 'https://pkonto-backend-1.onrender.com';
-        const response = await fetch(`${backendUrl}/api/mollie/methods?amount=29.00`);
-
-        if (!response.ok) {
-            throw new Error('Failed to load payment methods');
-        }
-
-        const result = await response.json();
-        console.log('Payment methods loaded:', result);
-
-        if (result.success && result.data) {
-            renderPaymentMethods(result.data);
-
-            // Hide loading, show container
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (containerEl) containerEl.style.display = 'block';
-        } else {
-            throw new Error('Invalid response format');
-        }
-    } catch (error) {
-        console.error('Error loading payment methods:', error);
-
-        // Show error
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (errorEl) errorEl.style.display = 'block';
-    }
-}
-
-// Render Payment Methods UI
-function renderPaymentMethods(methods) {
-    const container = document.getElementById('payment-methods-container');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    // Mollie methods is an array of method objects
-    methods.forEach((method, index) => {
-        const methodEl = document.createElement('div');
-        methodEl.className = 'payment-option';
-        methodEl.innerHTML = `
-            <input type="radio" name="payment" id="${method.id}" ${index === 0 ? 'checked' : ''} value="${method.id}">
-            <img src="${method.image.svg}" alt="${method.description}" class="payment-logo" style="width: 50px; height: auto;">
-            <label for="${method.id}" class="payment-label">${method.description}</label>
-        `;
-        container.appendChild(methodEl);
-    });
-
-    console.log(`✓ Rendered ${methods.length} payment methods`);
-}
-
 // Submit form - MOLLIE PAYMENT
 window.submitForm = async function() {
     console.log('===============================================');
@@ -2896,8 +2835,6 @@ setTimeout(function() {
         if (step === 4) {
             console.log('DEBUG (OVERRIDE): Step 4 Navigation detected - updating summary');
             updateSummary();
-            // Load Mollie payment methods
-            loadPaymentMethods();
         }
 
         // Auto-Scroll zum Formular nach Step-Wechsel
