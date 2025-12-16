@@ -207,7 +207,7 @@ const fillPdfForm = async (application) => {
     if (hasOtherChildBenefits) {
       setCheckBox('Andere gesetzliche Geldleistungen für Kinder  z B Kinderzuschlag und vergleichbare', true);
       setCheckBox('Andere Gesetzliche Geldleistungen für Kinder', true);
-      setTextField('Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
+      setTextField('156000 €Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
     }
 
     // ============================================================
