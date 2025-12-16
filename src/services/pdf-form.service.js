@@ -122,59 +122,47 @@ const fillPdfForm = async (application) => {
     // SECTION III: Freibetrag Calculation
     // ============================================================
 
-    // Base Freibetrag (always 1560.00 EUR as of 2025)
+    // Base Freibetrag (always 1560.00 EUR as of 2025) - Always check this checkbox
     const baseFreibetrag = '1.560,00';
+    setCheckBox('Grundfreibetrag des Schuldners  Kontoinhaber derzeit', true);
 
     // First person (married/partnership)
     const erhöhungErsteerson = calculationData.married ? '585,23' : '';
-    setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
+    setTextField('Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € in Höhe von', erhöhungErsteerson);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if married
-    setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', calculationData.married);
+    if (calculationData.married) {
+      setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', true);
+    }
 
     // Additional persons checkboxes
     const additionalPersons = calculationData.childrenCount;
     setCheckBox('eine', additionalPersons === 1);
     setCheckBox('zwei', additionalPersons === 2);
     setCheckBox('drei', additionalPersons === 3);
-    setCheckBox('vier weitere Personen derzeit1 iHv von je 32604 €', additionalPersons >= 4);
+    setCheckBox('vier', additionalPersons >= 4);
 
     // Children amount
     const childrenAmount = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
-    setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
+    setTextField('Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € in Höhe von', childrenAmount);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
-    setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', additionalPersons > 0);
-
-    // Calculate total number of dependents (Unterhaltspflichtige Personen)
-    const totalDependents = (calculationData.married ? 1 : 0) + additionalPersons;
-
-    // Set checkboxes for number of dependents
-    setCheckBox('Kontrollkästchen 1. Person Unterhalt', totalDependents === 1);
-    setCheckBox('Kontrollkästchen 2. Person Unterhalt', totalDependents >= 2);
+    if (additionalPersons > 0) {
+      setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', true);
+    }
 
     // ============================================================
     // SECTION IV: Additional Monthly Benefits
     // ============================================================
 
-    // Other child-related financial benefits (e.g., Kinderzuschlag, Unterhaltsvorschuss, Betreuungsgeld)
-    // § 902 Satz 1 Nr 5 ZPO
-    const hasOtherChildBenefits = calculationData.healthCompensation > 0;
-    setCheckBox('Andere Gesetzliche Geldleistungen für Kinder', hasOtherChildBenefits);
-
-    if (hasOtherChildBenefits) {
-      setTextField('156000 €Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
-    }
-
-    // Children birthdays and Kindergeld checkboxes
+    // Kindergeld section
     if (calculationData.children && calculationData.children.length > 0) {
       // Check if any child receives Kindergeld
       const hasKindergeld = calculationData.children.some(child => child.receivesKindergeld);
 
-      // Set main Kindergeld checkboxes if any child receives Kindergeld
+      // Set main Kindergeld checkbox if any child receives Kindergeld
       if (hasKindergeld) {
-        setCheckBox('undefined_2', true);
-        setCheckBox('Kindergeld', true);
+        setCheckBox('Kindergeld für  902 Satz 1 Nr 5 ZPO2', true);
       }
 
       calculationData.children.forEach((child, index) => {
@@ -182,24 +170,34 @@ const fillPdfForm = async (application) => {
           const childNum = index + 1;
           const birthdate = formatDate(child.birthdate);
 
-          // Set checkbox for "Kind X geboren im MonatJahr"
-          setCheckBox(`Kind ${childNum} geboren im MonatJahr`, child.receivesKindergeld);
+          // Set checkbox for "Kind X geboren im Monat/Jahr"
+          if (child.receivesKindergeld) {
+            setCheckBox(`Kind ${childNum} geboren im MonatJahr`, true);
+          }
 
-          // Set birthdate text field
-          setTextField(`Kind ${childNum} Geburtstag`, birthdate);
+          // Set birthdate text field (Monat/Jahr format: MM/YYYY)
+          setTextField(`Kind ${childNum} geboren im MonatJahr_2`, birthdate);
         }
       });
 
       // If more than 5 children
       if (calculationData.children.length > 5) {
-        setTextField('weitere Kinder', String(calculationData.children.length - 5));
+        setTextField('weitere Kinder3 Anzahl', String(calculationData.children.length - 5));
       }
+    }
+
+    // Other child-related financial benefits (e.g., Kinderzuschlag, Unterhaltsvorschuss, Betreuungsgeld)
+    // § 902 Satz 1 Nr 5 ZPO
+    const hasOtherChildBenefits = calculationData.healthCompensation > 0;
+    if (hasOtherChildBenefits) {
+      setCheckBox('Andere gesetzliche Geldleistungen für Kinder  z B Kinderzuschlag und vergleichbare', true);
+      setTextField('Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
     }
 
     // ============================================================
     // TOTAL FREIBETRAG
     // ============================================================
-    setTextField('156000 €Monatlicher Gesamtfreibetrag', formatCurrency(calculatedFreibetrag.amount));
+    setTextField('Monatlicher Gesamtfreibetrag', formatCurrency(calculatedFreibetrag.amount));
 
     // ============================================================
     // SECTION V: Entity Type (Arbeitgeber, Sozialleistungsträger, etc.)
