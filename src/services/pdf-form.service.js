@@ -155,7 +155,9 @@ const fillPdfForm = async (application) => {
     const totalDependents = (calculationData.married ? 1 : 0) + additionalPersons;
 
     // Set checkboxes for number of dependents
-    setCheckBox('Kontrollkästchen 1. Person Unterhalt', totalDependents === 1);
+    // If 1 person: check only first box
+    // If 2+ persons: check BOTH boxes
+    setCheckBox('Kontrollkästchen 1. Person Unterhalt', totalDependents >= 1);
     setCheckBox('Kontrollkästchen 2. Person Unterhalt', totalDependents >= 2);
 
     // ============================================================
