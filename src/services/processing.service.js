@@ -3,6 +3,88 @@ const { generateCertificate } = require('./pdf.service');
 const { sendCertificateEmail } = require('./email.service');
 
 /**
+ * Send order confirmation to Make.com webhook for Slack notification
+ */
+const sendOrderConfirmation = async (application) => {
+  try {
+    const webhookUrl = 'https://hook.eu2.make.com/836uqphu625qgwinko90jsiufnalryqd';
+
+    const orderData = {
+      orderId: application._id.toString(),
+      orderDate: application.createdAt,
+      completedAt: new Date(),
+
+      // Customer Information
+      customer: {
+        salutation: application.personalData.salutation,
+        firstName: application.personalData.firstName,
+        lastName: application.personalData.lastName,
+        email: application.personalData.email,
+        birthdate: `${application.personalData.birthdate.day}.${application.personalData.birthdate.month}.${application.personalData.birthdate.year}`,
+        address: {
+          street: application.personalData.street,
+          houseNumber: application.personalData.houseNumber,
+          zipCode: application.personalData.zipCode,
+          city: application.personalData.city
+        }
+      },
+
+      // Bank Information
+      bank: {
+        iban: application.bankData.iban,
+        bic: application.bankData.bic
+      },
+
+      // Calculation Data
+      calculation: {
+        married: application.calculationData.married,
+        childrenCount: application.calculationData.childrenCount,
+        healthCompensation: application.calculationData.healthCompensation,
+        children: application.calculationData.children || []
+      },
+
+      // Freibetrag Information
+      freibetrag: {
+        amount: application.calculatedFreibetrag.amount,
+        currency: 'EUR'
+      },
+
+      // Payment Information
+      payment: {
+        method: application.payment.method,
+        amount: application.payment.amount,
+        status: application.payment.status,
+        paidAt: application.payment.paidAt,
+        molliePaymentId: application.payment.molliePaymentId
+      },
+
+      // Application Status
+      status: application.status,
+      ipAddress: application.ipAddress
+    };
+
+    console.log('Sending order confirmation to Make.com webhook...');
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    });
+
+    if (response.ok) {
+      console.log('✓ Order confirmation sent to Slack successfully');
+    } else {
+      console.warn(`⚠️  Make.com webhook returned status ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error sending order confirmation:', error);
+    // Don't throw - this is not critical for the main flow
+  }
+};
+
+/**
  * Process paid application: Generate PDF and send email
  * This is triggered after successful payment
  *
@@ -45,6 +127,9 @@ const processApplication = async (applicationId) => {
     await application.save();
 
     console.log(`Application ${applicationId} completed successfully`);
+
+    // Send order confirmation to internal team via Make.com webhook
+    await sendOrderConfirmation(application);
 
     return {
       success: true,
@@ -97,5 +182,6 @@ const reprocessApplication = async (applicationId) => {
 
 module.exports = {
   processApplication,
-  reprocessApplication
+  reprocessApplication,
+  sendOrderConfirmation
 };
