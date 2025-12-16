@@ -2569,6 +2569,13 @@ function generateChildrenInputs(count) {
 
     console.log(`User hat ${count} Kind(er) - zeige Kindergeld-Frage...`);
 
+    // Generate options dynamically based on children count
+    let kindergeldOptions = '';
+    for (let i = 0; i <= count; i++) {
+        const label = i === 0 ? '0 Kinder' : (i === 1 ? '1 Kind' : `${i} Kinder`);
+        kindergeldOptions += `<option value="${i}">${label}</option>\n`;
+    }
+
     // Only show: "Für wie viele Kinder erhalten Sie Kindergeld?" on Step 1
     // Details will be shown on Step 2
     const kindergeldQuestion = `
@@ -2577,13 +2584,7 @@ function generateChildrenInputs(count) {
                 <div class="question-text">Für wie viele Kinder erhalten Sie Kindergeld auf Ihr Konto?</div>
                 <div class="input-group">
                     <select class="form-input" id="kindergeld-count">
-                        <option value="0">0 Kinder</option>
-                        <option value="1">1 Kind</option>
-                        <option value="2">2 Kinder</option>
-                        <option value="3">3 Kinder</option>
-                        <option value="4">4 Kinder</option>
-                        <option value="5">5 Kinder</option>
-                        <option value="6">Mehr als 5 Kinder</option>
+                        ${kindergeldOptions}
                     </select>
                 </div>
             </div>
