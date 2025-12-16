@@ -169,9 +169,10 @@ const fillPdfForm = async (application) => {
       // Check if any child receives Kindergeld
       const hasKindergeld = calculationData.children.some(child => child.receivesKindergeld);
 
-      // Set main Kindergeld checkbox if any child receives Kindergeld
+      // Set main Kindergeld checkboxes if any child receives Kindergeld
       if (hasKindergeld) {
         setCheckBox('Kindergeld für  902 Satz 1 Nr 5 ZPO2', true);
+        setCheckBox('Kindergeld', true);
       }
 
       calculationData.children.forEach((child, index) => {
@@ -200,6 +201,7 @@ const fillPdfForm = async (application) => {
     const hasOtherChildBenefits = calculationData.healthCompensation > 0;
     if (hasOtherChildBenefits) {
       setCheckBox('Andere gesetzliche Geldleistungen für Kinder  z B Kinderzuschlag und vergleichbare', true);
+      setCheckBox('Andere Gesetzliche Geldleistungen für Kinder', true);
       setTextField('Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
     }
 
