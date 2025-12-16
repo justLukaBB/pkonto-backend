@@ -229,8 +229,64 @@ const getPaymentStatus = async (req, res) => {
   }
 };
 
+/**
+ * Debug: List available payment methods
+ * GET /api/mollie/debug/methods
+ */
+const debugPaymentMethods = async (req, res) => {
+  try {
+    if (!mollieClient) {
+      return res.status(503).json({
+        success: false,
+        message: 'Mollie ist nicht konfiguriert'
+      });
+    }
+
+    // Get all available payment methods
+    const methods = await mollieClient.methods.list({
+      amount: {
+        currency: 'EUR',
+        value: '29.00'
+      }
+    });
+
+    // Get profile info
+    const profile = await mollieClient.profiles.getCurrent();
+
+    console.log('Available Mollie payment methods:', methods);
+    console.log('Current Mollie profile:', profile);
+
+    res.json({
+      success: true,
+      data: {
+        profile: {
+          id: profile.id,
+          name: profile.name,
+          status: profile.status,
+          mode: profile.mode
+        },
+        availableMethods: methods.map(m => ({
+          id: m.id,
+          description: m.description,
+          minimumAmount: m.minimumAmount,
+          maximumAmount: m.maximumAmount
+        })),
+        count: methods.length
+      }
+    });
+  } catch (error) {
+    console.error('Debug payment methods error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Fehler beim Abrufen der Zahlungsmethoden',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createPayment,
   handleWebhook,
-  getPaymentStatus
+  getPaymentStatus,
+  debugPaymentMethods
 };
