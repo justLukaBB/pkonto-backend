@@ -160,7 +160,7 @@ const fillPdfForm = async (application) => {
     // Other child-related financial benefits (e.g., Kinderzuschlag, Unterhaltsvorschuss, Betreuungsgeld)
     // § 902 Satz 1 Nr 5 ZPO
     const hasOtherChildBenefits = calculationData.healthCompensation > 0;
-    setCheckBox('Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare', hasOtherChildBenefits);
+    setCheckBox('Andere Gesetzliche Geldleistungen für Kinder', hasOtherChildBenefits);
 
     if (hasOtherChildBenefits) {
       setTextField('156000 €Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
