@@ -128,7 +128,7 @@ const fillPdfForm = async (application) => {
 
     // First person (married/partnership)
     const erhöhungErsteerson = calculationData.married ? '585,23' : '';
-    setTextField('Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € in Höhe von', erhöhungErsteerson);
+    setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if married
     if (calculationData.married) {
@@ -144,7 +144,7 @@ const fillPdfForm = async (application) => {
 
     // Children amount
     const childrenAmount = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
-    setTextField('Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € in Höhe von', childrenAmount);
+    setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
 
     // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
     if (additionalPersons > 0) {
