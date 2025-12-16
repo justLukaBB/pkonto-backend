@@ -146,6 +146,13 @@ const fillPdfForm = async (application) => {
     // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
     setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', additionalPersons > 0);
 
+    // Calculate total number of dependents (Unterhaltspflichtige Personen)
+    const totalDependents = (calculationData.married ? 1 : 0) + additionalPersons;
+
+    // Set checkboxes for number of dependents
+    setCheckBox('Kontrollkästchen 1. Person Unterhalt', totalDependents === 1);
+    setCheckBox('Kontrollkästchen 2. Person Unterhalt', totalDependents >= 2);
+
     // ============================================================
     // SECTION IV: Additional Monthly Benefits
     // ============================================================
