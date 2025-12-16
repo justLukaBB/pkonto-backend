@@ -171,9 +171,10 @@ const fillPdfForm = async (application) => {
       // Check if any child receives Kindergeld
       const hasKindergeld = calculationData.children.some(child => child.receivesKindergeld);
 
-      // Set main checkbox "undefined_2" if any child receives Kindergeld
+      // Set main Kindergeld checkboxes if any child receives Kindergeld
       if (hasKindergeld) {
         setCheckBox('undefined_2', true);
+        setCheckBox('Kindergeld', true);
       }
 
       calculationData.children.forEach((child, index) => {
