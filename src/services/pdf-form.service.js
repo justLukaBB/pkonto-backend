@@ -208,7 +208,7 @@ const fillPdfForm = async (application) => {
     // ============================================================
     // TOTAL FREIBETRAG
     // ============================================================
-    setTextField('Monatlicher Gesamtfreibetrag', formatCurrency(calculatedFreibetrag.amount));
+    setTextField('156000 €Monatlicher Gesamtfreibetrag', formatCurrency(calculatedFreibetrag.amount));
 
     // ============================================================
     // SECTION V: Entity Type (Arbeitgeber, Sozialleistungsträger, etc.)
