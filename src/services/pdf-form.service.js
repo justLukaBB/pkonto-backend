@@ -175,8 +175,8 @@ const fillPdfForm = async (application) => {
             setCheckBox(`Kind ${childNum} geboren im MonatJahr`, true);
           }
 
-          // Set birthdate text field (Monat/Jahr format: MM/YYYY)
-          setTextField(`Kind ${childNum} geboren im MonatJahr_2`, birthdate);
+          // Set birthdate text field
+          setTextField(`Kind ${childNum} Geburtstag`, birthdate);
         }
       });
 
