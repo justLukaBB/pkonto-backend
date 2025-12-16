@@ -126,33 +126,47 @@ const fillPdfForm = async (application) => {
     const baseFreibetrag = '1.560,00';
     setCheckBox('Grundfreibetrag des Schuldners  Kontoinhaber derzeit', true);
 
-    // First person (married/partnership)
-    const erhöhungErsteerson = calculationData.married ? '585,23' : '';
+    // First person logic:
+    // - If married: spouse is first person (585,23 EUR)
+    // - If not married but has children: first child is first person (585,23 EUR)
+    const totalChildren = calculationData.childrenCount;
+    const hasFirstPerson = calculationData.married || totalChildren > 0;
+    const erhöhungErsteerson = hasFirstPerson ? '585,23' : '';
+
     setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
 
-    // Check "a) aufgrund gesetzlicher Verpflichtung" if married
-    if (calculationData.married) {
+    // Check "a) aufgrund gesetzlicher Verpflichtung" if first person exists
+    if (hasFirstPerson) {
       setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', true);
     }
 
-    // Additional persons checkboxes
-    const additionalPersons = calculationData.childrenCount;
+    // Additional persons (weitere Personen):
+    // - If married: ALL children are additional persons
+    // - If not married: remaining children (total - 1) are additional persons
+    let additionalPersons = 0;
+    if (calculationData.married) {
+      additionalPersons = totalChildren; // All children
+    } else if (totalChildren > 0) {
+      additionalPersons = totalChildren - 1; // First child already counted as "erste Person"
+    }
+
+    // Checkboxes for additional persons
     setCheckBox('eine', additionalPersons === 1);
     setCheckBox('zwei', additionalPersons === 2);
     setCheckBox('drei', additionalPersons === 3);
     setCheckBox('vier', additionalPersons >= 4);
 
-    // Children amount
+    // Calculate amount for additional persons
     const childrenAmount = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
     setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
 
-    // Check "a) aufgrund gesetzlicher Verpflichtung" if children exist
+    // Check "a) aufgrund gesetzlicher Verpflichtung" if additional persons exist
     if (additionalPersons > 0) {
       setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', true);
     }
 
     // Calculate total number of dependents (Unterhaltspflichtige Personen)
-    const totalDependents = (calculationData.married ? 1 : 0) + additionalPersons;
+    const totalDependents = (hasFirstPerson ? 1 : 0) + additionalPersons;
 
     // Set checkboxes for number of dependents
     // If 1 person: check only first box

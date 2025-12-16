@@ -30,21 +30,41 @@ function calculateFreibetrag(data) {
     amount: FREIBETRAG_CONSTANTS.BASE_AMOUNT
   });
 
-  // Add spouse amount if married
+  // First person logic:
+  // - If married: spouse is first person (585,23 EUR)
+  // - If not married but has children: first child is first person (585,23 EUR)
   if (data.married) {
     total += FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT;
     breakdown.push({
       label: 'Verheiratet/Lebenspartnerschaft',
       amount: FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT
     });
+  } else if (data.childrenCount > 0) {
+    // First child counts as "erste Person"
+    total += FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT;
+    breakdown.push({
+      label: '1. Kind (erste Person)',
+      amount: FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT
+    });
   }
 
-  // Add amount for each child
-  if (data.childrenCount > 0) {
-    const childrenTotal = data.childrenCount * FREIBETRAG_CONSTANTS.CHILD_AMOUNT;
+  // Additional persons (weitere Personen):
+  // - If married: ALL children are additional persons
+  // - If not married: remaining children (total - 1) are additional persons
+  let additionalChildren = 0;
+  if (data.married) {
+    additionalChildren = data.childrenCount; // All children
+  } else if (data.childrenCount > 0) {
+    additionalChildren = data.childrenCount - 1; // First child already counted
+  }
+
+  if (additionalChildren > 0) {
+    const childrenTotal = additionalChildren * FREIBETRAG_CONSTANTS.CHILD_AMOUNT;
     total += childrenTotal;
     breakdown.push({
-      label: `${data.childrenCount} Kind${data.childrenCount > 1 ? 'er' : ''}`,
+      label: additionalChildren === data.childrenCount
+        ? `${additionalChildren} Kind${additionalChildren > 1 ? 'er' : ''}`
+        : `${additionalChildren} weitere${additionalChildren > 1 ? 's' : ''} Kind${additionalChildren > 1 ? 'er' : ''}`,
       amount: childrenTotal
     });
   }
