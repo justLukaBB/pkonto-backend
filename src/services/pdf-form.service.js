@@ -173,6 +173,11 @@ const fillPdfForm = async (application) => {
       if (hasKindergeld) {
         setCheckBox('Kindergeld für  902 Satz 1 Nr 5 ZPO2', true);
         setCheckBox('Kindergeld', true);
+
+        // Calculate total Kindergeld amount (255 EUR per child)
+        const kindergeldCount = calculationData.children.filter(child => child.receivesKindergeld).length;
+        const totalKindergeld = kindergeldCount * 255;
+        setTextField('156000 €Row6', formatCurrency(totalKindergeld));
       }
 
       calculationData.children.forEach((child, index) => {
