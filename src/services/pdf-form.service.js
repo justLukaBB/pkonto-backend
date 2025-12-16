@@ -150,12 +150,13 @@ const fillPdfForm = async (application) => {
     // SECTION IV: Additional Monthly Benefits
     // ============================================================
 
-    // Health compensation
-    const hasHealthCompensation = calculationData.healthCompensation > 0;
-    setCheckBox('Laufende Geldleistungen zum Ausgleich des durch einen Körperoder Gesundheitsschaden', hasHealthCompensation);
+    // Other child-related financial benefits (e.g., Kinderzuschlag, Unterhaltsvorschuss, Betreuungsgeld)
+    // § 902 Satz 1 Nr 5 ZPO
+    const hasOtherChildBenefits = calculationData.healthCompensation > 0;
+    setCheckBox('Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare', hasOtherChildBenefits);
 
-    if (hasHealthCompensation) {
-      setTextField('156000 €Laufende Geldleistungen zum Ausgleich des durch einen Körperoder Gesundheitsschaden bedingten Mehraufwandes  902 Satz 1 Nr 2 ZPO iVm  54 Abs 3 Nr 3 SGB I in Höhe von', formatCurrency(calculationData.healthCompensation));
+    if (hasOtherChildBenefits) {
+      setTextField('156000 €Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
     }
 
     // Children birthdays and Kindergeld checkboxes

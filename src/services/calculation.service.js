@@ -59,11 +59,11 @@ function calculateFreibetrag(data) {
     });
   }
 
-  // Add health compensation (exact amount provided)
+  // Add other child-related financial benefits (exact amount provided)
   if (data.healthCompensation > 0) {
     total += data.healthCompensation;
     breakdown.push({
-      label: 'Bezüge zum Ausgleich von Körper-/Gesundheitsschäden',
+      label: 'Andere Geldleistungen für Kinder',
       amount: data.healthCompensation
     });
   }
@@ -94,7 +94,7 @@ function generateFreibetragDetails(data, total) {
   }
 
   if (data.healthCompensation > 0) {
-    details += `Ihre monatlichen Bezüge zum Ausgleich von Mehraufwand (${formatCurrency(data.healthCompensation)}) wurden berücksichtigt.`;
+    details += `Ihre anderen monatlichen Geldleistungen für Kinder (${formatCurrency(data.healthCompensation)}) wurden berücksichtigt.`;
   }
 
   return details;
@@ -133,7 +133,7 @@ function validateCalculationData(data) {
   }
 
   if (typeof data.healthCompensation !== 'number' || data.healthCompensation < 0) {
-    errors.push('Betrag für Gesundheitsschäden muss eine positive Zahl sein');
+    errors.push('Betrag für andere Geldleistungen für Kinder muss eine positive Zahl sein');
   }
 
   return errors;
