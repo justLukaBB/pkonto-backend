@@ -14,13 +14,6 @@ if (process.env.MOLLIE_API_KEY) {
  */
 const createPayment = async (req, res) => {
   try {
-    if (!mollieClient) {
-      return res.status(503).json({
-        success: false,
-        message: 'Mollie ist nicht konfiguriert. Bitte nutzen Sie WooCommerce zur Zahlung.'
-      });
-    }
-
     const { calculationData, personalData, bankData, calculatedFreibetrag, payment } = req.body;
 
     // Validate required data
@@ -28,6 +21,50 @@ const createPayment = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Fehlende Formulardaten'
+      });
+    }
+
+    // Check if this is a Mandant (existing client) request
+    if (payment?.method === 'mandant-code') {
+      console.log('Mandant request detected - bypassing Mollie payment');
+
+      // Create Application in MongoDB with status "paid" (no payment required)
+      const application = new Application({
+        calculationData: calculationData || {},
+        personalData,
+        bankData,
+        calculatedFreibetrag,
+        payment: {
+          method: 'mandant-code',
+          amount: 0.00, // No payment required for existing clients
+          status: 'completed'
+        },
+        status: 'paid',
+        agreementAccepted: true,
+        ipAddress: req.ip || req.connection.remoteAddress
+      });
+
+      await application.save();
+      console.log(`Created mandant application ${application._id}`);
+
+      // Process application immediately (generate PDF and send email)
+      await processApplication(application._id);
+      console.log(`Mandant application ${application._id} processed successfully`);
+
+      return res.json({
+        success: true,
+        data: {
+          applicationId: application._id,
+          message: 'Mandanten-Anfrage erfolgreich bearbeitet'
+        }
+      });
+    }
+
+    // Regular Mollie payment flow
+    if (!mollieClient) {
+      return res.status(503).json({
+        success: false,
+        message: 'Mollie ist nicht konfiguriert. Bitte nutzen Sie WooCommerce zur Zahlung.'
       });
     }
 

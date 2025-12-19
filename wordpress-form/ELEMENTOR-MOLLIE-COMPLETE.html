@@ -1549,7 +1549,7 @@ select.form-input {
                         <div class="payment-option">
                             <input type="radio" name="payment" id="paypal" checked>
                             <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/PayPal.svg" alt="PayPal" class="payment-logo">
-                            <label for="paypal" class="payment-label">Paypal (Kostenfrei)</label>
+                            <label for="paypal" class="payment-label">Paypal</label>
                         </div>
 
                         <div class="payment-option">
@@ -1577,30 +1577,32 @@ select.form-input {
                                     </g>
                                 </svg>
                             </div>
-                            <label for="creditcard" class="payment-label">Kreditkarte (Kostenfrei)</label>
+                            <label for="creditcard" class="payment-label">Kreditkarte</label>
                         </div>
 
                         <div class="payment-option">
                             <input type="radio" name="payment" id="klarna">
                             <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Klarna_Payment_Badge-1.svg" alt="Klarna" class="payment-logo">
-                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna (Kostenfrei)</label>
+                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna</label>
                         </div>
 
                         <div class="payment-option">
                             <input type="radio" name="payment" id="applepay">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/1024px-Apple_Pay_logo.svg.png" alt="Apple Pay" class="payment-logo">
-                            <label for="applepay" class="payment-label">Apple Pay (Kostenfrei)</label>
+                            <label for="applepay" class="payment-label">Apple Pay</label>
                         </div>
 
                         <!-- Mandant Payment Option -->
                         <div class="payment-option">
                             <input type="radio" name="payment" id="mandant">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
+                            <div style="display: flex; align-items: center; width: 50px; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
                             <label for="mandant" class="payment-label">Bereits Mandant bei uns</label>
                         </div>
 
@@ -2664,6 +2666,18 @@ window.nextStep = function() {
     }
 
     if (window.pkontoCurrentStep < 4) {
+        // Check if on Step 1 and no children - skip Step 2
+        if (window.pkontoCurrentStep === 1) {
+            const kindergeldCountSelect = document.getElementById('kindergeld-count');
+            const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+            if (kindergeldCount === 0) {
+                console.log('Keine Kinder - überspringe Step 2, gehe zu Step 3');
+                goToStep(3);
+                return;
+            }
+        }
+
         goToStep(window.pkontoCurrentStep + 1);
     } else {
         console.log('INFO - Bereits auf letztem Step');
@@ -2677,6 +2691,18 @@ window.previousStep = function() {
     console.log('===============================================');
 
     if (window.pkontoCurrentStep > 1) {
+        // Check if on Step 3 and no children - skip Step 2, go to Step 1
+        if (window.pkontoCurrentStep === 3) {
+            const kindergeldCountSelect = document.getElementById('kindergeld-count');
+            const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+            if (kindergeldCount === 0) {
+                console.log('Keine Kinder - überspringe Step 2, gehe zurück zu Step 1');
+                goToStep(1);
+                return;
+            }
+        }
+
         goToStep(window.pkontoCurrentStep - 1);
     }
 };
@@ -3202,6 +3228,18 @@ setTimeout(function() {
         }
 
         if (window.pkontoCurrentStep < 4) {
+            // Check if on Step 1 and no children - skip Step 2 (OVERRIDE VERSION)
+            if (window.pkontoCurrentStep === 1) {
+                const kindergeldCountSelect = document.getElementById('kindergeld-count');
+                const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+                if (kindergeldCount === 0) {
+                    console.log('Keine Kinder (OVERRIDE) - überspringe Step 2, gehe zu Step 3');
+                    goToStep(3);
+                    return;
+                }
+            }
+
             goToStep(window.pkontoCurrentStep + 1);
         } else {
             console.log('INFO - Bereits auf letztem Step');
@@ -3212,6 +3250,18 @@ setTimeout(function() {
     window.previousStep = function() {
         console.log('previousStep() aufgerufen! (OVERRIDE VERSION)');
         if (window.pkontoCurrentStep > 1) {
+            // Check if on Step 3 and no children - skip Step 2, go to Step 1 (OVERRIDE VERSION)
+            if (window.pkontoCurrentStep === 3) {
+                const kindergeldCountSelect = document.getElementById('kindergeld-count');
+                const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+                if (kindergeldCount === 0) {
+                    console.log('Keine Kinder (OVERRIDE) - überspringe Step 2, gehe zurück zu Step 1');
+                    goToStep(1);
+                    return;
+                }
+            }
+
             goToStep(window.pkontoCurrentStep - 1);
         }
     };
