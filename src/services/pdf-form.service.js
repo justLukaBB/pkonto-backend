@@ -265,9 +265,16 @@ const fillPdfForm = async (application) => {
     // Flatten form (make fields read-only and visible)
     // ============================================================
     // This converts form fields to static content, ensuring compatibility with all PDF readers
-    console.log('\nFlattening form (converting to static content)...');
-    form.flatten();
-    console.log('✓ Form flattened - fields are now permanent and visible in all PDF readers');
+    // NOTE: Some PDF templates have broken references that cause flatten() to fail
+    console.log('\nAttempting to flatten form (converting to static content)...');
+    try {
+      form.flatten();
+      console.log('✓ Form flattened - fields are now permanent and visible in all PDF readers');
+    } catch (error) {
+      console.warn('⚠️  Could not flatten form (template has broken references):', error.message);
+      console.warn('⚠️  PDF will be saved with form fields intact. Field appearances have been updated.');
+      console.warn('⚠️  Note: Some PDF readers may not display form field values correctly.');
+    }
 
     console.log('\nSaving filled PDF...');
 
