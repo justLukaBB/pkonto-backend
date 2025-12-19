@@ -35,10 +35,11 @@ const fillPdfForm = async (application) => {
     const { personalData, calculationData, calculatedFreibetrag, bankData } = application;
 
     // Helper function to safely set text field
-    const setTextField = (fieldName, value) => {
+    const setTextField = (fieldName, value, fontSize = 6) => {
       try {
         const field = form.getTextField(fieldName);
         field.setText(String(value || ''));
+        field.setFontSize(fontSize); // Set smaller font size (6pt)
         console.log(`  ✓ ${fieldName}: ${value}`);
       } catch (error) {
         console.warn(`  ⚠️  Field "${fieldName}" not found or cannot be set`);
@@ -96,8 +97,8 @@ const fillPdfForm = async (application) => {
     setTextField('Ort', 'Bochum');
     setTextField('Ansprechpartner', `${lawyerTitle} ${lawyerName}; Tel: ${lawyerPhone}; E-mail: ${lawyerEmail}`);
 
-    // Checkbox: Geeignete Person (law firm doesn't check this)
-    setCheckBox('Kontrollkästchen Geignette Person', false);
+    // Checkbox: Geeignete Person (always checked for law firm)
+    setCheckBox('Kontrollkästchen Geignette Person', true);
 
     // ============================================================
     // SECTION II: Customer Information
@@ -219,6 +220,24 @@ const fillPdfForm = async (application) => {
     // Date and Signature
     // ============================================================
     setTextField('Ort, Datum', `Bochum, ${today}`);
+
+    // ============================================================
+    // Set font size for all text fields BEFORE updating appearances
+    // ============================================================
+    console.log('\nSetting font size for all fields...');
+    const allFields = form.getFields();
+    let fontSizeSetCount = 0;
+    allFields.forEach(field => {
+      try {
+        if (field.constructor.name === 'PDFTextField') {
+          field.setFontSize(6);
+          fontSizeSetCount++;
+        }
+      } catch (error) {
+        // Ignore errors for individual fields
+      }
+    });
+    console.log(`✓ Font size set to 6pt for ${fontSizeSetCount} text fields`);
 
     // ============================================================
     // Update field appearances (CRITICAL!)

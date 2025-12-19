@@ -14,7 +14,8 @@ const PizZip = require('pizzip');
  */
 const generateFromWordTemplate = async (application) => {
   try {
-    const templatePath = path.join(__dirname, '../templates/certificate-template.docx');
+    // Use the new 2025 P-Konto template
+    const templatePath = path.join(__dirname, '../templates/pkonto-template-2025.docx');
 
     // Use /tmp for Vercel serverless, local uploads otherwise
     const isVercel = process.env.VERCEL === '1';
@@ -85,6 +86,14 @@ const prepareTemplateData = (application) => {
     return `${String(dateObj.day).padStart(2, '0')}.${String(dateObj.month).padStart(2, '0')}.${dateObj.year}`;
   };
 
+  // Format currency in German format
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('de-DE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount) + ' €';
+  };
+
   // Salutation mapping
   const salutationMap = {
     herr: 'Herr',
@@ -105,74 +114,116 @@ const prepareTemplateData = (application) => {
   const isGeeignetePerson = false; // Set to true if individual person, false for entity/firm
   const isGeeigneteStelle = true;  // Always true for Rechtsanwalt (law firm/office)
 
+  // Calculate P-Konto specific amounts
+  const totalChildren = calculationData.childrenCount || 0;
+  const hasFirstPerson = calculationData.married || totalChildren > 0;
+
+  // First person logic (spouse or first child)
+  const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
+
+  // Additional persons (weitere Personen)
+  let additionalPersons = 0;
+  if (calculationData.married) {
+    additionalPersons = totalChildren; // All children
+  } else if (totalChildren > 0) {
+    additionalPersons = totalChildren - 1; // First child already counted
+  }
+
+  const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
+
+  // Kindergeld calculation
+  let kindergeldBetrag = '';
+  let kind1MonatJahr = '';
+  let kind2MonatJahr = '';
+  let kind3MonatJahr = '';
+  let kind4MonatJahr = '';
+  let kind5MonatJahr = '';
+
+  if (calculationData.children && calculationData.children.length > 0) {
+    const kindergeldCount = calculationData.children.filter(child => child.receivesKindergeld).length;
+    if (kindergeldCount > 0) {
+      kindergeldBetrag = formatCurrency(kindergeldCount * 255);
+    }
+
+    // Format individual child birthdates as "MM/YYYY"
+    calculationData.children.forEach((child, index) => {
+      if (child.receivesKindergeld) {
+        const birthdate = child.birthdate;
+        const formatted = `${String(birthdate.month).padStart(2, '0')}/${birthdate.year}`;
+
+        if (index === 0) kind1MonatJahr = formatted;
+        else if (index === 1) kind2MonatJahr = formatted;
+        else if (index === 2) kind3MonatJahr = formatted;
+        else if (index === 3) kind4MonatJahr = formatted;
+        else if (index === 4) kind5MonatJahr = formatted;
+      }
+    });
+  }
+
+  // Lawyer/Issuing entity information
+  const lawyerName = process.env.LAWYER_NAME || 'Thomas Scuric';
+  const lawyerTitle = process.env.LAWYER_TITLE || 'Rechtsanwalt';
+  const lawyerPhone = process.env.LAWYER_PHONE || '0234 913 68 10';
+  const lawyerEmail = process.env.LAWYER_EMAIL || 'info@ra-scuric.de';
+
   // Base data
   const data = {
-    // Personal Information (English names)
-    salutation: salutationMap[personalData.salutation] || '',
+    // ===== SECTION I: Issuing Entity (Lawyer/Law Firm) =====
+    lawyerName: `${lawyerTitle} ${lawyerName}`,
+    lawyerStreet: 'Bongardstraße',
+    lawyerHouseNumber: '33',
+    lawyerZipCode: '44787',
+    lawyerCity: 'Bochum',
+    lawyerContact: `${lawyerTitle} ${lawyerName}; Tel: ${lawyerPhone}; E-mail: ${lawyerEmail}`,
+
+    // Checkboxes for entity type
+    geeignetePersonCheck: '☐',
+    geeigneteStelleCheck: '☐', // Law firm doesn't check these boxes
+
+    // ===== SECTION II: Customer Information =====
+    fullName: `${salutationMap[personalData.salutation]} ${personalData.firstName} ${personalData.lastName}`.trim(),
+    birthdate: formatDate(personalData.birthdate),
+    fullAddress: `${personalData.street} ${personalData.houseNumber}, ${personalData.zipCode} ${personalData.city}`,
+    bic: bankData.bic, // Kreditinstitut
+    iban: bankData.iban,
+
+    // ===== SECTION III: Freibetrag Calculation =====
+    // Base amount is always 1.560,00 EUR (automatically in template)
+    erhöhungErstePerson: erhöhungErstePerson,
+    erhöhungWeiterePers: erhöhungWeiterePers,
+
+    // Checkboxes for number of additional persons
+    einePersonCheck: additionalPersons === 1 ? '☑' : '☐',
+    zweiPersonenCheck: additionalPersons === 2 ? '☑' : '☐',
+    dreiPersonenCheck: additionalPersons === 3 ? '☑' : '☐',
+    vierPersonenCheck: additionalPersons >= 4 ? '☑' : '☐',
+
+    // ===== SECTION IV: Additional Monthly Benefits =====
+    kindergeldBetrag: kindergeldBetrag,
+    kind1MonatJahr: kind1MonatJahr,
+    kind2MonatJahr: kind2MonatJahr,
+    kind3MonatJahr: kind3MonatJahr,
+    kind4MonatJahr: kind4MonatJahr,
+    kind5MonatJahr: kind5MonatJahr,
+
+    // Health compensation (Gesundheitsschaden)
+    gesundheitsschaden: calculationData.healthCompensation > 0 ? formatCurrency(calculationData.healthCompensation) : '',
+
+    // ===== TOTAL FREIBETRAG =====
+    freibetragFormatted: formatCurrency(calculatedFreibetrag.amount),
+
+    // ===== Date and Signature =====
+    ortDatum: `Bochum, ${todayFormatted}`,
+
+    // ===== Additional fields for compatibility =====
     firstName: personalData.firstName,
     lastName: personalData.lastName,
-    fullName: `${salutationMap[personalData.salutation]} ${personalData.firstName} ${personalData.lastName}`.trim(),
     street: personalData.street,
     houseNumber: personalData.houseNumber,
-    fullAddress: `${personalData.street} ${personalData.houseNumber}`,
     zipCode: personalData.zipCode,
     city: personalData.city,
-    fullCityLine: `${personalData.zipCode} ${personalData.city}`,
-    birthdate: formatDate(personalData.birthdate),
     email: personalData.email,
     phone: personalData.phone || '',
-
-    // Personal Information (German aliases for compatibility)
-    vorname: personalData.firstName,
-    name: personalData.lastName,
-    'G-Datum': formatDate(personalData.birthdate),
-    straße: personalData.street,
-    hausnummer: personalData.houseNumber,
-    plz: personalData.zipCode,
-    ort: personalData.city,
-
-    // Bank Information
-    iban: bankData.iban,
-    bic: bankData.bic,
-    bic_swift: bankData.bic,
-
-    // Calculation Data
-    married: calculationData.married ? 'Ja' : 'Nein',
-    marriedCheck: calculationData.married ? '☑' : '☐',
-    notMarriedCheck: !calculationData.married ? '☑' : '☐',
-    childrenCount: calculationData.childrenCount,
-    socialBenefitsCount: calculationData.socialBenefitsCount,
-    healthCompensation: calculationData.healthCompensation.toFixed(2),
-    healthCompensationFormatted: new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(calculationData.healthCompensation),
-
-    // Calculated Freibetrag
-    freibetrag: calculatedFreibetrag.amount.toFixed(2),
-    freibetragFormatted: new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(calculatedFreibetrag.amount),
-    freibetragDetails: calculatedFreibetrag.details,
-
-    // Issuing Entity Checkboxes (for "Die Bescheinigung wird erteilt als")
-    geeignetePersonCheck: isGeeignetePerson ? '☑' : '☐',
-    geeigneteStelleCheck: isGeeigneteStelle ? '☑' : '☐',
-
-    // Additional checkboxes for various fields
-    hasHealthCompensationCheck: calculationData.healthCompensation > 0 ? '☑' : '☐',
-    noHealthCompensationCheck: calculationData.healthCompensation === 0 ? '☑' : '☐',
-
-    // Lawyer Information
-    lawyerTitle: process.env.LAWYER_TITLE || 'Rechtsanwalt',
-    lawyerName: process.env.LAWYER_NAME || '',
-    lawyerFullName: `${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME}`,
-
-    // Date
-    issueDate: todayFormatted,
-    today: todayFormatted,
-    currentDate: todayFormatted,
 
     // Application ID (for reference)
     applicationId: application._id.toString()
