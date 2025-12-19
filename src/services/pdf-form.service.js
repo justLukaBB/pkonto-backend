@@ -35,11 +35,11 @@ const fillPdfForm = async (application) => {
     const { personalData, calculationData, calculatedFreibetrag, bankData } = application;
 
     // Helper function to safely set text field
-    const setTextField = (fieldName, value, fontSize = 7) => {
+    const setTextField = (fieldName, value, fontSize = 8) => {
       try {
         const field = form.getTextField(fieldName);
         field.setText(String(value || ''));
-        field.setFontSize(fontSize); // Set font size (7pt)
+        field.setFontSize(fontSize); // Set font size (8pt)
         console.log(`  ✓ ${fieldName}: ${value}`);
       } catch (error) {
         console.warn(`  ⚠️  Field "${fieldName}" not found or cannot be set`);
@@ -230,14 +230,14 @@ const fillPdfForm = async (application) => {
     allFields.forEach(field => {
       try {
         if (field.constructor.name === 'PDFTextField') {
-          field.setFontSize(7);
+          field.setFontSize(8);
           fontSizeSetCount++;
         }
       } catch (error) {
         // Ignore errors for individual fields
       }
     });
-    console.log(`✓ Font size set to 7pt for ${fontSizeSetCount} text fields`);
+    console.log(`✓ Font size set to 8pt for ${fontSizeSetCount} text fields`);
 
     // ============================================================
     // Update field appearances (CRITICAL!)
