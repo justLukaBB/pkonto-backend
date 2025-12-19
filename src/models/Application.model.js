@@ -62,7 +62,7 @@ const applicationSchema = new mongoose.Schema({
   payment: {
     method: {
       type: String,
-      enum: ['paypal', 'klarna', 'amazon', 'applepay', 'woocommerce', 'stripe', 'mollie'],
+      enum: ['paypal', 'klarna', 'amazon', 'applepay', 'woocommerce', 'stripe', 'mollie', 'mandant-code'],
       required: true
     },
     amount: { type: Number, required: true },
