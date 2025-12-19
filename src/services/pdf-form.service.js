@@ -3,7 +3,7 @@ const path = require('path');
 const { PDFDocument } = require('pdf-lib');
 
 /**
- * Fill PDF form fields with application data
+ * Fill PDF form fields with application data (NEW TEMPLATE 2025)
  *
  * @param {Object} application - Application document from MongoDB
  * @returns {string} - Path to generated filled PDF file
@@ -20,7 +20,7 @@ const fillPdfForm = async (application) => {
     // Ensure output directory exists
     await fs.mkdir(outputDir, { recursive: true });
 
-    console.log('Loading PDF form template...');
+    console.log('Loading NEW PDF form template...');
 
     // Load PDF template
     const existingPdfBytes = await fs.readFile(templatePath);
@@ -54,17 +54,13 @@ const fillPdfForm = async (application) => {
         } else {
           field.uncheck();
         }
-        console.log(`  ✓ ${fieldName}: ${checked ? '☑' : '☐'}`);
+        console.log(`  ✓ ${fieldName}: ${checked ? '☑' : '☐'}`);;
       } catch (error) {
         console.warn(`  ⚠️  Checkbox "${fieldName}" not found`);
       }
     };
 
     // Format helpers
-    const formatDate = (dateObj) => {
-      return `${String(dateObj.day).padStart(2, '0')}.${String(dateObj.month).padStart(2, '0')}.${dateObj.year}`;
-    };
-
     const formatCurrency = (amount) => {
       return new Intl.NumberFormat('de-DE', {
         minimumFractionDigits: 2,
@@ -93,52 +89,46 @@ const fillPdfForm = async (application) => {
     const lawyerPhone = process.env.LAWYER_PHONE || '0234 913 68 10';
     const lawyerEmail = process.env.LAWYER_EMAIL || 'info@ra-scuric.de';
 
-    setTextField('Name', `${lawyerTitle} ${lawyerName}`);
+    setTextField('Name - Anwalt', `${lawyerTitle} ${lawyerName}`);
     setTextField('Straße', 'Bongardstraße');
     setTextField('Hausnummer', '33');
-    setTextField('Postleitzahl', '44787');
+    setTextField('PLZ', '44787');
     setTextField('Ort', 'Bochum');
-    setTextField('Ansprechpartnerin', `${lawyerTitle} ${lawyerName}; Tel: ${lawyerPhone}; E-mail: ${lawyerEmail}`);
+    setTextField('Ansprechpartner', `${lawyerTitle} ${lawyerName}; Tel: ${lawyerPhone}; E-mail: ${lawyerEmail}`);
 
-    // Checkboxes: Law firm is "geeignete Stelle" but we don't check it here
-    setCheckBox('geeignete Person gemäß  305 Abs 1 Nr 1 InsO', false);
-    setCheckBox('geeignete Stelle gemäß  305 Abs 1 Nr 1 InsO', false);
+    // Checkbox: Geeignete Person (law firm doesn't check this)
+    setCheckBox('Kontrollkästchen Geignette Person', false);
 
     // ============================================================
     // SECTION II: Customer Information
     // ============================================================
     const fullName = `${salutationMap[personalData.salutation]} ${personalData.firstName} ${personalData.lastName}`.trim();
     const fullAddress = `${personalData.street} ${personalData.houseNumber}, ${personalData.zipCode} ${personalData.city}`;
+    const birthdate = `${String(personalData.birthdate.day).padStart(2, '0')}.${String(personalData.birthdate.month).padStart(2, '0')}.${personalData.birthdate.year}`;
 
     setTextField('Kontoinhaber', fullName);
-    setTextField('Geburtsdatum', formatDate(personalData.birthdate));
+    setTextField('Geburtsdatum', birthdate);
     setTextField('Anschrift', fullAddress);
 
     // Bank data
-    setTextField('bic', bankData.bic);
-    setTextField('iban', bankData.iban);
+    setTextField('Kreditinsitut', bankData.bic); // Note: Field name has typo "Kreditinsitut"
+    setTextField('IBAN', bankData.iban);
 
     // ============================================================
     // SECTION III: Freibetrag Calculation
     // ============================================================
 
-    // Base Freibetrag (always 1560.00 EUR as of 2025) - Always check this checkbox
-    const baseFreibetrag = '1.560,00';
-    setCheckBox('Grundfreibetrag des Schuldners  Kontoinhaber derzeit', true);
-
     // First person logic:
     // - If married: spouse is first person (585,23 EUR)
     // - If not married but has children: first child is first person (585,23 EUR)
-    const totalChildren = calculationData.childrenCount;
+    const totalChildren = calculationData.childrenCount || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
-    const erhöhungErsteerson = hasFirstPerson ? '585,23' : '';
+    const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
 
-    setTextField('156000 €Erhöhungsbetrag für die erste Person derzeit1 in Höhe von 58523 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c Geldleistungen nach dem AsylbLG entgegennimmt  902 S 1 Nr 1a  c ZPO in Höhe von', erhöhungErsteerson);
+    setTextField('Erhöhun 1. Person', erhöhungErstePerson); // Note: Field name has typo "Erhöhun"
 
-    // Check "a) aufgrund gesetzlicher Verpflichtung" if first person exists
-    if (hasFirstPerson) {
-      setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder', true);
-    }
+    // Check "Erhöhungsbetrag Erste Person" if first person exists
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag Erste Person', hasFirstPerson);
 
     // Additional persons (weitere Personen):
     // - If married: ALL children are additional persons
@@ -150,105 +140,85 @@ const fillPdfForm = async (application) => {
       additionalPersons = totalChildren - 1; // First child already counted as "erste Person"
     }
 
-    // Checkboxes for additional persons
-    setCheckBox('eine', additionalPersons === 1);
-    setCheckBox('zwei', additionalPersons === 2);
-    setCheckBox('drei', additionalPersons === 3);
-    setCheckBox('vier', additionalPersons >= 4);
-
     // Calculate amount for additional persons
-    const childrenAmount = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
-    setTextField('156000 €Erhöhungsbetrag für eine zwei drei vier weitere Personen derzeit1 iHv von je 32604 € a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder b für die der Schuldner Geldleistungen nach SGB II XII oder c dem Asylbewerberleistungsgesetz entgegennimmt  902 Satz 1 Nr 1a  c ZPO in Höhe von', childrenAmount);
+    const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
+    setTextField('Erhöhun 2. Person', erhöhungWeiterePers); // Note: Field name has typo
 
-    // Check "a) aufgrund gesetzlicher Verpflichtung" if additional persons exist
+    // Checkboxes for number of additional persons
     if (additionalPersons > 0) {
-      setCheckBox('a der aufgrund gesetzlicher Verpflichtung Unterhalt gewährt wird oder_2', true);
+      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person', true);
+      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 1. Person', additionalPersons >= 1);
+      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 2. Person', additionalPersons >= 2);
+      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 3. Person', additionalPersons >= 3);
+      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 4. Person', additionalPersons >= 4);
     }
 
-    // Calculate total number of dependents (Unterhaltspflichtige Personen)
-    const totalDependents = (hasFirstPerson ? 1 : 0) + additionalPersons;
-
-    // Set checkboxes for number of dependents
-    // If 1 person: check only first box
-    // If 2+ persons: check BOTH boxes
-    setCheckBox('Kontrollkästchen 1. Person Unterhalt', totalDependents >= 1);
-    setCheckBox('Kontrollkästchen 2. Person Unterhalt', totalDependents >= 2);
-
     // ============================================================
-    // SECTION IV: Additional Monthly Benefits
+    // SECTION IV: Kindergeld (NEW LOGIC!)
     // ============================================================
+    let totalKindergeld = 0;
+    let kindergeldCount = 0;
 
-    // Kindergeld section
     if (calculationData.children && calculationData.children.length > 0) {
-      // Check if any child receives Kindergeld
-      const hasKindergeld = calculationData.children.some(child => child.receivesKindergeld);
-
-      // Set main Kindergeld checkboxes if any child receives Kindergeld
-      if (hasKindergeld) {
-        setCheckBox('Kindergeld für  902 Satz 1 Nr 5 ZPO2', true);
-        setCheckBox('Kindergeld', true);
-
-        // Calculate total Kindergeld amount (255 EUR per child)
-        const kindergeldCount = calculationData.children.filter(child => child.receivesKindergeld).length;
-        const totalKindergeld = kindergeldCount * 255;
-        setTextField('156000 €Row6', formatCurrency(totalKindergeld));
-      }
-
+      // Process first 5 children
       calculationData.children.forEach((child, index) => {
-        if (index < 5) { // Only first 5 children have fields
+        if (index < 5) { // Only first 5 children have dedicated fields
           const childNum = index + 1;
-          const birthdate = formatDate(child.birthdate);
 
-          // Set checkbox for "Kind X geboren im Monat/Jahr"
           if (child.receivesKindergeld) {
-            setCheckBox(`Kind ${childNum} geboren im MonatJahr`, true);
-          }
+            kindergeldCount++;
+            totalKindergeld += 255;
 
-          // Set birthdate text field
-          setTextField(`Kind ${childNum} Geburtstag`, birthdate);
+            // Set 255 EUR for this child
+            setTextField(`Kindergeld 255 ${childNum}. Person`, '255,00');
+
+            // Set Monat and Jahr
+            const month = String(child.birthdate.month).padStart(2, '0');
+            const year = child.birthdate.year;
+            setTextField(`${childNum}. Kind Monat`, month);
+            setTextField(`${childNum}. Kind Jahr`, String(year));
+
+            // Check the checkbox for this child
+            setCheckBox(`Kontrollkästchen Kindergeld mehrere Person / ${childNum}. Person`, true);
+          }
         }
       });
 
-      // If more than 5 children
+      // Handle more than 5 children
       if (calculationData.children.length > 5) {
-        setTextField('weitere Kinder3 Anzahl', String(calculationData.children.length - 5));
-      }
-    }
+        const additionalChildren = calculationData.children.slice(5);
+        const additionalKindergeldCount = additionalChildren.filter(child => child.receivesKindergeld).length;
 
-    // Other child-related financial benefits (e.g., Kinderzuschlag, Unterhaltsvorschuss, Betreuungsgeld)
-    // § 902 Satz 1 Nr 5 ZPO
-    const hasOtherChildBenefits = calculationData.healthCompensation > 0;
-    if (hasOtherChildBenefits) {
-      setCheckBox('Andere gesetzliche Geldleistungen für Kinder  z B Kinderzuschlag und vergleichbare', true);
-      setCheckBox('Andere Gesetzliche Geldleistungen für Kinder', true);
-      setTextField('156000 €Andere gesetzliche Geldleistungen für Kinder z B Kinderzuschlag und vergleichbare Rentenbestandteile  902 Satz 1 Nr 5 ZPO in Höhe von', formatCurrency(calculationData.healthCompensation));
+        if (additionalKindergeldCount > 0) {
+          kindergeldCount += additionalKindergeldCount;
+          totalKindergeld += additionalKindergeldCount * 255;
+
+          // Set anzahl and betrag for additional children
+          setTextField('Kindergeld weitere Kinder Anzahl', String(additionalKindergeldCount));
+          setTextField('Kindergeld weitere Kinder Anzahl (Betrag)', formatCurrency(additionalKindergeldCount * 255));
+
+          // Check the "weitere Person" checkbox
+          setCheckBox('Kontrollkästchen Kindergeld mehrere Person / weitere Person', true);
+        }
+      }
+
+      // Set total Kindergeld
+      if (kindergeldCount > 0) {
+        setTextField('Kindergeld zusammen', formatCurrency(totalKindergeld));
+        setCheckBox('Kontrollkästchen Kindergeld mehrere Person', true);
+        setCheckBox('Kontrollkästchen Kindergeld mehrere Person / 1. Person', true);
+      }
     }
 
     // ============================================================
     // TOTAL FREIBETRAG
     // ============================================================
-    setTextField('156000 €Monatlicher Gesamtfreibetrag', formatCurrency(calculatedFreibetrag.amount));
-
-    // ============================================================
-    // SECTION V: Entity Type (Arbeitgeber, Sozialleistungsträger, etc.)
-    // ============================================================
-    // Leave all unchecked - law firm issues the certificate
-    setCheckBox('Arbeitgeber', false);
-    setCheckBox('Sozialleistungsträger', false);
-    setCheckBox('sonstiger Leistungsträger  902 ZPO', false);
-    setCheckBox('Familienkasse', false);
+    setTextField('Gesamtbetrag', formatCurrency(calculatedFreibetrag.amount));
 
     // ============================================================
     // Date and Signature
     // ============================================================
-    setTextField('Ort Datum', `Bochum, ${today}`);
-
-    // Signature/stamp field - leave empty (will be signed manually)
-    // setTextField('Unterschrift  Stempel der bescheinigenden Person oder Stelle', '');
-
-    // Footer note about annual adjustment
-    setTextField('die Freibeträge werden jährlich zum 0107 angepasst',
-      '¹ die Freibeträge werden jährlich zum 01.07. angepasst');
+    setTextField('Ort, Datum', `Bochum, ${today}`);
 
     // ============================================================
     // Update field appearances (CRITICAL!)
@@ -264,8 +234,6 @@ const fillPdfForm = async (application) => {
     // ============================================================
     // Flatten form (make fields read-only and visible)
     // ============================================================
-    // This converts form fields to static content, ensuring compatibility with all PDF readers
-    // NOTE: Some PDF templates have broken references that cause flatten() to fail
     console.log('\nAttempting to flatten form (converting to static content)...');
     try {
       form.flatten();

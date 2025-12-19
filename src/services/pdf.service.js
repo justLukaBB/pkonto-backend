@@ -94,7 +94,7 @@ const convertToPdf = async (docxPath) => {
 const generateCertificate = async (application, options = {}) => {
   try {
     const {
-      method = 'pdf-form', // Default to PDF form (faster, no LibreOffice needed)
+      method = 'pdf-form', // Default back to PDF form
       convertToPdf: shouldConvertToPdf = true,
       keepDocx = false
     } = options;
