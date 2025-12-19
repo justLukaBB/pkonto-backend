@@ -1753,7 +1753,7 @@ select.form-input {
 <div class="loading-overlay" id="loading-overlay">
     <div style="text-align: center;">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Zahlung wird vorbereitet...<br>Bitte warten Sie einen Moment.</div>
+        <div class="loading-text" id="loading-text">Zahlung wird vorbereitet...<br>Bitte warten Sie einen Moment.</div>
     </div>
 </div>
 <script>
@@ -2722,6 +2722,16 @@ window.submitForm = async function() {
     const mandantRadio = document.getElementById('mandant');
     const isMandant = mandantRadio && mandantRadio.checked;
 
+    // Update loading text based on mandant status
+    const loadingText = document.getElementById('loading-text');
+    if (loadingText) {
+        if (isMandant) {
+            loadingText.innerHTML = 'Ihre Anfrage wird geprüft...<br>Bitte warten Sie einen Moment.';
+        } else {
+            loadingText.innerHTML = 'Zahlung wird vorbereitet...<br>Bitte warten Sie einen Moment.';
+        }
+    }
+
     // Show loading overlay
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) {
@@ -3280,6 +3290,16 @@ setTimeout(function() {
         // Check if mandant payment option is selected
         const mandantRadio = document.getElementById('mandant');
         const isMandant = mandantRadio && mandantRadio.checked;
+
+        // Update loading text based on mandant status (OVERRIDE VERSION)
+        const loadingText = document.getElementById('loading-text');
+        if (loadingText) {
+            if (isMandant) {
+                loadingText.innerHTML = 'Ihre Anfrage wird geprüft...<br>Bitte warten Sie einen Moment.';
+            } else {
+                loadingText.innerHTML = 'Zahlung wird vorbereitet...<br>Bitte warten Sie einen Moment.';
+            }
+        }
 
         // Show loading overlay
         const loadingOverlay = document.getElementById('loading-overlay');
