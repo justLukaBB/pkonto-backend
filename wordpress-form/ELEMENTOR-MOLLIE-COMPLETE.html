@@ -446,24 +446,22 @@ select.form-input {
   color: #333;
   margin-bottom: 20px;
   line-height: 1.4;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .result-amount {
   background: #fff;
   border-radius: 25px;
   padding: 15px 30px;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   color: #333;
 }
 
-.result-sub-label {
-  font-size: 13px;
-  color: #666;
-  margin-top: 15px;
-  line-height: 1.3;
+.result-amount.green {
+  color: #338d00;
 }
+
 
 /* Review Badge */
 .review-badge {
@@ -512,21 +510,22 @@ select.form-input {
 }
 
 .summary-box h3 {
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 600;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 15px;
+  display: block;
   color: #333;
 }
 
 .edit-link {
   color: #EA5530;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .edit-link:hover {
@@ -535,13 +534,39 @@ select.form-input {
 
 .summary-row {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   padding: 10px 0;
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.summary-row > div {
+  text-align: left;
 }
 
 .summary-row:not(:last-child) {
   border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.item-label {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.item-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
 }
 
 /* Cost Row */
@@ -558,9 +583,9 @@ select.form-input {
 }
 
 .cost-row.total {
-  background: #F1EFE9;
-  padding: 15px 20px;
-  margin: 15px -20px 0;
+  background: #fff;
+  padding: 15px 30px;
+  margin: 15px -30px 0;
   border-radius: 8px;
   font-weight: 600;
   font-size: 18px;
@@ -569,11 +594,13 @@ select.form-input {
 
 .cost-label {
   color: #333;
+  font-size: 15px;
 }
 
 .cost-value {
   font-weight: 600;
   color: #333;
+  font-size: 16px;
 }
 
 /* Payment Options */
@@ -702,26 +729,42 @@ select.form-input {
 
   .progress-steps {
     padding: 20px 10px;
-    gap: 15px;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .progress-steps::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 
   .step {
-    font-size: 14px;
+    font-size: 15px;
+    flex-shrink: 0;
+    min-width: 120px;
   }
 
   .step-number {
-    width: 45px;
-    height: 45px;
-    font-size: 16px;
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
   }
 
   .step-text {
-    display: none;
+    display: block;
+    font-size: 15px;
+    margin-top: 8px;
+    white-space: nowrap;
+    font-weight: 600;
   }
 
   .form-left {
     padding: 25px 15px;
     order: 2;
+    margin-top: -10px;
   }
 
   .form-right {
@@ -731,7 +774,7 @@ select.form-input {
     max-width: 100%;
     margin-left: 0;
     margin-right: 0;
-    padding: 0 15px;
+    padding: 0;
   }
 
   .result-box {
@@ -739,10 +782,11 @@ select.form-input {
     justify-content: space-between;
     align-items: center;
     text-align: left;
-    padding: 20px;
+    padding: 18px 15px;
     background: #f6d4c2;
     margin-bottom: 0;
     border-radius: 10px;
+    position: relative;
   }
 
   .result-label {
@@ -758,17 +802,21 @@ select.form-input {
   }
 
   .result-label::before {
-    content: "Ihr monatlicher Freibetrag nach der Umwandlung";
+    content: "Ihr monatlicher Freibetrag vor der Umwandlung";
     display: block;
-    font-size: 14px;
+    font-size: 16px;
+  }
+
+  .result-label.step-4::before {
+    content: "Ihr monatlicher Freibetrag nach der Umwandlung";
   }
 
   .result-amount {
-    font-size: 20px;
+    font-size: 19px;
     white-space: nowrap;
     background: white;
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 8px 15px;
+    border-radius: 15px;
     font-weight: 600;
   }
 
@@ -820,17 +868,16 @@ select.form-input {
     padding: 13px 40px;
   }
 
-  .result-amount {
-    font-size: 22px;
-  }
-
   .summary-box {
     padding: 20px 15px;
   }
 
   .cost-row.total {
-    margin: 15px -15px 0;
-    padding: 15px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 15px;
+    padding: 15px 15px;
+    width: calc(100% + 30px);
   }
 }
 
@@ -1110,7 +1157,7 @@ select.form-input {
 </style>
 
 <!-- HTML STARTET HIER -->
-<div class="form-container">
+<div class="form-container" id="pkonto-formular">
     <!-- Progress Steps -->
     <div class="progress-steps">
         <div class="step active" data-step="1">
@@ -1222,20 +1269,6 @@ select.form-input {
 
                     <!-- Dynamic Kindergeld Details Container (Step 2) -->
                     <div id="kindergeld-details-container-step2"></div>
-
-                    <!-- Andere Geldleistungen für Kinder Question -->
-                    <div class="form-question">
-                        <div class="question-wrapper">
-                            <div class="question-text">Erhalten Sie andere Geldleistungen für Kinder?</div>
-                            <div class="input-group">
-                                <input type="number" class="form-input" placeholder="Betrag in EUR (z.B. 150)" min="0" step="0.01" id="health-compensation" value="0">
-                                <div class="info-icon">
-                                    i
-                                    <span class="tooltip">Falls Sie zusätzliche monatliche Geldleistungen für Kinder erhalten (z.B. Unterhaltsvorschuss, Betreuungsgeld, etc.), geben Sie hier den Betrag in Euro an.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Trust Badges and Button -->
                     <div class="badges-button-container">
@@ -1476,28 +1509,23 @@ select.form-input {
                 <div class="step-content" id="step-4">
                     <!-- Summary Section 1 -->
                     <div class="summary-box">
-                        <h3>
-                            Ihre Angaben zur Berechnung des Freibetrages
-                            <a href="#" class="edit-link" onclick="window.goToStep(1); return false;">Bearbeiten</a>
-                        </h3>
+                        <h3>Ihre Angaben zur Berechnung des Freibetrages</h3>
                         <div id="summary-calculation-details">
                             <!-- Will be filled dynamically -->
                         </div>
+                        <a href="#" class="edit-link" onclick="window.goToStep(1); return false;">Bearbeiten</a>
                     </div>
 
                     <!-- Summary Section 2 -->
                     <div class="summary-box">
-                        <h3>
-                            Ihre persönlichen Daten
-                            <a href="#" class="edit-link" onclick="window.goToStep(3); return false;">Bearbeiten</a>
-                        </h3>
+                        <h3>Ihre persönlichen Daten</h3>
                         <div class="summary-row" style="border-bottom: none;">
                             <div>
                                 <div style="margin-bottom: 10px;" id="summary-name">Herr Max Mustermann</div>
                                 <div style="margin-bottom: 10px;" id="summary-address">Musterstraße 15</div>
                                 <div id="summary-city">40210 Düsseldorf</div>
                             </div>
-                            <div style="text-align: right;">
+                            <div>
                                 <div style="margin-bottom: 5px; font-weight: 600;">Bankverbindung:</div>
                                 <div style="margin-bottom: 5px;" id="summary-iban">IBAN: DE123456789251455215</div>
                                 <div id="summary-bic">BIC/Swift-Code: 215855115</div>
@@ -1511,10 +1539,11 @@ select.form-input {
                             <div class="cost-label" style="color: #EA5530;" id="summary-email">test@test.de</div>
                             <div class="cost-value"></div>
                         </div>
+                        <a href="#" class="edit-link" onclick="window.goToStep(3); return false;">Bearbeiten</a>
                     </div>
 
                     <!-- Payment Options -->
-                    <div class="summary-box">
+                    <div class="summary-box" id="payment-section">
                         <h3>Wie möchten Sie bezahlen?</h3>
 
                         <div class="payment-option">
@@ -1524,15 +1553,37 @@ select.form-input {
                         </div>
 
                         <div class="payment-option">
-                            <input type="radio" name="payment" id="klarna">
-                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Klarna_Payment_Badge-1.svg" alt="Klarna" class="payment-logo">
-                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna (Kostenfrei)</label>
+                            <input type="radio" name="payment" id="creditcard">
+                            <div style="display: flex; gap: 5px; align-items: center; width: 50px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32">
+                                    <g class="nc-icon-wrapper">
+                                        <rect x="2" y="7" width="28" height="18" rx="3" ry="3" fill="#fff" stroke-width="0"></rect>
+                                        <path d="m27,7H5c-1.657,0-3,1.343-3,3v12c0,1.657,1.343,3,3,3h22c1.657,0,3-1.343,3-3v-12c0-1.657-1.343-3-3-3Zm2,15c0,1.103-.897,2-2,2H5c-1.103,0-2-.897-2-2v-12c0-1.103.897-2,2-2h22c1.103,0,2,.897,2,2v12Z" stroke-width="0" opacity=".15"></path>
+                                        <path d="m27,8H5c-1.105,0-2,.895-2,2v1c0-1.105.895-2,2-2h22c1.105,0,2,.895,2,2v-1c0-1.105-.895-2-2-2Z" fill="#fff" opacity=".2" stroke-width="0"></path>
+                                        <path d="m13.392,12.624l-2.838,6.77h-1.851l-1.397-5.403c-.085-.332-.158-.454-.416-.595-.421-.229-1.117-.443-1.728-.576l.041-.196h2.98c.38,0,.721.253.808.69l.738,3.918,1.822-4.608h1.84Z" fill="#1434cb" stroke-width="0"></path>
+                                        <path d="m20.646,17.183c.008-1.787-2.47-1.886-2.453-2.684.005-.243.237-.501.743-.567.251-.032.943-.058,1.727.303l.307-1.436c-.421-.152-.964-.299-1.638-.299-1.732,0-2.95.92-2.959,2.238-.011.975.87,1.518,1.533,1.843.683.332.912.545.909.841-.005.454-.545.655-1.047.663-.881.014-1.392-.238-1.799-.428l-.318,1.484c.41.188,1.165.351,1.947.359,1.841,0,3.044-.909,3.05-2.317" fill="#1434cb" stroke-width="0"></path>
+                                        <path d="m25.423,12.624h-1.494c-.337,0-.62.195-.746.496l-2.628,6.274h1.839l.365-1.011h2.247l.212,1.011h1.62l-1.415-6.77Zm-2.16,4.372l.922-2.542.53,2.542h-1.452Z" fill="#1434cb" stroke-width="0"></path>
+                                        <path fill="#1434cb" stroke-width="0" d="M15.894 12.624L14.446 19.394 12.695 19.394 14.143 12.624 15.894 12.624z"></path>
+                                    </g>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32">
+                                    <g class="nc-icon-wrapper">
+                                        <rect x="2" y="7" width="28" height="18" rx="3" ry="3" fill="#fff" stroke-width="0"></rect>
+                                        <path d="m27,7H5c-1.657,0-3,1.343-3,3v12c0,1.657,1.343,3,3,3h22c1.657,0,3-1.343,3-3v-12c0-1.657-1.343-3-3-3Zm2,15c0,1.103-.897,2-2,2H5c-1.103,0-2-.897-2-2v-12c0-1.103.897-2,2-2h22c1.103,0,2,.897,2,2v12Z" stroke-width="0" opacity=".15"></path>
+                                        <path d="m27,8H5c-1.105,0-2,.895-2,2v1c0-1.105.895-2,2-2h22c1.105,0,2,.895,2,2v-1c0-1.105-.895-2-2-2Z" fill="#fff" opacity=".2" stroke-width="0"></path>
+                                        <path fill="#ff5f00" stroke-width="0" d="M13.597 11.677H18.407V20.32H13.597z"></path>
+                                        <path d="m13.902,15.999c0-1.68.779-3.283,2.092-4.322-2.382-1.878-5.849-1.466-7.727.932-1.863,2.382-1.451,5.833.947,7.712,2,1.573,4.795,1.573,6.795,0-1.329-1.038-2.107-2.642-2.107-4.322Z" fill="#eb001b" stroke-width="0"></path>
+                                        <path d="m24.897,15.999c0,3.039-2.459,5.497-5.497,5.497-1.237,0-2.428-.412-3.39-1.176,2.382-1.878,2.795-5.329.916-7.727-.275-.336-.58-.657-.916-.916,2.382-1.878,5.849-1.466,7.712.932.764.962,1.176,2.153,1.176,3.39Z" fill="#f79e1b" stroke-width="0"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            <label for="creditcard" class="payment-label">Kreditkarte (Kostenfrei)</label>
                         </div>
 
                         <div class="payment-option">
-                            <input type="radio" name="payment" id="amazon">
-                            <img src="https://solutionshelf-cdn.oxid-esales.com/provider_121/module_203/4d3a4b0a57c07c0f89e84784df718fff.png" alt="Amazon" class="payment-logo">
-                            <label for="amazon" class="payment-label">Amazon Payments (Kostenfrei)</label>
+                            <input type="radio" name="payment" id="klarna">
+                            <img src="https://p-konto-bescheinigung.com/wp-content/uploads/2025/11/Klarna_Payment_Badge-1.svg" alt="Klarna" class="payment-logo">
+                            <label for="klarna" class="payment-label">Sofortüberweisung mit Klarna (Kostenfrei)</label>
                         </div>
 
                         <div class="payment-option">
@@ -1540,26 +1591,53 @@ select.form-input {
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/1024px-Apple_Pay_logo.svg.png" alt="Apple Pay" class="payment-logo">
                             <label for="applepay" class="payment-label">Apple Pay (Kostenfrei)</label>
                         </div>
+
+                        <!-- Mandant Payment Option -->
+                        <div class="payment-option">
+                            <input type="radio" name="payment" id="mandant">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <label for="mandant" class="payment-label">Bereits Mandant bei uns</label>
+                        </div>
+
+                        <!-- Mandant Code Input (hidden by default) -->
+                        <div id="mandant-code-section" style="display: none; padding: 20px; background: #f8f8f8; border-radius: 10px; margin-top: 15px;">
+                            <div class="form-question">
+                                <div class="question-wrapper">
+                                    <div class="question-text" style="margin-bottom: 10px; font-weight: 600;">Bitte geben Sie Ihren Mandanten-Code ein:</div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" id="mandant-code" placeholder="Code eingeben">
+                                    </div>
+                                    <div id="code-error" style="color: #d32f2f; font-size: 14px; margin-top: 8px; display: none;">
+                                        Falscher Code. Bitte versuchen Sie es erneut.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Gebühren und Kosten Section -->
-                    <div class="summary-box" style="margin-top: 30px;">
+                    <div class="summary-box" id="gebuehren-section" style="margin-top: 30px;">
                         <h3>Gebühren und Kosten</h3>
                         <div class="cost-row">
                             <div class="cost-label">Erstellung und Beglaubigung der P-Konto Bescheinigung</div>
-                            <div class="cost-value">29,00 €</div>
+                            <div class="cost-value">19,90 €</div>
                         </div>
                         <div class="cost-row">
                             <div class="cost-label">Versand (per Post)</div>
                             <div class="cost-value">0,00 €</div>
                         </div>
                         <div class="cost-row">
-                            <div class="cost-label">Bezahlart: Sofortüberweisung</div>
+                            <div class="cost-label" id="payment-method-label">Bezahlart: Paypal</div>
                             <div class="cost-value">0,00 €</div>
                         </div>
                         <div class="cost-row total">
                             <div class="cost-label">Gesamtbetrag (inkl. MwSt.)</div>
-                            <div class="cost-value">29,00 €</div>
+                            <div class="cost-value">19,90 €</div>
                         </div>
                     </div>
 
@@ -1568,6 +1646,15 @@ select.form-input {
                         <input type="checkbox" id="agreement">
                         <label for="agreement">
                             Mit Absenden des Formulars bestätige ich die Richtigkeit meiner Angaben und beauftrage Herrn Rechtsanwalt Thomas Scuric, die Bescheinigung nach § 850k ZPO zur Erhöhung des Freibetrages auf meinem Pfändungsschutzkonto zu erstellen und zu beglaubigen. Die <a href="#">AGB</a> und <a href="#">Widerrufsbelehrung</a> habe ich gelesen und stimme ihnen zu. Mir ist außerdem bekannt, dass die Verwendung einer durch Falschangaben erstellte Bescheinigung strafbar ist.
+                        </label>
+                    </div>
+
+                    <!-- Checkbox Immediate Start -->
+                    <div class="checkbox-group" style="margin-top: 20px;">
+                        <input type="checkbox" id="immediate-start">
+                        <label for="immediate-start">
+                            <strong>Sofortige Beauftragung (erforderlich)</strong><br>
+                            Ich bin einverstanden und wünsche ausdrücklich, dass Sie vor Ende der Widerrufsfrist mit der Ausführung der beauftragten Dienstleistung beginnen. Mir ist bekannt, dass ich bei vollständiger Vertragserfüllung durch Sie mein Widerrufrecht verliere.
                         </label>
                     </div>
 
@@ -1582,7 +1669,7 @@ select.form-input {
                     </div>
 
                     <!-- Final Submit Button -->
-                    <button class="btn-calculate" style="margin-top: 30px;" onclick="window.submitForm()">Jetzt kostenpflichtig beauftragen</button>
+                    <button class="btn-calculate" id="submit-button" style="margin-top: 30px;" onclick="window.submitForm()">Jetzt kostenpflichtig beauftragen</button>
                 </div>
 
                 <!-- STEP 5: Success Page -->
@@ -1642,9 +1729,8 @@ select.form-input {
             <div class="form-right">
                 <!-- Result Box -->
                 <div class="result-box">
-                    <div class="result-label">Ihr montl. Freibetrag<br><br>Nach der Umwandlung ergibt sich folgender Freibetrag:</div>
-                    <div class="result-amount" id="result-amount">1.410,64 €</div>
-                    <div class="result-sub-label" id="result-sub-label"></div>
+                    <div class="result-label" id="result-label">Ihr montl. Freibetrag<br><br>Vor der Umwandlung ergibt sich folgender Freibetrag:</div>
+                    <div class="result-amount" id="result-amount">1.560,00 €</div>
                 </div>
 
                 <!-- Review Badge -->
@@ -1813,7 +1899,7 @@ window.pkontoFormData = {
     },
     payment: {
         method: 'paypal',
-        amount: 29.00,
+        amount: 19.90,
         status: 'pending'
     }
 };
@@ -1823,18 +1909,19 @@ window.pkontoMaxStep = 1; // Tracks the maximum reached step
 
 console.log('Initial FormData erstellt');
 
-// Add click handlers to progress steps
+// Add click handlers to progress steps - only allow navigation to visited steps
 setTimeout(function() {
     const progressSteps = document.querySelectorAll('.progress-steps .step');
     progressSteps.forEach(function(stepEl) {
         stepEl.addEventListener('click', function() {
             const targetStep = parseInt(stepEl.getAttribute('data-step'));
+            // Only allow going to steps that have been visited (or current step)
             if (targetStep && targetStep <= window.pkontoMaxStep) {
                 window.goToStep(targetStep);
             }
         });
     });
-    console.log('✓ Step click handlers added');
+    console.log('✓ Step click handlers added (visited steps only)');
 }, 100);
 
 // Familienstand Change Handler - Show/Hide Unterhalt Question
@@ -1861,6 +1948,46 @@ setTimeout(function() {
         // Check initial state
         handleFamilienstandChange();
     }
+}, 100);
+
+// Payment method change handler - Update payment method label
+function updatePaymentMethodLabel() {
+    const paymentMethodLabel = document.getElementById('payment-method-label');
+    if (!paymentMethodLabel) return;
+
+    const selectedPayment = document.querySelector('input[name="payment"]:checked');
+    if (!selectedPayment) return;
+
+    const paymentId = selectedPayment.id;
+    let paymentText = 'Paypal';
+
+    switch(paymentId) {
+        case 'paypal':
+            paymentText = 'Paypal';
+            break;
+        case 'creditcard':
+            paymentText = 'Kreditkarte';
+            break;
+        case 'klarna':
+            paymentText = 'Sofortüberweisung mit Klarna';
+            break;
+        case 'applepay':
+            paymentText = 'Apple Pay';
+            break;
+    }
+
+    paymentMethodLabel.textContent = 'Bezahlart: ' + paymentText;
+}
+
+// Attach event listeners to payment radio buttons
+setTimeout(function() {
+    const paymentOptions = document.querySelectorAll('input[name="payment"]');
+    paymentOptions.forEach(function(radio) {
+        radio.addEventListener('change', updatePaymentMethodLabel);
+    });
+    // Set initial state
+    updatePaymentMethodLabel();
+    console.log('✓ Payment method change handlers added');
 }, 100);
 
 // Navigate to step
@@ -1916,6 +2043,33 @@ window.goToStep = function(step) {
 
     window.pkontoCurrentStep = step;
 
+    // Update result box styling and calculation based on current step
+    const resultAmount = document.getElementById('result-amount');
+    const resultLabel = document.getElementById('result-label');
+    if (step >= 3) {
+        if (resultAmount) resultAmount.classList.add('green');
+        if (resultLabel) {
+            resultLabel.classList.add('step-4');
+            resultLabel.innerHTML = 'Ihr montl. Freibetrag<br><br>Nach der Umwandlung ergibt sich folgender Freibetrag:';
+        }
+        // Calculate Freibetrag when entering Step 3 or 4
+        calculateFreibetrag();
+        // Animate count-up from 0 to final amount
+        setTimeout(function() {
+            if (resultAmount) {
+                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                animateCountUp(resultAmount, amount, 1500);
+                console.log('🔄 Animating count-up in Step ' + step + ':', amount);
+            }
+        }, 100);
+    } else {
+        if (resultAmount) resultAmount.classList.remove('green');
+        if (resultLabel) {
+            resultLabel.classList.remove('step-4');
+            resultLabel.innerHTML = 'Ihr montl. Freibetrag<br><br>Vor der Umwandlung ergibt sich folgender Freibetrag:';
+        }
+    }
+
     // Generate Kindergeld details when navigating to Step 2
     if (step === 2) {
         console.log('DEBUG: Step 2 Navigation detected');
@@ -1936,6 +2090,43 @@ window.goToStep = function(step) {
     if (step === 4) {
         console.log('DEBUG: Step 4 Navigation detected - updating summary');
         updateSummary();
+
+        // Add event listener for payment radio buttons (including mandant)
+        const paymentRadios = document.querySelectorAll('input[name="payment"]');
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const gebuehrenSection = document.getElementById('gebuehren-section');
+                const mandantCodeSection = document.getElementById('mandant-code-section');
+                const submitButton = document.getElementById('submit-button');
+
+                if (this.id === 'mandant' && this.checked) {
+                    // Hide Gebühren und Kosten, show code input, change button text
+                    if (gebuehrenSection) gebuehrenSection.style.display = 'none';
+                    if (mandantCodeSection) mandantCodeSection.style.display = 'block';
+                    if (submitButton) submitButton.textContent = 'Jetzt anfordern';
+                    console.log('Mandant-Modus aktiviert');
+                } else {
+                    // Show Gebühren und Kosten, hide code input, restore button text
+                    if (gebuehrenSection) gebuehrenSection.style.display = 'block';
+                    if (mandantCodeSection) mandantCodeSection.style.display = 'none';
+                    if (submitButton) submitButton.textContent = 'Jetzt kostenpflichtig beauftragen';
+                    console.log('Normal-Modus aktiviert');
+                }
+            });
+        });
+    }
+
+    // Scroll to active step on mobile
+    if (window.innerWidth <= 768) {
+        const progressSteps = document.querySelector('.progress-steps');
+        const activeStep = document.querySelector('.progress-steps .step.active');
+        if (progressSteps && activeStep) {
+            const scrollLeft = activeStep.offsetLeft - (progressSteps.offsetWidth / 2) + (activeStep.offsetWidth / 2);
+            progressSteps.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth'
+            });
+        }
     }
 
     // Auto-Scroll zum Formular nach Step-Wechsel
@@ -2219,16 +2410,70 @@ function validateCurrentStep() {
     }
 
     if (step === 4) {
+        // Check if mandant payment option is selected
+        const mandantRadio = document.getElementById('mandant');
+        const isMandant = mandantRadio && mandantRadio.checked;
+
+        if (isMandant) {
+            // Validate mandant code
+            const codeInput = document.getElementById('mandant-code');
+            const codeError = document.getElementById('code-error');
+            if (!codeInput || !codeInput.value.trim()) {
+                alert('Bitte geben Sie Ihren Mandanten-Code ein.');
+                return false;
+            }
+            if (codeInput.value !== '123412') {
+                if (codeError) codeError.style.display = 'block';
+                alert('Falscher Mandanten-Code. Bitte versuchen Sie es erneut.');
+                return false;
+            }
+            if (codeError) codeError.style.display = 'none';
+            console.log('OK - Mandanten-Code korrekt');
+        }
+
         const checkbox = document.getElementById('agreement');
         if (!checkbox || !checkbox.checked) {
             console.warn('WARNUNG - AGB nicht akzeptiert');
-            alert('Bitte bestaetigen Sie die AGB und Widerrufsbelehrung.');
+            alert('Bitte bestätigen Sie die AGB und Widerrufsbelehrung.');
             return false;
         }
+
+        const immediateStartCheckbox = document.getElementById('immediate-start');
+        if (!immediateStartCheckbox || !immediateStartCheckbox.checked) {
+            console.warn('WARNUNG - Sofortige Beauftragung nicht akzeptiert');
+            alert('Bitte bestätigen Sie die sofortige Beauftragung.');
+            return false;
+        }
+
         console.log('OK - Step 4 Validierung erfolgreich');
     }
 
     return true;
+}
+
+// Count-Up Animation for amount
+function animateCountUp(element, targetAmount, duration = 1500) {
+    const startTime = performance.now();
+    const startAmount = 0;
+
+    function updateCount(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function (easeOutExpo) for smooth deceleration
+        const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+        const currentAmount = startAmount + (targetAmount - startAmount) * easeProgress;
+        element.textContent = currentAmount.toFixed(2).replace('.', ',') + ' EUR';
+
+        if (progress < 1) {
+            requestAnimationFrame(updateCount);
+        } else {
+            element.textContent = targetAmount.toFixed(2).replace('.', ',') + ' EUR';
+        }
+    }
+
+    requestAnimationFrame(updateCount);
 }
 
 // Calculate Freibetrag
@@ -2270,6 +2515,13 @@ function calculateFreibetrag() {
 // Update result box
 function updateResultBox() {
     console.log('🔍 updateResultBox() called');
+
+    // Only update display if we're in Step 4
+    if (window.pkontoCurrentStep !== 4) {
+        console.log('⏸️ Skipping result box update - not in Step 4 (current step:', window.pkontoCurrentStep, ')');
+        return;
+    }
+
     const resultAmount = document.getElementById('result-amount');
     console.log('🔍 resultAmount element:', resultAmount);
     if (resultAmount) {
@@ -2303,9 +2555,9 @@ function updateSummary() {
         // Familienstand/Verheiratet
         const marriedText = data.calculationData.married ? 'Ja' : 'Nein';
         html += `
-            <div class="summary-row">
-                <div class="cost-label">Verheiratet/Lebenspartnerschaft</div>
-                <div class="cost-value">${marriedText}</div>
+            <div class="summary-item">
+                <div class="item-label">Verheiratet</div>
+                <div class="item-value">${marriedText}</div>
             </div>
         `;
 
@@ -2313,34 +2565,13 @@ function updateSummary() {
         if (data.calculationData.childrenCount > 0) {
             data.calculationData.children.forEach((child, index) => {
                 const birthdate = `${child.birthdate.day}.${child.birthdate.month}.${child.birthdate.year}`;
-                const kindergeldText = child.receivesKindergeld ? 'Ja' : 'Nein';
                 html += `
-                    <div class="summary-row">
-                        <div class="cost-label">Kind ${index + 1} - Geboren am ${birthdate}</div>
-                        <div class="cost-value">Kindergeld: ${kindergeldText}</div>
+                    <div class="summary-item">
+                        <div class="item-label">Kind ${index + 1}</div>
+                        <div class="item-value">Geboren am ${birthdate}</div>
                     </div>
                 `;
             });
-        }
-
-        // Anzahl weiterer Personen mit Sozialleistungen
-        if (data.calculationData.socialBenefitsCount > 0) {
-            html += `
-                <div class="summary-row">
-                    <div class="cost-label">Weitere Personen mit Sozialleistungen</div>
-                    <div class="cost-value">${data.calculationData.socialBenefitsCount}</div>
-                </div>
-            `;
-        }
-
-        // Gesundheitsschaden
-        if (data.calculationData.healthCompensation > 0) {
-            html += `
-                <div class="summary-row">
-                    <div class="cost-label">Gesundheitsschaden (Mehraufwand)</div>
-                    <div class="cost-value">${data.calculationData.healthCompensation.toFixed(2).replace('.', ',')} €</div>
-                </div>
-            `;
         }
 
         summaryCalcDetails.innerHTML = html;
@@ -2427,17 +2658,7 @@ window.nextStep = function() {
         return;
     }
 
-    if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
-        calculateFreibetrag();
-        // DIREKT UPDATE - BYPASS CACHE
-        const resultAmountEl = document.getElementById('result-amount');
-        if (resultAmountEl) {
-            const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-            resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-            console.log('💥 DIREKT AKTUALISIERT (nextStep):', amount.toFixed(2), 'EUR');
-        }
-    }
-
+    // Update summary when moving from Step 3 to Step 4
     if (window.pkontoCurrentStep === 3) {
         updateSummary();
     }
@@ -2471,6 +2692,10 @@ window.submitForm = async function() {
         return;
     }
 
+    // Check if mandant payment option is selected
+    const mandantRadio = document.getElementById('mandant');
+    const isMandant = mandantRadio && mandantRadio.checked;
+
     // Show loading overlay
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) {
@@ -2478,6 +2703,50 @@ window.submitForm = async function() {
     }
 
     collectStepData();
+
+    // If mandant, change email to kanzlei and send to backend without payment
+    if (isMandant) {
+        console.log('Mandanten-Modus: Email wird an Kanzlei gesendet');
+        window.pkontoFormData.personalData.email = 'info@ra-scuric.de';
+        window.pkontoFormData.payment.method = 'mandant-code';
+        window.pkontoFormData.payment.status = 'completed';
+
+        console.log('FormData für Mandant:', window.pkontoFormData);
+
+        // Send data to backend for email
+        const backendUrl = 'https://pkonto-backend-1.onrender.com';
+        try {
+            const response = await fetch(backendUrl + '/api/mollie/create-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(window.pkontoFormData)
+            });
+
+            console.log('Mandant Backend Response Status:', response.status);
+
+            if (response.ok) {
+                console.log('✓ Mandanten-Daten erfolgreich an Backend gesendet');
+                alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+            } else {
+                console.error('Backend Error:', response.status);
+                alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
+            }
+        } catch (error) {
+            console.error('Fehler beim Senden der Mandanten-Daten:', error);
+            alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
+        }
+
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+
+        // Show success page
+        document.querySelectorAll('.step-content').forEach(sc => sc.classList.remove('active'));
+        const successStep = document.getElementById('step-success');
+        if (successStep) successStep.style.display = 'block';
+
+        return;
+    }
 
     const paymentRadio = document.querySelector('input[name="payment"]:checked');
     if (paymentRadio) {
@@ -2653,7 +2922,7 @@ function generateKindergeldDetails(count) {
 
         const childSection = `
             <div class="children-section" id="kindergeld-child-section-${i}">
-                <h4>Geburtsdatum des ${ordinalName} Kindes</h4>
+                <h4 style="font-weight: 400;">Geburtsdatum des <span style="font-weight: 600;">${ordinalName} Kindes</span></h4>
                 <div class="date-inputs">
                     <select class="form-input small" id="kindergeld-child-${i}-day">
                         ${generateDayOptions()}
@@ -2791,6 +3060,33 @@ setTimeout(function() {
 
         window.pkontoCurrentStep = step;
 
+        // Update result box styling and calculation based on current step (OVERRIDE VERSION)
+        const resultAmount = document.getElementById('result-amount');
+        const resultLabel = document.getElementById('result-label');
+        if (step >= 3) {
+            if (resultAmount) resultAmount.classList.add('green');
+            if (resultLabel) {
+                resultLabel.classList.add('step-4');
+                resultLabel.innerHTML = 'Ihr montl. Freibetrag<br><br>Nach der Umwandlung ergibt sich folgender Freibetrag:';
+            }
+            // Calculate Freibetrag when entering Step 3 or 4
+            calculateFreibetrag();
+            // Animate count-up from 0 to final amount
+            setTimeout(function() {
+                if (resultAmount) {
+                    const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                    animateCountUp(resultAmount, amount, 1500);
+                    console.log('🔄 Animating count-up in Step ' + step + ' (OVERRIDE):', amount);
+                }
+            }, 100);
+        } else {
+            if (resultAmount) resultAmount.classList.remove('green');
+            if (resultLabel) {
+                resultLabel.classList.remove('step-4');
+                resultLabel.innerHTML = 'Ihr montl. Freibetrag<br><br>Vor der Umwandlung ergibt sich folgender Freibetrag:';
+            }
+        }
+
         // Generate Kindergeld details when navigating to Step 2 (OVERRIDE VERSION)
         if (step === 2) {
             console.log('DEBUG (OVERRIDE): Step 2 Navigation detected');
@@ -2819,12 +3115,14 @@ setTimeout(function() {
                         const data = window.pkontoFormData;
                         data.calculationData.healthCompensation = parseFloat(this.value) || 0;
                         calculateFreibetrag();
-                        // DIREKT UPDATE - BYPASS CACHE
-                        const resultAmountEl = document.getElementById('result-amount');
-                        if (resultAmountEl) {
-                            const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                            resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                            console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                        // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+                        if (window.pkontoCurrentStep === 4) {
+                            const resultAmountEl = document.getElementById('result-amount');
+                            if (resultAmountEl) {
+                                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                            }
                         }
                     });
                     console.log('✓ Event Listener für Gesundheitsschaden auf Step 2 hinzugefügt');
@@ -2836,6 +3134,43 @@ setTimeout(function() {
         if (step === 4) {
             console.log('DEBUG (OVERRIDE): Step 4 Navigation detected - updating summary');
             updateSummary();
+
+            // Add event listener for payment radio buttons (including mandant) - OVERRIDE VERSION
+            const paymentRadios = document.querySelectorAll('input[name="payment"]');
+            paymentRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const gebuehrenSection = document.getElementById('gebuehren-section');
+                    const mandantCodeSection = document.getElementById('mandant-code-section');
+                    const submitButton = document.getElementById('submit-button');
+
+                    if (this.id === 'mandant' && this.checked) {
+                        // Hide Gebühren und Kosten, show code input, change button text
+                        if (gebuehrenSection) gebuehrenSection.style.display = 'none';
+                        if (mandantCodeSection) mandantCodeSection.style.display = 'block';
+                        if (submitButton) submitButton.textContent = 'Jetzt anfordern';
+                        console.log('Mandant-Modus aktiviert (OVERRIDE)');
+                    } else {
+                        // Show Gebühren und Kosten, hide code input, restore button text
+                        if (gebuehrenSection) gebuehrenSection.style.display = 'block';
+                        if (mandantCodeSection) mandantCodeSection.style.display = 'none';
+                        if (submitButton) submitButton.textContent = 'Jetzt kostenpflichtig beauftragen';
+                        console.log('Normal-Modus aktiviert (OVERRIDE)');
+                    }
+                });
+            });
+        }
+
+        // Scroll to active step on mobile (OVERRIDE VERSION)
+        if (window.innerWidth <= 768) {
+            const progressSteps = document.querySelector('.progress-steps');
+            const activeStep = document.querySelector('.progress-steps .step.active');
+            if (progressSteps && activeStep) {
+                const scrollLeft = activeStep.offsetLeft - (progressSteps.offsetWidth / 2) + (activeStep.offsetWidth / 2);
+                progressSteps.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth'
+                });
+            }
         }
 
         // Auto-Scroll zum Formular nach Step-Wechsel
@@ -2861,17 +3196,7 @@ setTimeout(function() {
             return;
         }
 
-        if (window.pkontoCurrentStep === 1 || window.pkontoCurrentStep === 2) {
-            calculateFreibetrag();
-            // DIREKT UPDATE - BYPASS CACHE
-            const resultAmountEl = document.getElementById('result-amount');
-            if (resultAmountEl) {
-                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                console.log('💥 DIREKT AKTUALISIERT (nextStep):', amount.toFixed(2), 'EUR');
-            }
-        }
-
+        // Update summary when moving from Step 3 to Step 4 (OVERRIDE VERSION)
         if (window.pkontoCurrentStep === 3) {
             updateSummary();
         }
@@ -2902,6 +3227,10 @@ setTimeout(function() {
             return;
         }
 
+        // Check if mandant payment option is selected
+        const mandantRadio = document.getElementById('mandant');
+        const isMandant = mandantRadio && mandantRadio.checked;
+
         // Show loading overlay
         const loadingOverlay = document.getElementById('loading-overlay');
         if (loadingOverlay) {
@@ -2909,6 +3238,50 @@ setTimeout(function() {
         }
 
         collectStepData();
+
+        // If mandant, change email to kanzlei and send to backend without payment
+        if (isMandant) {
+            console.log('Mandanten-Modus (OVERRIDE): Email wird an Kanzlei gesendet');
+            window.pkontoFormData.personalData.email = 'info@ra-scuric.de';
+            window.pkontoFormData.payment.method = 'mandant-code';
+            window.pkontoFormData.payment.status = 'completed';
+
+            console.log('FormData für Mandant (OVERRIDE):', window.pkontoFormData);
+
+            // Send data to backend for email
+            const backendUrl = 'https://pkonto-backend-1.onrender.com';
+            try {
+                const response = await fetch(backendUrl + '/api/mollie/create-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(window.pkontoFormData)
+                });
+
+                console.log('Mandant Backend Response Status (OVERRIDE):', response.status);
+
+                if (response.ok) {
+                    console.log('✓ Mandanten-Daten erfolgreich an Backend gesendet (OVERRIDE)');
+                    alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+                } else {
+                    console.error('Backend Error (OVERRIDE):', response.status);
+                    alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
+                }
+            } catch (error) {
+                console.error('Fehler beim Senden der Mandanten-Daten (OVERRIDE):', error);
+                alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
+            }
+
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+
+            // Show success page
+            document.querySelectorAll('.step-content').forEach(sc => sc.classList.remove('active'));
+            const successStep = document.getElementById('step-success');
+            if (successStep) successStep.style.display = 'block';
+
+            return;
+        }
 
         const paymentRadio = document.querySelector('input[name="payment"]:checked');
         if (paymentRadio) {
@@ -2996,17 +3369,18 @@ setTimeout(function() {
     // Re-attach event listeners after override
     console.log('Event Listeners werden neu registriert...');
 
-    // Progress Steps - Click handlers
+    // Progress Steps - Click handlers (only visited steps)
     const progressSteps = document.querySelectorAll('.progress-steps .step');
     progressSteps.forEach(function(stepEl) {
         stepEl.addEventListener('click', function() {
             const targetStep = parseInt(stepEl.getAttribute('data-step'));
+            // Only allow going to steps that have been visited (or current step)
             if (targetStep && targetStep <= window.pkontoMaxStep) {
                 window.goToStep(targetStep);
             }
         });
     });
-    console.log('✓ Step click handlers added (OVERRIDE)');
+    console.log('✓ Step click handlers added (OVERRIDE - visited steps only)');
 
     // Familienstand
     const familienstandSelect = document.getElementById('familienstand');
@@ -3030,12 +3404,14 @@ setTimeout(function() {
 
             console.log('Calling calculateFreibetrag...');
             calculateFreibetrag();
-            // DIREKT UPDATE - BYPASS CACHE
-            const resultAmountEl = document.getElementById('result-amount');
-            if (resultAmountEl) {
-                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+            if (window.pkontoCurrentStep === 4) {
+                const resultAmountEl = document.getElementById('result-amount');
+                if (resultAmountEl) {
+                    const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                    resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                    console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                }
             }
             console.log('calculateFreibetrag finished');
         });
@@ -3061,12 +3437,14 @@ setTimeout(function() {
             }
 
             calculateFreibetrag();
-            // DIREKT UPDATE - BYPASS CACHE
-            const resultAmountEl = document.getElementById('result-amount');
-            if (resultAmountEl) {
-                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+            if (window.pkontoCurrentStep === 4) {
+                const resultAmountEl = document.getElementById('result-amount');
+                if (resultAmountEl) {
+                    const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                    resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                    console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                }
             }
         });
         console.log('✓ Event Listener für Unterhalt hinzugefügt');
@@ -3082,12 +3460,14 @@ setTimeout(function() {
             data.calculationData.childrenCount = count;
             generateChildrenInputs(count);
             calculateFreibetrag();
-            // DIREKT UPDATE - BYPASS CACHE
-            const resultAmountEl = document.getElementById('result-amount');
-            if (resultAmountEl) {
-                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+            if (window.pkontoCurrentStep === 4) {
+                const resultAmountEl = document.getElementById('result-amount');
+                if (resultAmountEl) {
+                    const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                    resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                    console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                }
             }
         });
         console.log('✓ Event Listener für Kinderanzahl hinzugefügt');
@@ -3101,12 +3481,14 @@ setTimeout(function() {
             const data = window.pkontoFormData;
             data.calculationData.healthCompensation = parseFloat(this.value) || 0;
             calculateFreibetrag();
-            // DIREKT UPDATE - BYPASS CACHE
-            const resultAmountEl = document.getElementById('result-amount');
-            if (resultAmountEl) {
-                const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-                resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-                console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+            // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+            if (window.pkontoCurrentStep === 4) {
+                const resultAmountEl = document.getElementById('result-amount');
+                if (resultAmountEl) {
+                    const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+                    resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+                    console.log('💥 DIREKT AKTUALISIERT:', amount.toFixed(2), 'EUR');
+                }
             }
         });
         console.log('✓ Event Listener für Gesundheitsschaden-Eingabe hinzugefügt');
@@ -3117,12 +3499,14 @@ setTimeout(function() {
     // Führe initiale Berechnung durch
     console.log('Führe initiale Freibetrags-Berechnung durch...');
     calculateFreibetrag();
-    // DIREKT UPDATE - BYPASS CACHE
-    const resultAmountEl = document.getElementById('result-amount');
-    if (resultAmountEl) {
-        const amount = window.pkontoFormData.calculatedFreibetrag.amount;
-        resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
-        console.log('💥 DIREKT AKTUALISIERT (initial):', amount.toFixed(2), 'EUR');
+    // DIREKT UPDATE - BYPASS CACHE (only in Step 4)
+    if (window.pkontoCurrentStep === 4) {
+        const resultAmountEl = document.getElementById('result-amount');
+        if (resultAmountEl) {
+            const amount = window.pkontoFormData.calculatedFreibetrag.amount;
+            resultAmountEl.textContent = amount.toFixed(2).replace('.', ',') + ' EUR';
+            console.log('💥 DIREKT AKTUALISIERT (initial):', amount.toFixed(2), 'EUR');
+        }
     }
     console.log('✓ P-Konto Form vollständig initialisiert!');
 }, 500);
