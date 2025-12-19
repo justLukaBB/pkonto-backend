@@ -1,6 +1,6 @@
 const Application = require('../models/Application.model');
 const { generateCertificate } = require('./pdf.service');
-const { sendCertificateEmail } = require('./email.service');
+const { sendCertificateEmail, sendMandantInternalEmail } = require('./email.service');
 
 /**
  * Send order confirmation to Make.com webhook for Slack notification
@@ -117,8 +117,18 @@ const processApplication = async (applicationId) => {
 
     console.log(`Certificate generated for application ${applicationId}`);
 
-    // Send email with certificate
-    await sendCertificateEmail(application, pdfPath);
+    // Check if this is a Mandant request - send different email
+    const isMandant = application.payment.method === 'mandant-code';
+
+    if (isMandant) {
+      console.log('Sending internal mandant email to info@ra-scuric.de');
+      // Send internal email with all details to law office
+      await sendMandantInternalEmail(application, pdfPath);
+    } else {
+      console.log('Sending customer certificate email');
+      // Send regular customer email with certificate
+      await sendCertificateEmail(application, pdfPath);
+    }
 
     // Update application status
     application.certificate.sentViaEmail = true;
@@ -128,8 +138,10 @@ const processApplication = async (applicationId) => {
 
     console.log(`Application ${applicationId} completed successfully`);
 
-    // Send order confirmation to internal team via Make.com webhook
-    await sendOrderConfirmation(application);
+    // Send order confirmation to internal team via Make.com webhook (only for regular customers)
+    if (!isMandant) {
+      await sendOrderConfirmation(application);
+    }
 
     return {
       success: true,

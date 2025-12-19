@@ -1484,7 +1484,7 @@ select.form-input {
                         <label class="section-label">Bankverbindung</label>
                         <div class="form-grid two-col">
                             <input type="text" class="form-input" placeholder="IBAN">
-                            <input type="text" class="form-input" placeholder="BIC/Swift-Code">
+                            <input type="text" class="form-input" placeholder="Kreditinstitut">
                         </div>
                     </div>
 
@@ -1528,7 +1528,7 @@ select.form-input {
                             <div>
                                 <div style="margin-bottom: 5px; font-weight: 600;">Bankverbindung:</div>
                                 <div style="margin-bottom: 5px;" id="summary-iban">IBAN: DE123456789251455215</div>
-                                <div id="summary-bic">BIC/Swift-Code: 215855115</div>
+                                <div id="summary-bic">Kreditinstitut: 215855115</div>
                             </div>
                         </div>
                         <div class="summary-row" style="border-top: 1px solid #f0f0f0;">
@@ -2250,7 +2250,7 @@ function collectStepData() {
         }
 
         const ibanInput = step3.querySelector('input[placeholder="IBAN"]');
-        const bicInput = step3.querySelector('input[placeholder="BIC/Swift-Code"]');
+        const bicInput = step3.querySelector('input[placeholder="Kreditinstitut"]');
         if (ibanInput) data.bankData.iban = ibanInput.value;
         if (bicInput) data.bankData.bic = bicInput.value;
 
@@ -2401,10 +2401,10 @@ function validateCurrentStep() {
             return false;
         }
 
-        const bicInput = step3.querySelector('input[placeholder="BIC/Swift-Code"]');
+        const bicInput = step3.querySelector('input[placeholder="Kreditinstitut"]');
         if (!bicInput || !bicInput.value.trim()) {
-            console.warn('WARNUNG - BIC fehlt');
-            alert('Bitte geben Sie Ihren BIC/Swift-Code ein.');
+            console.warn('WARNUNG - Kreditinstitut fehlt');
+            alert('Bitte geben Sie Ihr Kreditinstitut ein.');
             return false;
         }
 
@@ -2619,11 +2619,11 @@ function updateSummary() {
         console.log('✓ IBAN aktualisiert');
     }
 
-    // BIC
+    // Kreditinstitut
     const summaryBic = document.getElementById('summary-bic');
     if (summaryBic) {
-        summaryBic.textContent = `BIC/Swift-Code: ${data.bankData.bic}`;
-        console.log('✓ BIC aktualisiert');
+        summaryBic.textContent = `Kreditinstitut: ${data.bankData.bic}`;
+        console.log('✓ Kreditinstitut aktualisiert');
     }
 
     // Geburtsdatum

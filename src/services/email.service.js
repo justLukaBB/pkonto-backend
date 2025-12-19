@@ -214,7 +214,166 @@ const sendConfirmationEmail = async (application) => {
   }
 };
 
+/**
+ * Send internal email for Mandant (existing client) requests
+ * @param {Object} application - Application document from MongoDB
+ * @param {string} pdfPath - Path to generated PDF
+ */
+const sendMandantInternalEmail = async (application, pdfPath) => {
+  try {
+    const transporter = createTransporter();
+
+    const salutationMap = {
+      herr: 'Herr',
+      frau: 'Frau',
+      divers: 'Divers'
+    };
+
+    const salutation = salutationMap[application.personalData.salutation] || '';
+    const fullName = `${salutation} ${application.personalData.firstName} ${application.personalData.lastName}`.trim();
+
+    // Format birthdate
+    const birthdate = `${String(application.personalData.birthdate.day).padStart(2, '0')}.${String(application.personalData.birthdate.month).padStart(2, '0')}.${application.personalData.birthdate.year}`;
+
+    // Format children info
+    let childrenInfo = 'Keine Kinder';
+    if (application.calculationData.children && application.calculationData.children.length > 0) {
+      childrenInfo = application.calculationData.children.map((child, index) => {
+        const childBirthdate = `${String(child.birthdate.day).padStart(2, '0')}.${String(child.birthdate.month).padStart(2, '0')}.${child.birthdate.year}`;
+        const kindergeld = child.receivesKindergeld ? 'Ja' : 'Nein';
+        return `Kind ${index + 1}: ${childBirthdate} (Kindergeld: ${kindergeld})`;
+      }).join('<br>');
+    }
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: 'info@ra-scuric.de',
+      subject: `MANDANT - P-Konto Bescheinigung Anfrage - ${fullName}`,
+      html: `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #ffffff;">
+  <div style="padding: 20px; background-color: #961919; color: white; border-radius: 8px 8px 0 0;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">🔔 Neue Mandanten-Anfrage</h1>
+    <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">P-Konto Bescheinigung für bestehenden Mandanten</p>
+  </div>
+
+  <div style="padding: 24px; background-color: #f9fafb;">
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin-bottom: 24px; border-radius: 4px;">
+      <strong style="color: #92400e;">⚠️ MANDANT:</strong>
+      <span style="color: #78350f;">Dies ist ein bestehender Mandant. Keine Zahlung erforderlich.</span>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">👤 Persönliche Daten</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td style="padding: 8px 0; color: #6b7280; width: 180px; font-weight: 500;">Name:</td><td style="padding: 8px 0; color: #111827; font-weight: 600;">${fullName}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Geburtsdatum:</td><td style="padding: 8px 0; color: #111827;">${birthdate}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">E-Mail:</td><td style="padding: 8px 0; color: #111827;"><a href="mailto:${application.personalData.email}" style="color: #0563c1;">${application.personalData.email}</a></td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Adresse:</td><td style="padding: 8px 0; color: #111827;">${application.personalData.street} ${application.personalData.houseNumber}<br>${application.personalData.zipCode} ${application.personalData.city}</td></tr>
+      </table>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">🏦 Bankverbindung</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td style="padding: 8px 0; color: #6b7280; width: 180px; font-weight: 500;">IBAN:</td><td style="padding: 8px 0; color: #111827; font-family: monospace; font-size: 15px;">${application.bankData.iban}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Kreditinstitut:</td><td style="padding: 8px 0; color: #111827;">${application.bankData.bic}</td></tr>
+      </table>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">📊 Berechnungsdaten</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td style="padding: 8px 0; color: #6b7280; width: 180px; font-weight: 500;">Familienstand:</td><td style="padding: 8px 0; color: #111827;">${application.calculationData.married ? '✓ Verheiratet' : '✗ Nicht verheiratet'}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Anzahl Kinder:</td><td style="padding: 8px 0; color: #111827;">${application.calculationData.childrenCount || 0}</td></tr>
+        ${application.calculationData.children && application.calculationData.children.length > 0 ? `<tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500; vertical-align: top;">Kinder Details:</td><td style="padding: 8px 0; color: #111827;">${childrenInfo}</td></tr>` : ''}
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Gesundheitsschaden:</td><td style="padding: 8px 0; color: #111827;">${application.calculationData.healthCompensation ? application.calculationData.healthCompensation.toFixed(2) + ' EUR' : '0,00 EUR'}</td></tr>
+      </table>
+    </div>
+
+    <div style="background-color: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 600; color: #15803d;">💰 Berechneter Freibetrag</h2>
+      <div style="font-size: 36px; font-weight: 700; color: #16a34a; margin: 8px 0;">${application.calculatedFreibetrag.amount.toFixed(2).replace('.', ',')} EUR</div>
+      <div style="font-size: 14px; color: #15803d; margin-top: 8px;">monatlich</div>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">ℹ️ Zusätzliche Informationen</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td style="padding: 8px 0; color: #6b7280; width: 180px; font-weight: 500;">Antrags-ID:</td><td style="padding: 8px 0; color: #111827; font-family: monospace;">${application._id}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Eingegangen am:</td><td style="padding: 8px 0; color: #111827;">${new Date(application.createdAt).toLocaleString('de-DE', { dateStyle: 'long', timeStyle: 'short' })}</td></tr>
+        <tr><td style="padding: 8px 0; color: #6b7280; font-weight: 500;">Status:</td><td style="padding: 8px 0; color: #111827;"><span style="background-color: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">MANDANT - KEINE ZAHLUNG</span></td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af;">
+        <strong>📎 Nächster Schritt:</strong> Die P-Konto Bescheinigung wurde automatisch generiert und ist im Anhang dieser Email. Bitte prüfen Sie die Angaben und senden Sie die Bescheinigung an den Mandanten.
+      </p>
+    </div>
+  </div>
+
+  <div style="padding: 20px; background-color: #f3f4f6; border-radius: 0 0 8px 8px; text-align: center;">
+    <p style="margin: 0; font-size: 12px; color: #6b7280;">Diese E-Mail wurde automatisch vom P-Konto System generiert.</p>
+    <p style="margin: 8px 0 0 0; font-size: 11px; color: #9ca3af;">© ${new Date().getFullYear()} Rechtsanwaltskanzlei Thomas Scuric</p>
+  </div>
+</div>
+      `,
+      text: `
+NEUE MANDANTEN-ANFRAGE - P-Konto Bescheinigung
+================================================
+
+⚠️ MANDANT: Dies ist ein bestehender Mandant. Keine Zahlung erforderlich.
+
+PERSÖNLICHE DATEN
+-----------------
+Name: ${fullName}
+Geburtsdatum: ${birthdate}
+E-Mail: ${application.personalData.email}
+Adresse: ${application.personalData.street} ${application.personalData.houseNumber}, ${application.personalData.zipCode} ${application.personalData.city}
+
+BANKVERBINDUNG
+--------------
+IBAN: ${application.bankData.iban}
+Kreditinstitut: ${application.bankData.bic}
+
+BERECHNUNGSDATEN
+----------------
+Familienstand: ${application.calculationData.married ? 'Verheiratet' : 'Nicht verheiratet'}
+Anzahl Kinder: ${application.calculationData.childrenCount || 0}
+Gesundheitsschaden: ${application.calculationData.healthCompensation ? application.calculationData.healthCompensation.toFixed(2) + ' EUR' : '0,00 EUR'}
+
+BERECHNETER FREIBETRAG
+----------------------
+${application.calculatedFreibetrag.amount.toFixed(2)} EUR monatlich
+
+ZUSÄTZLICHE INFORMATIONEN
+-------------------------
+Antrags-ID: ${application._id}
+Eingegangen am: ${new Date(application.createdAt).toLocaleString('de-DE')}
+Status: MANDANT - KEINE ZAHLUNG
+
+Die P-Konto Bescheinigung ist im Anhang dieser Email.
+      `,
+      attachments: [
+        {
+          filename: `P-Konto-Bescheinigung-Mandant-${application._id}${pdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
+          path: pdfPath
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log('Mandant internal email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Mandant email sending error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   sendCertificateEmail,
-  sendConfirmationEmail
+  sendConfirmationEmail,
+  sendMandantInternalEmail
 };
