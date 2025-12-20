@@ -1985,43 +1985,48 @@ function restoreFormDataFromLocalStorage() {
     }
 }
 
-// Global State
-window.pkontoFormData = {
-    calculationData: {
-        familienstand: 'ledig',
-        unterhalt: 'nein',
-        married: false,
-        childrenCount: 0,
-        children: [],
-        socialBenefitsCount: 0,
-        healthCompensation: 0
-    },
-    personalData: {
-        salutation: '',
-        firstName: '',
-        lastName: '',
-        street: '',
-        houseNumber: '',
-        zipCode: '',
-        city: '',
-        birthdate: { day: 0, month: 0, year: 0 },
-        email: '',
-        phone: ''
-    },
-    bankData: {
-        iban: '',
-        bic: ''
-    },
-    calculatedFreibetrag: {
-        amount: PKONTO_FORM_CONFIG.baseFreibetrag,
-        details: ''
-    },
-    payment: {
-        method: 'paypal',
-        amount: 19.90,
-        status: 'pending'
-    }
-};
+// Global State - Initialize only if not already set by localStorage restore
+if (!window.pkontoFormData) {
+    window.pkontoFormData = {
+        calculationData: {
+            familienstand: 'ledig',
+            unterhalt: 'nein',
+            married: false,
+            childrenCount: 0,
+            children: [],
+            socialBenefitsCount: 0,
+            healthCompensation: 0
+        },
+        personalData: {
+            salutation: '',
+            firstName: '',
+            lastName: '',
+            street: '',
+            houseNumber: '',
+            zipCode: '',
+            city: '',
+            birthdate: { day: 0, month: 0, year: 0 },
+            email: '',
+            phone: ''
+        },
+        bankData: {
+            iban: '',
+            bic: ''
+        },
+        calculatedFreibetrag: {
+            amount: PKONTO_FORM_CONFIG.baseFreibetrag,
+            details: ''
+        },
+        payment: {
+            method: 'paypal',
+            amount: 19.90,
+            status: 'pending'
+        }
+    };
+    console.log('Initialized pkontoFormData with default values');
+} else {
+    console.log('pkontoFormData already exists (restored from localStorage), skipping initialization');
+}
 
 window.pkontoCurrentStep = 1;
 window.pkontoMaxStep = 1; // Tracks the maximum reached step
