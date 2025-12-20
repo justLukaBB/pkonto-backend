@@ -1830,11 +1830,13 @@ console.log('Form Config:', PKONTO_FORM_CONFIG);
                 // Remove URL parameters and go back to step 4
                 window.history.replaceState({}, document.title, window.location.pathname);
 
-                // Wait for DOM then navigate to step 4
+                // Wait for DOM then navigate to step 4 and restore form data
                 setTimeout(function() {
                     if (typeof goToStep === 'function') {
                         goToStep(4);
                     }
+                    // Restore form data from localStorage after navigating to step 4
+                    setTimeout(restoreFormDataFromLocalStorage, 200);
                 }, 100);
             }
         } catch (error) {
@@ -1845,6 +1847,8 @@ console.log('Form Config:', PKONTO_FORM_CONFIG);
                 if (typeof goToStep === 'function') {
                     goToStep(4);
                 }
+                // Restore form data from localStorage after navigating to step 4
+                setTimeout(restoreFormDataFromLocalStorage, 200);
             }, 100);
         }
 
@@ -1918,6 +1922,55 @@ function showSuccessPage() {
             }
         }, 200);
     }, 100);
+}
+
+// Helper function to restore form data from localStorage
+function restoreFormDataFromLocalStorage() {
+    try {
+        const savedData = localStorage.getItem('pkonto_form_data');
+        const timestamp = localStorage.getItem('pkonto_form_timestamp');
+
+        if (!savedData) {
+            console.log('No saved form data found in localStorage');
+            return;
+        }
+
+        // Check if data is not too old (max 24 hours)
+        const now = Date.now();
+        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+        if (timestamp && (now - parseInt(timestamp)) > maxAge) {
+            console.log('Saved form data is too old, ignoring');
+            localStorage.removeItem('pkonto_form_data');
+            localStorage.removeItem('pkonto_form_timestamp');
+            return;
+        }
+
+        // Parse and restore data
+        const formData = JSON.parse(savedData);
+        console.log('Restoring form data from localStorage:', formData);
+
+        // Restore to global state
+        window.pkontoFormData = formData;
+
+        // Update summary boxes in step 4
+        if (typeof updateSummary === 'function') {
+            updateSummary();
+        }
+
+        // Update Freibetrag display
+        if (typeof updateResultBox === 'function') {
+            updateResultBox();
+        }
+
+        console.log('Form data successfully restored from localStorage');
+
+        // Clean up localStorage after successful restore
+        localStorage.removeItem('pkonto_form_data');
+        localStorage.removeItem('pkonto_form_timestamp');
+
+    } catch (error) {
+        console.error('Error restoring form data from localStorage:', error);
+    }
 }
 
 // Global State
@@ -2881,6 +2934,15 @@ window.submitForm = async function() {
             console.log('Payment ID:', result.data.paymentId);
             console.log('Redirect zu Mollie Checkout:', result.data.checkoutUrl);
 
+            // Save form data to localStorage before redirect (for recovery if payment is canceled)
+            try {
+                localStorage.setItem('pkonto_form_data', JSON.stringify(window.pkontoFormData));
+                localStorage.setItem('pkonto_form_timestamp', Date.now().toString());
+                console.log('Form data saved to localStorage for recovery');
+            } catch (e) {
+                console.error('Failed to save form data to localStorage:', e);
+            }
+
             // Redirect to Mollie Checkout page
             window.location.href = result.data.checkoutUrl;
         } else {
@@ -3449,6 +3511,15 @@ setTimeout(function() {
                 console.log('Application ID:', result.data.applicationId);
                 console.log('Payment ID:', result.data.paymentId);
                 console.log('Redirect zu Mollie Checkout:', result.data.checkoutUrl);
+
+                // Save form data to localStorage before redirect (for recovery if payment is canceled)
+                try {
+                    localStorage.setItem('pkonto_form_data', JSON.stringify(window.pkontoFormData));
+                    localStorage.setItem('pkonto_form_timestamp', Date.now().toString());
+                    console.log('Form data saved to localStorage for recovery');
+                } catch (e) {
+                    console.error('Failed to save form data to localStorage:', e);
+                }
 
                 // Redirect to Mollie Checkout page
                 window.location.href = result.data.checkoutUrl;
