@@ -1952,6 +1952,12 @@ function restoreFormDataFromLocalStorage() {
         // Restore to global state
         window.pkontoFormData = formData;
 
+        // Ensure childrenCount is synchronized with children array length
+        if (formData.calculationData && formData.calculationData.children) {
+            formData.calculationData.childrenCount = formData.calculationData.children.length;
+            console.log('Synchronized childrenCount:', formData.calculationData.childrenCount, 'from children array length');
+        }
+
         // Update summary boxes in step 4
         if (typeof updateSummary === 'function') {
             updateSummary();
@@ -1968,6 +1974,7 @@ function restoreFormDataFromLocalStorage() {
         }
 
         console.log('Form data successfully restored from localStorage');
+        console.log('Restored calculationData:', formData.calculationData);
 
         // Clean up localStorage after successful restore
         localStorage.removeItem('pkonto_form_data');
@@ -2883,7 +2890,16 @@ window.submitForm = async function() {
         window.pkontoFormData.payment.method = 'mandant-code';
         window.pkontoFormData.payment.status = 'completed';
 
+        // Ensure childrenCount is synchronized with children array length before sending
+        if (window.pkontoFormData.calculationData && window.pkontoFormData.calculationData.children) {
+            window.pkontoFormData.calculationData.childrenCount = window.pkontoFormData.calculationData.children.length;
+            console.log('Pre-submit: Synchronized childrenCount to', window.pkontoFormData.calculationData.childrenCount);
+        }
+
         console.log('FormData für Mandant:', window.pkontoFormData);
+        console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
+        console.log('  - children.length:', window.pkontoFormData.calculationData.children?.length);
+        console.log('  - married:', window.pkontoFormData.calculationData.married);
 
         // Send data to backend for email
         const backendUrl = 'https://pkonto-backend-1.onrender.com';
@@ -3445,7 +3461,16 @@ setTimeout(function() {
             window.pkontoFormData.payment.method = 'mandant-code';
             window.pkontoFormData.payment.status = 'completed';
 
+            // Ensure childrenCount is synchronized with children array length before sending
+            if (window.pkontoFormData.calculationData && window.pkontoFormData.calculationData.children) {
+                window.pkontoFormData.calculationData.childrenCount = window.pkontoFormData.calculationData.children.length;
+                console.log('Pre-submit (OVERRIDE): Synchronized childrenCount to', window.pkontoFormData.calculationData.childrenCount);
+            }
+
             console.log('FormData für Mandant (OVERRIDE):', window.pkontoFormData);
+            console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
+            console.log('  - children.length:', window.pkontoFormData.calculationData.children?.length);
+            console.log('  - married:', window.pkontoFormData.calculationData.married);
 
             // Send data to backend for email
             const backendUrl = 'https://pkonto-backend-1.onrender.com';
