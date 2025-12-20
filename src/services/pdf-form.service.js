@@ -119,12 +119,23 @@ const fillPdfForm = async (application) => {
     // SECTION III: Freibetrag Calculation
     // ============================================================
 
+    // DEBUG: Log calculation data to diagnose issue
+    console.log('DEBUG - Calculation Data for Erhöhung fields:');
+    console.log('  married:', calculationData.married);
+    console.log('  childrenCount:', calculationData.childrenCount);
+    console.log('  children.length:', calculationData.children?.length);
+    console.log('  familienstand:', calculationData.familienstand);
+    console.log('  unterhalt:', calculationData.unterhalt);
+
     // First person logic:
     // - If married: spouse is first person (585,23 EUR)
     // - If not married but has children: first child is first person (585,23 EUR)
     const totalChildren = calculationData.childrenCount || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
     const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
+
+    console.log('  totalChildren:', totalChildren);
+    console.log('  hasFirstPerson:', hasFirstPerson);
 
     setTextField('Erhöhun 1. Person', erhöhungErstePerson); // Note: Field name has typo "Erhöhun"
 
@@ -137,8 +148,12 @@ const fillPdfForm = async (application) => {
     let additionalPersons = 0;
     if (calculationData.married) {
       additionalPersons = totalChildren; // All children
+      console.log('  Logic: married=true → additionalPersons = totalChildren =', additionalPersons);
     } else if (totalChildren > 0) {
       additionalPersons = totalChildren - 1; // First child already counted as "erste Person"
+      console.log('  Logic: married=false, totalChildren>0 → additionalPersons = totalChildren-1 =', additionalPersons);
+    } else {
+      console.log('  Logic: no additional persons');
     }
 
     // Calculate amount for additional persons
