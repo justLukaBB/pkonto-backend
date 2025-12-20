@@ -141,11 +141,21 @@ const handleWebhook = async (req, res) => {
   }
 
   try {
-    const paymentId = req.body.id;
+    const id = req.body.id;
 
-    if (!paymentId) {
-      return res.status(400).send('Missing payment ID');
+    if (!id) {
+      return res.status(400).send('Missing ID');
     }
+
+    // Check if this is an Event webhook (event_xxx format)
+    // Mollie sends both Event webhooks and Payment webhooks
+    // We only process Payment webhooks (tr_xxx, ord_xxx format)
+    if (id.startsWith('event_')) {
+      console.log(`Received Mollie Event webhook ${id} - ignoring (we only process Payment webhooks)`);
+      return res.status(200).send('OK');
+    }
+
+    const paymentId = id;
 
     // Get payment details from Mollie
     const molliePayment = await mollieClient.payments.get(paymentId);
