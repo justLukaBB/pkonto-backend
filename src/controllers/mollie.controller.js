@@ -95,7 +95,7 @@ const createPayment = async (req, res) => {
         value: (payment?.amount || 29.00).toFixed(2) // Mollie requires string format like "29.00"
       },
       description: `P-Konto Bescheinigung - Freibetrag: ${calculatedFreibetrag.amount.toFixed(2)} EUR`,
-      redirectUrl: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/?payment=success&application_id=${application._id}`,
+      redirectUrl: `${process.env.FRONTEND_URL || 'https://p-konto-bescheinigung.com'}/?payment=redirect&application_id=${application._id}`,
       webhookUrl: `${process.env.BACKEND_URL || 'https://pkonto-backend-1.onrender.com'}/api/mollie/webhook`,
       metadata: {
         applicationId: application._id.toString(),
