@@ -1947,15 +1947,21 @@ function restoreFormDataFromLocalStorage() {
 
         // Parse and restore data
         const formData = JSON.parse(savedData);
-        console.log('Restoring form data from localStorage:', formData);
+        console.log('📥 Restoring from localStorage - formData:', formData);
+        console.log('  - familienstand:', formData.calculationData?.familienstand);
+        console.log('  - unterhalt:', formData.calculationData?.unterhalt);
+        console.log('  - married:', formData.calculationData?.married);
+        console.log('  - childrenCount:', formData.calculationData?.childrenCount);
+        console.log('  - children.length:', formData.calculationData?.children?.length);
 
         // Restore to global state
         window.pkontoFormData = formData;
+        console.log('✅ Restored to window.pkontoFormData');
 
         // Ensure childrenCount is synchronized with children array length
         if (formData.calculationData && formData.calculationData.children) {
             formData.calculationData.childrenCount = formData.calculationData.children.length;
-            console.log('Synchronized childrenCount:', formData.calculationData.childrenCount, 'from children array length');
+            console.log('🔄 Synchronized childrenCount:', formData.calculationData.childrenCount, 'from children array length');
         }
 
         // Update summary boxes in step 4
@@ -1987,6 +1993,7 @@ function restoreFormDataFromLocalStorage() {
 
 // Global State - Initialize only if not already set by localStorage restore
 if (!window.pkontoFormData) {
+    console.log('⚙️ Initializing pkontoFormData with default values...');
     window.pkontoFormData = {
         calculationData: {
             familienstand: 'ledig',
@@ -2023,9 +2030,15 @@ if (!window.pkontoFormData) {
             status: 'pending'
         }
     };
-    console.log('Initialized pkontoFormData with default values');
+    console.log('✅ Initialized pkontoFormData with defaults');
 } else {
-    console.log('pkontoFormData already exists (restored from localStorage), skipping initialization');
+    console.log('⏭️ pkontoFormData already exists (restored from localStorage), skipping initialization');
+    console.log('  Current values:', {
+        familienstand: window.pkontoFormData.calculationData?.familienstand,
+        unterhalt: window.pkontoFormData.calculationData?.unterhalt,
+        married: window.pkontoFormData.calculationData?.married,
+        childrenCount: window.pkontoFormData.calculationData?.childrenCount
+    });
 }
 
 window.pkontoCurrentStep = 1;
@@ -2993,11 +3006,17 @@ window.submitForm = async function() {
 
             // Save form data to localStorage before redirect (for recovery if payment is canceled)
             try {
+                console.log('💾 Saving to localStorage - pkontoFormData:', window.pkontoFormData);
+                console.log('  - familienstand:', window.pkontoFormData.calculationData.familienstand);
+                console.log('  - unterhalt:', window.pkontoFormData.calculationData.unterhalt);
+                console.log('  - married:', window.pkontoFormData.calculationData.married);
+                console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
+
                 localStorage.setItem('pkonto_form_data', JSON.stringify(window.pkontoFormData));
                 localStorage.setItem('pkonto_form_timestamp', Date.now().toString());
-                console.log('Form data saved to localStorage for recovery');
+                console.log('✅ Form data saved to localStorage successfully');
             } catch (e) {
-                console.error('Failed to save form data to localStorage:', e);
+                console.error('❌ Failed to save form data to localStorage:', e);
             }
 
             // Redirect to Mollie Checkout page
@@ -3564,11 +3583,17 @@ setTimeout(function() {
 
                 // Save form data to localStorage before redirect (for recovery if payment is canceled)
                 try {
+                    console.log('💾 (OVERRIDE) Saving to localStorage - pkontoFormData:', window.pkontoFormData);
+                    console.log('  - familienstand:', window.pkontoFormData.calculationData.familienstand);
+                    console.log('  - unterhalt:', window.pkontoFormData.calculationData.unterhalt);
+                    console.log('  - married:', window.pkontoFormData.calculationData.married);
+                    console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
+
                     localStorage.setItem('pkonto_form_data', JSON.stringify(window.pkontoFormData));
                     localStorage.setItem('pkonto_form_timestamp', Date.now().toString());
-                    console.log('Form data saved to localStorage for recovery');
+                    console.log('✅ Form data saved to localStorage successfully');
                 } catch (e) {
-                    console.error('Failed to save form data to localStorage:', e);
+                    console.error('❌ Failed to save form data to localStorage:', e);
                 }
 
                 // Redirect to Mollie Checkout page
