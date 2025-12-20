@@ -1982,6 +1982,10 @@ function restoreFormDataFromLocalStorage() {
         console.log('Form data successfully restored from localStorage');
         console.log('Restored calculationData:', formData.calculationData);
 
+        // Set flag to skip collectStepData() on next submit
+        window.pkontoDataRestoredFromLocalStorage = true;
+        console.log('🚩 Set flag: pkontoDataRestoredFromLocalStorage = true (will skip collectStepData on submit)');
+
         // Clean up localStorage after successful restore
         localStorage.removeItem('pkonto_form_data');
         localStorage.removeItem('pkonto_form_timestamp');
@@ -2899,7 +2903,13 @@ window.submitForm = async function() {
         loadingOverlay.classList.add('active');
     }
 
-    collectStepData();
+    // Check if data was just restored from localStorage
+    if (window.pkontoDataRestoredFromLocalStorage) {
+        console.log('⏭️ Skipping collectStepData() - data was restored from localStorage');
+        window.pkontoDataRestoredFromLocalStorage = false; // Reset flag
+    } else {
+        collectStepData();
+    }
 
     // If mandant, change email to kanzlei and send to backend without payment
     if (isMandant) {
