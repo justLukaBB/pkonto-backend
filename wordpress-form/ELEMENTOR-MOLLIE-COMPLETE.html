@@ -1962,6 +1962,11 @@ function restoreFormDataFromLocalStorage() {
             updateResultBox();
         }
 
+        // Re-setup payment radio listeners and update UI
+        if (typeof setupPaymentRadioListeners === 'function') {
+            setupPaymentRadioListeners();
+        }
+
         console.log('Form data successfully restored from localStorage');
 
         // Clean up localStorage after successful restore
@@ -2198,29 +2203,8 @@ window.goToStep = function(step) {
         console.log('DEBUG: Step 4 Navigation detected - updating summary');
         updateSummary();
 
-        // Add event listener for payment radio buttons (including mandant)
-        const paymentRadios = document.querySelectorAll('input[name="payment"]');
-        paymentRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                const gebuehrenSection = document.getElementById('gebuehren-section');
-                const mandantCodeSection = document.getElementById('mandant-code-section');
-                const submitButton = document.getElementById('submit-button');
-
-                if (this.id === 'mandant' && this.checked) {
-                    // Hide Gebühren und Kosten, show code input, change button text
-                    if (gebuehrenSection) gebuehrenSection.style.display = 'none';
-                    if (mandantCodeSection) mandantCodeSection.style.display = 'block';
-                    if (submitButton) submitButton.textContent = 'Jetzt anfordern';
-                    console.log('Mandant-Modus aktiviert');
-                } else {
-                    // Show Gebühren und Kosten, hide code input, restore button text
-                    if (gebuehrenSection) gebuehrenSection.style.display = 'block';
-                    if (mandantCodeSection) mandantCodeSection.style.display = 'none';
-                    if (submitButton) submitButton.textContent = 'Jetzt kostenpflichtig beauftragen';
-                    console.log('Normal-Modus aktiviert');
-                }
-            });
-        });
+        // Setup payment radio buttons event listeners
+        setupPaymentRadioListeners();
     }
 
     // Scroll to active step on mobile
@@ -2644,6 +2628,53 @@ function updateResultBox() {
         console.error('❌ FEHLER - Result Box Element mit ID "result-amount" nicht gefunden!');
         console.log('🔍 Alle Elemente mit class "result-amount":', document.querySelectorAll('.result-amount'));
     }
+}
+
+// Update payment UI based on selected payment method
+function updatePaymentUIBasedOnSelection() {
+    const mandantRadio = document.getElementById('mandant');
+    const gebuehrenSection = document.getElementById('gebuehren-section');
+    const mandantCodeSection = document.getElementById('mandant-code-section');
+    const submitButton = document.getElementById('submit-button');
+
+    if (mandantRadio && mandantRadio.checked) {
+        // Hide Gebühren und Kosten, show code input, change button text
+        if (gebuehrenSection) gebuehrenSection.style.display = 'none';
+        if (mandantCodeSection) mandantCodeSection.style.display = 'block';
+        if (submitButton) submitButton.textContent = 'Jetzt anfordern';
+        console.log('Mandant-Modus UI aktualisiert');
+    } else {
+        // Show Gebühren und Kosten, hide code input, restore button text
+        if (gebuehrenSection) gebuehrenSection.style.display = 'block';
+        if (mandantCodeSection) mandantCodeSection.style.display = 'none';
+        if (submitButton) submitButton.textContent = 'Jetzt kostenpflichtig beauftragen';
+        console.log('Normal-Modus UI aktualisiert');
+    }
+}
+
+// Setup payment radio button event listeners
+function setupPaymentRadioListeners() {
+    const paymentRadios = document.querySelectorAll('input[name="payment"]');
+
+    // Remove existing listeners by cloning and replacing elements
+    paymentRadios.forEach(radio => {
+        const newRadio = radio.cloneNode(true);
+        radio.parentNode.replaceChild(newRadio, radio);
+    });
+
+    // Re-query after replacement
+    const newPaymentRadios = document.querySelectorAll('input[name="payment"]');
+
+    newPaymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            updatePaymentUIBasedOnSelection();
+        });
+    });
+
+    // Update UI based on current selection
+    updatePaymentUIBasedOnSelection();
+
+    console.log('Payment radio listeners eingerichtet');
 }
 
 // Update summary
@@ -3290,29 +3321,8 @@ setTimeout(function() {
             console.log('DEBUG (OVERRIDE): Step 4 Navigation detected - updating summary');
             updateSummary();
 
-            // Add event listener for payment radio buttons (including mandant) - OVERRIDE VERSION
-            const paymentRadios = document.querySelectorAll('input[name="payment"]');
-            paymentRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const gebuehrenSection = document.getElementById('gebuehren-section');
-                    const mandantCodeSection = document.getElementById('mandant-code-section');
-                    const submitButton = document.getElementById('submit-button');
-
-                    if (this.id === 'mandant' && this.checked) {
-                        // Hide Gebühren und Kosten, show code input, change button text
-                        if (gebuehrenSection) gebuehrenSection.style.display = 'none';
-                        if (mandantCodeSection) mandantCodeSection.style.display = 'block';
-                        if (submitButton) submitButton.textContent = 'Jetzt anfordern';
-                        console.log('Mandant-Modus aktiviert (OVERRIDE)');
-                    } else {
-                        // Show Gebühren und Kosten, hide code input, restore button text
-                        if (gebuehrenSection) gebuehrenSection.style.display = 'block';
-                        if (mandantCodeSection) mandantCodeSection.style.display = 'none';
-                        if (submitButton) submitButton.textContent = 'Jetzt kostenpflichtig beauftragen';
-                        console.log('Normal-Modus aktiviert (OVERRIDE)');
-                    }
-                });
-            });
+            // Setup payment radio buttons event listeners
+            setupPaymentRadioListeners();
         }
 
         // Scroll to active step on mobile (OVERRIDE VERSION)
