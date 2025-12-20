@@ -2869,22 +2869,27 @@ window.submitForm = async function() {
 
             if (response.ok) {
                 console.log('✓ Mandanten-Daten erfolgreich an Backend gesendet');
-                alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+
+                // Hide loading overlay
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
+
+                // Show success page with proper formatting
+                showSuccessPage();
+
+                // Optional: Show alert after success page is displayed
+                setTimeout(() => {
+                    alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+                }, 500);
             } else {
                 console.error('Backend Error:', response.status);
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
                 alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
             }
         } catch (error) {
             console.error('Fehler beim Senden der Mandanten-Daten:', error);
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
             alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
         }
-
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
-
-        // Show success page
-        document.querySelectorAll('.step-content').forEach(sc => sc.classList.remove('active'));
-        const successStep = document.getElementById('step-success');
-        if (successStep) successStep.style.display = 'block';
 
         return;
     }
@@ -3447,22 +3452,27 @@ setTimeout(function() {
 
                 if (response.ok) {
                     console.log('✓ Mandanten-Daten erfolgreich an Backend gesendet (OVERRIDE)');
-                    alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+
+                    // Hide loading overlay
+                    if (loadingOverlay) loadingOverlay.classList.remove('active');
+
+                    // Show success page with proper formatting
+                    showSuccessPage();
+
+                    // Optional: Show alert after success page is displayed
+                    setTimeout(() => {
+                        alert('Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Die Kanzlei wird sich bei Ihnen melden.');
+                    }, 500);
                 } else {
                     console.error('Backend Error (OVERRIDE):', response.status);
+                    if (loadingOverlay) loadingOverlay.classList.remove('active');
                     alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
                 }
             } catch (error) {
                 console.error('Fehler beim Senden der Mandanten-Daten (OVERRIDE):', error);
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
                 alert('Es gab ein Problem beim Übermitteln Ihrer Anfrage. Bitte versuchen Sie es erneut.');
             }
-
-            if (loadingOverlay) loadingOverlay.classList.remove('active');
-
-            // Show success page
-            document.querySelectorAll('.step-content').forEach(sc => sc.classList.remove('active'));
-            const successStep = document.getElementById('step-success');
-            if (successStep) successStep.style.display = 'block';
 
             return;
         }
