@@ -2877,6 +2877,11 @@ window.submitForm = async function() {
     console.log('===============================================');
     console.log('submitForm() AUFGERUFEN! - MOLLIE PAYMENT');
     console.log('===============================================');
+    console.log('🔍 DEBUG - Flag status:', window.pkontoDataRestoredFromLocalStorage);
+    console.log('🔍 DEBUG - Current formData.married:', window.pkontoFormData?.calculationData?.married);
+    console.log('🔍 DEBUG - Current formData.familienstand:', window.pkontoFormData?.calculationData?.familienstand);
+    console.log('🔍 DEBUG - Current formData.childrenCount:', window.pkontoFormData?.calculationData?.childrenCount);
+    console.log('🔍 DEBUG - Current formData.children.length:', window.pkontoFormData?.calculationData?.children?.length);
 
     if (!validateCurrentStep()) {
         console.warn('WARNUNG - Validierung fehlgeschlagen');
@@ -2906,10 +2911,18 @@ window.submitForm = async function() {
     // Check if data was just restored from localStorage
     if (window.pkontoDataRestoredFromLocalStorage) {
         console.log('⏭️ Skipping collectStepData() - data was restored from localStorage');
+        console.log('🔍 BEFORE Reset - Flag:', window.pkontoDataRestoredFromLocalStorage);
         window.pkontoDataRestoredFromLocalStorage = false; // Reset flag
+        console.log('🔍 AFTER Reset - Flag:', window.pkontoDataRestoredFromLocalStorage);
     } else {
+        console.log('📝 Calling collectStepData() - NO localStorage restore detected');
         collectStepData();
     }
+
+    console.log('🔍 DEBUG AFTER collectStepData() check:');
+    console.log('  - married:', window.pkontoFormData?.calculationData?.married);
+    console.log('  - familienstand:', window.pkontoFormData?.calculationData?.familienstand);
+    console.log('  - childrenCount:', window.pkontoFormData?.calculationData?.childrenCount);
 
     // If mandant, change email to kanzlei and send to backend without payment
     if (isMandant) {
