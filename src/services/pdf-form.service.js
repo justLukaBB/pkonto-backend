@@ -130,11 +130,13 @@ const fillPdfForm = async (application) => {
     // First person logic:
     // - If married: spouse is first person (585,23 EUR)
     // - If not married but has children: first child is first person (585,23 EUR)
-    const totalChildren = calculationData.childrenCount || 0;
+    // IMPORTANT: Use children.length (children with Kindergeld), NOT childrenCount (total children)
+    const totalChildren = calculationData.children?.length || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
     const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
 
-    console.log('  totalChildren:', totalChildren);
+    console.log('  totalChildren (with Kindergeld):', totalChildren);
+    console.log('  childrenCount (total):', calculationData.childrenCount);
     console.log('  hasFirstPerson:', hasFirstPerson);
 
     setTextField('Erhöhun 1. Person', erhöhungErstePerson); // Note: Field name has typo "Erhöhun"

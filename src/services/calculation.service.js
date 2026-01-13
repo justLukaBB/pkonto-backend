@@ -2,18 +2,18 @@
  * P-Konto Freibetrag Calculation Service
  * Based on § 850k ZPO (Zivilprozessordnung)
  *
- * Current values (2024/2025):
- * - Base amount (Grundfreibetrag): €1,410.00
- * - Per spouse: €531.00
- * - Per child: €531.00
+ * Current values (2025):
+ * - Base amount (Grundfreibetrag): €1,560.00
+ * - First person (spouse or first child): €585.23
+ * - Additional persons (further children): €326.04 per person
  * - Additional social benefits and health compensation are added directly
  */
 
 const FREIBETRAG_CONSTANTS = {
-  BASE_AMOUNT: 1410.00,          // Grundfreibetrag
-  SPOUSE_AMOUNT: 531.00,         // Ehepartner/Lebenspartner
-  CHILD_AMOUNT: 531.00,          // Pro Kind
-  SOCIAL_PERSON_AMOUNT: 531.00   // Pro weitere Person mit Sozialleistungen
+  BASE_AMOUNT: 1560.00,          // Grundfreibetrag (2025)
+  FIRST_PERSON: 585.23,          // Erste Person (Ehepartner oder 1. Kind)
+  ADDITIONAL_PERSON: 326.04,     // Weitere Personen (weitere Kinder)
+  SOCIAL_PERSON_AMOUNT: 326.04   // Pro weitere Person mit Sozialleistungen
 };
 
 /**
@@ -30,41 +30,44 @@ function calculateFreibetrag(data) {
     amount: FREIBETRAG_CONSTANTS.BASE_AMOUNT
   });
 
+  // IMPORTANT: Use children.length (children with Kindergeld), NOT childrenCount (total children)
+  const childrenWithKindergeld = data.children?.length || 0;
+
   // First person logic:
   // - If married: spouse is first person (585,23 EUR)
   // - If not married but has children: first child is first person (585,23 EUR)
   if (data.married) {
-    total += FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT;
+    total += FREIBETRAG_CONSTANTS.FIRST_PERSON;
     breakdown.push({
       label: 'Verheiratet/Lebenspartnerschaft',
-      amount: FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT
+      amount: FREIBETRAG_CONSTANTS.FIRST_PERSON
     });
-  } else if (data.childrenCount > 0) {
+  } else if (childrenWithKindergeld > 0) {
     // First child counts as "erste Person"
-    total += FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT;
+    total += FREIBETRAG_CONSTANTS.FIRST_PERSON;
     breakdown.push({
       label: '1. Kind (erste Person)',
-      amount: FREIBETRAG_CONSTANTS.SPOUSE_AMOUNT
+      amount: FREIBETRAG_CONSTANTS.FIRST_PERSON
     });
   }
 
   // Additional persons (weitere Personen):
-  // - If married: ALL children are additional persons
+  // - If married: ALL children with Kindergeld are additional persons
   // - If not married: remaining children (total - 1) are additional persons
   let additionalChildren = 0;
   if (data.married) {
-    additionalChildren = data.childrenCount; // All children
-  } else if (data.childrenCount > 0) {
-    additionalChildren = data.childrenCount - 1; // First child already counted
+    additionalChildren = childrenWithKindergeld; // All children with Kindergeld
+  } else if (childrenWithKindergeld > 0) {
+    additionalChildren = childrenWithKindergeld - 1; // First child already counted
   }
 
   if (additionalChildren > 0) {
-    const childrenTotal = additionalChildren * FREIBETRAG_CONSTANTS.CHILD_AMOUNT;
+    const childrenTotal = additionalChildren * FREIBETRAG_CONSTANTS.ADDITIONAL_PERSON;
     total += childrenTotal;
     breakdown.push({
-      label: additionalChildren === data.childrenCount
-        ? `${additionalChildren} Kind${additionalChildren > 1 ? 'er' : ''}`
-        : `${additionalChildren} weitere${additionalChildren > 1 ? 's' : ''} Kind${additionalChildren > 1 ? 'er' : ''}`,
+      label: additionalChildren === childrenWithKindergeld
+        ? `${additionalChildren} Kind${additionalChildren > 1 ? 'er' : ''} mit Kindergeld`
+        : `${additionalChildren} weitere${additionalChildren > 1 ? 's' : ''} Kind${additionalChildren > 1 ? 'er' : ''} mit Kindergeld`,
       amount: childrenTotal
     });
   }
@@ -105,8 +108,9 @@ function generateFreibetragDetails(data, total) {
     details += 'Dies beinhaltet den erhöhten Freibetrag für Verheiratete/Lebenspartner. ';
   }
 
-  if (data.childrenCount > 0) {
-    details += `Zusätzlich wurde der Freibetrag für ${data.childrenCount} Kind${data.childrenCount > 1 ? 'er' : ''} berücksichtigt. `;
+  const childrenWithKindergeld = data.children?.length || 0;
+  if (childrenWithKindergeld > 0) {
+    details += `Zusätzlich wurde der Freibetrag für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} mit Kindergeld berücksichtigt. `;
   }
 
   if (data.socialBenefitsCount > 0) {
@@ -144,8 +148,9 @@ function validateCalculationData(data) {
     errors.push('Anzahl der Kinder muss eine positive Zahl sein');
   }
 
-  if (data.childrenCount > 0 && (!data.children || data.children.length !== data.childrenCount)) {
-    errors.push('Geburtsdaten aller Kinder sind erforderlich');
+  const childrenWithKindergeld = data.children?.length || 0;
+  if (childrenWithKindergeld > 0 && !data.children) {
+    errors.push('Geburtsdaten aller Kinder mit Kindergeld sind erforderlich');
   }
 
   if (typeof data.socialBenefitsCount !== 'number' || data.socialBenefitsCount < 0) {

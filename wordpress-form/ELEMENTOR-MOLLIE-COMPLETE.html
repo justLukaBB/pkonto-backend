@@ -2612,10 +2612,10 @@ function calculateFreibetrag() {
         console.log('  + Verheiratet/Lebenspartnerschaft: 585.23 EUR');
     }
 
-    if (data.calculationData.childrenCount > 0) {
-        const childBonus = data.calculationData.childrenCount * 326.04;
+    if (data.calculationData.children.length > 0) {
+        const childBonus = data.calculationData.children.length * 326.04;
         amount += childBonus;
-        console.log('  +', data.calculationData.childrenCount, 'Kind(er):', childBonus.toFixed(2), 'EUR');
+        console.log('  +', data.calculationData.children.length, 'Kind(er) mit Kindergeld:', childBonus.toFixed(2), 'EUR');
     }
 
     if (data.calculationData.healthCompensation > 0) {
@@ -2729,7 +2729,7 @@ function updateSummary() {
         `;
 
         // Kinder mit Kindergeld
-        if (data.calculationData.childrenCount > 0) {
+        if (data.calculationData.children.length > 0) {
             data.calculationData.children.forEach((child, index) => {
                 const birthdate = `${child.birthdate.day}.${child.birthdate.month}.${child.birthdate.year}`;
                 html += `

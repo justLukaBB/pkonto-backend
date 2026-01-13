@@ -110,10 +110,14 @@ const createPayment = async (req, res) => {
 
     console.log(`Created Mollie payment ${molliePayment.id} for application ${application._id}`);
 
+    const checkoutUrl = molliePayment.getCheckoutUrl();
+    console.log(`Mollie checkout URL: ${checkoutUrl}`);
+    console.log(`Mollie payment object:`, JSON.stringify(molliePayment, null, 2));
+
     res.json({
       success: true,
       data: {
-        checkoutUrl: molliePayment.getCheckoutUrl(),
+        checkoutUrl: checkoutUrl,
         paymentId: molliePayment.id,
         applicationId: application._id
       }
