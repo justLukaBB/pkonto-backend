@@ -129,14 +129,15 @@ const fillPdfForm = async (application) => {
 
     // First person logic:
     // - If married: spouse is first person (585,23 EUR)
-    // - If not married but has children: first child is first person (585,23 EUR)
-    // IMPORTANT: Use children.length (children with Kindergeld), NOT childrenCount (total children)
-    const totalChildren = calculationData.children?.length || 0;
+    // - If NOT married but has children: first child is first person (585,23 EUR)
+    // Use childrenCount (total children) for the 326.04 EUR calculation
+    const totalChildren = calculationData.childrenCount || 0;
+    const childrenWithKindergeld = calculationData.children?.length || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
     const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
 
-    console.log('  totalChildren (with Kindergeld):', totalChildren);
-    console.log('  childrenCount (total):', calculationData.childrenCount);
+    console.log('  totalChildren (for 326.04 calculation):', totalChildren);
+    console.log('  childrenWithKindergeld (for 259 Kindergeld):', childrenWithKindergeld);
     console.log('  hasFirstPerson:', hasFirstPerson);
 
     setTextField('Erhöhun 1. Person', erhöhungErstePerson); // Note: Field name has typo "Erhöhun"
@@ -172,7 +173,7 @@ const fillPdfForm = async (application) => {
     }
 
     // ============================================================
-    // SECTION IV: Kindergeld (NEW LOGIC!)
+    // SECTION IV: Kindergeld (259 EUR per child - 2025)
     // ============================================================
     let totalKindergeld = 0;
     let kindergeldCount = 0;
@@ -185,10 +186,10 @@ const fillPdfForm = async (application) => {
 
           if (child.receivesKindergeld) {
             kindergeldCount++;
-            totalKindergeld += 255;
+            totalKindergeld += 259;
 
-            // Set 255 EUR for this child
-            setTextField(`Kindergeld 255 ${childNum}. Person`, '255,00');
+            // Set 259 EUR for this child
+            setTextField(`Kindergeld 255 ${childNum}. Person`, '259,00');
 
             // Set Monat and Jahr
             const month = String(child.birthdate.month).padStart(2, '0');
@@ -209,11 +210,11 @@ const fillPdfForm = async (application) => {
 
         if (additionalKindergeldCount > 0) {
           kindergeldCount += additionalKindergeldCount;
-          totalKindergeld += additionalKindergeldCount * 255;
+          totalKindergeld += additionalKindergeldCount * 259;
 
           // Set anzahl and betrag for additional children
           setTextField('Kindergeld weitere Kinder Anzahl', String(additionalKindergeldCount));
-          setTextField('Kindergeld weitere Kinder Anzahl (Betrag)', formatCurrency(additionalKindergeldCount * 255));
+          setTextField('Kindergeld weitere Kinder Anzahl (Betrag)', formatCurrency(additionalKindergeldCount * 259));
 
           // Check the "weitere Person" checkbox
           setCheckBox('Kontrollkästchen Kindergeld mehrere Person / weitere Person', true);

@@ -6,6 +6,7 @@
  * - Base amount (Grundfreibetrag): €1,560.00
  * - First person (spouse or first child): €585.23
  * - Additional persons (further children): €326.04 per person
+ * - Kindergeld bonus: €259.00 per child receiving Kindergeld
  * - Additional social benefits and health compensation are added directly
  */
 
@@ -13,6 +14,7 @@ const FREIBETRAG_CONSTANTS = {
   BASE_AMOUNT: 1560.00,          // Grundfreibetrag (2025)
   FIRST_PERSON: 585.23,          // Erste Person (Ehepartner oder 1. Kind)
   ADDITIONAL_PERSON: 326.04,     // Weitere Personen (weitere Kinder)
+  KINDERGELD_BONUS: 259.00,      // Kindergeld pro Kind (2025)
   SOCIAL_PERSON_AMOUNT: 326.04   // Pro weitere Person mit Sozialleistungen
 };
 
@@ -30,19 +32,20 @@ function calculateFreibetrag(data) {
     amount: FREIBETRAG_CONSTANTS.BASE_AMOUNT
   });
 
-  // IMPORTANT: Use children.length (children with Kindergeld), NOT childrenCount (total children)
+  // Use childrenCount for 326.04 EUR calculation (total children, not just those with Kindergeld)
+  const totalChildren = data.childrenCount || 0;
   const childrenWithKindergeld = data.children?.length || 0;
 
   // First person logic:
-  // - If married: spouse is first person (585,23 EUR)
-  // - If not married but has children: first child is first person (585,23 EUR)
+  // - If married: spouse is first person (585.23 EUR)
+  // - If NOT married but has children: first child is first person (585.23 EUR)
   if (data.married) {
     total += FREIBETRAG_CONSTANTS.FIRST_PERSON;
     breakdown.push({
-      label: 'Verheiratet/Lebenspartnerschaft',
+      label: 'Verheiratet/Lebenspartnerschaft (erste Person)',
       amount: FREIBETRAG_CONSTANTS.FIRST_PERSON
     });
-  } else if (childrenWithKindergeld > 0) {
+  } else if (totalChildren > 0) {
     // First child counts as "erste Person"
     total += FREIBETRAG_CONSTANTS.FIRST_PERSON;
     breakdown.push({
@@ -51,24 +54,32 @@ function calculateFreibetrag(data) {
     });
   }
 
-  // Additional persons (weitere Personen):
-  // - If married: ALL children with Kindergeld are additional persons
-  // - If not married: remaining children (total - 1) are additional persons
+  // Additional persons (weitere Personen): 326.04 EUR each
+  // - If married: ALL children are additional persons
+  // - If NOT married: remaining children (total - 1) are additional persons
   let additionalChildren = 0;
   if (data.married) {
-    additionalChildren = childrenWithKindergeld; // All children with Kindergeld
-  } else if (childrenWithKindergeld > 0) {
-    additionalChildren = childrenWithKindergeld - 1; // First child already counted
+    additionalChildren = totalChildren; // All children
+  } else if (totalChildren > 0) {
+    additionalChildren = totalChildren - 1; // First child already counted
   }
 
   if (additionalChildren > 0) {
     const childrenTotal = additionalChildren * FREIBETRAG_CONSTANTS.ADDITIONAL_PERSON;
     total += childrenTotal;
     breakdown.push({
-      label: additionalChildren === childrenWithKindergeld
-        ? `${additionalChildren} Kind${additionalChildren > 1 ? 'er' : ''} mit Kindergeld`
-        : `${additionalChildren} weitere${additionalChildren > 1 ? 's' : ''} Kind${additionalChildren > 1 ? 'er' : ''} mit Kindergeld`,
+      label: `${additionalChildren} weitere${additionalChildren > 1 ? '' : 's'} Kind${additionalChildren > 1 ? 'er' : ''}`,
       amount: childrenTotal
+    });
+  }
+
+  // Kindergeld bonus (SEPARATE): 259 EUR per child receiving Kindergeld
+  if (childrenWithKindergeld > 0) {
+    const kindergeldTotal = childrenWithKindergeld * FREIBETRAG_CONSTANTS.KINDERGELD_BONUS;
+    total += kindergeldTotal;
+    breakdown.push({
+      label: `Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''}`,
+      amount: kindergeldTotal
     });
   }
 
@@ -108,9 +119,15 @@ function generateFreibetragDetails(data, total) {
     details += 'Dies beinhaltet den erhöhten Freibetrag für Verheiratete/Lebenspartner. ';
   }
 
+  const totalChildren = data.childrenCount || 0;
   const childrenWithKindergeld = data.children?.length || 0;
+
+  if (totalChildren > 0) {
+    details += `Der Freibetrag für ${totalChildren} Kind${totalChildren > 1 ? 'er' : ''} wurde berücksichtigt. `;
+  }
+
   if (childrenWithKindergeld > 0) {
-    details += `Zusätzlich wurde der Freibetrag für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} mit Kindergeld berücksichtigt. `;
+    details += `Zusätzlich wurde das Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} hinzugefügt. `;
   }
 
   if (data.socialBenefitsCount > 0) {

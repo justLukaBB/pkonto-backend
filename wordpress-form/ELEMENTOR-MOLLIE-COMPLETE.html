@@ -2607,15 +2607,43 @@ function calculateFreibetrag() {
 
     console.log('  Basis:', amount.toFixed(2), 'EUR');
 
+    // First person logic:
+    // - If married: spouse is first person (585.23 EUR)
+    // - If NOT married but has children: first child is first person (585.23 EUR)
+    const totalChildren = data.calculationData.childrenCount || 0;
+
     if (data.calculationData.married) {
         amount += 585.23;
-        console.log('  + Verheiratet/Lebenspartnerschaft: 585.23 EUR');
+        console.log('  + Verheiratet/Lebenspartnerschaft (erste Person): 585.23 EUR');
+    } else if (totalChildren > 0) {
+        amount += 585.23;
+        console.log('  + 1. Kind (erste Person): 585.23 EUR');
     }
 
-    if (data.calculationData.children.length > 0) {
-        const childBonus = data.calculationData.children.length * 326.04;
+    // Additional persons (weitere Personen): 326.04 EUR each
+    // - If married: ALL children are additional persons
+    // - If NOT married: remaining children (total - 1) are additional persons
+    let additionalChildren = 0;
+    if (data.calculationData.married) {
+        additionalChildren = totalChildren; // All children
+    } else if (totalChildren > 0) {
+        additionalChildren = totalChildren - 1; // First child already counted
+    }
+
+    if (additionalChildren > 0) {
+        const childBonus = additionalChildren * 326.04;
         amount += childBonus;
-        console.log('  +', data.calculationData.children.length, 'Kind(er) mit Kindergeld:', childBonus.toFixed(2), 'EUR');
+        console.log('  +', additionalChildren, 'weitere Kind(er): ' + childBonus.toFixed(2) + ' EUR (je 326.04 EUR)');
+    }
+
+    // Kindergeld bonus (SEPARATE): 259 EUR per child receiving Kindergeld
+    const kindergeldCountSelect = document.getElementById('kindergeld-count');
+    const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
+
+    if (kindergeldCount > 0) {
+        const kindergeldBonus = kindergeldCount * 259;
+        amount += kindergeldBonus;
+        console.log('  +', kindergeldCount, 'Kind(er) mit Kindergeld: ' + kindergeldBonus.toFixed(2) + ' EUR (je 259.00 EUR)');
     }
 
     if (data.calculationData.healthCompensation > 0) {
@@ -2728,8 +2756,8 @@ function updateSummary() {
             </div>
         `;
 
-        // Kinder mit Kindergeld
-        if (data.calculationData.children.length > 0) {
+        // Kinder mit Kindergeld (show children array entries)
+        if (data.calculationData.children && data.calculationData.children.length > 0) {
             data.calculationData.children.forEach((child, index) => {
                 const birthdate = `${child.birthdate.day}.${child.birthdate.month}.${child.birthdate.year}`;
                 html += `
