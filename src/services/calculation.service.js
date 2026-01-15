@@ -73,12 +73,13 @@ function calculateFreibetrag(data) {
     });
   }
 
-  // Kindergeld bonus (SEPARATE): 259 EUR per child receiving Kindergeld
+  // NOTE: Kindergeld (259 EUR) is NOT included in the total
+  // The PDF form fields handle Kindergeld separately and add it automatically
+  // We only add it to breakdown for informational purposes
   if (childrenWithKindergeld > 0) {
     const kindergeldTotal = childrenWithKindergeld * FREIBETRAG_CONSTANTS.KINDERGELD_BONUS;
-    total += kindergeldTotal;
     breakdown.push({
-      label: `Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''}`,
+      label: `Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} (separat in PDF)`,
       amount: kindergeldTotal
     });
   }
@@ -127,7 +128,7 @@ function generateFreibetragDetails(data, total) {
   }
 
   if (childrenWithKindergeld > 0) {
-    details += `Zusätzlich wurde das Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} hinzugefügt. `;
+    details += `Das Kindergeld für ${childrenWithKindergeld} Kind${childrenWithKindergeld > 1 ? 'er' : ''} (${formatCurrency(childrenWithKindergeld * FREIBETRAG_CONSTANTS.KINDERGELD_BONUS)}) wird in der Bescheinigung separat aufgeführt. `;
   }
 
   if (data.socialBenefitsCount > 0) {
