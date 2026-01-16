@@ -134,7 +134,7 @@ const fillPdfForm = async (application) => {
     const totalChildren = calculationData.childrenCount || 0;
     const childrenWithKindergeld = calculationData.children?.length || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
-    const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
+    const erhöhungErstePerson = hasFirstPerson ? '585,23' : '0,00';
 
     console.log('  totalChildren (for 326.04 calculation):', totalChildren);
     console.log('  childrenWithKindergeld (for 259 Kindergeld):', childrenWithKindergeld);
@@ -160,23 +160,32 @@ const fillPdfForm = async (application) => {
     }
 
     // Calculate amount for additional persons
-    const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
+    const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '0,00';
     setTextField('Erhöhun 2. Person', erhöhungWeiterePers); // Note: Field name has typo
 
-    // Checkboxes for number of additional persons
-    if (additionalPersons > 0) {
-      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person', true);
-      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 1. Person', additionalPersons >= 1);
-      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 2. Person', additionalPersons >= 2);
-      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 3. Person', additionalPersons >= 3);
-      setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 4. Person', additionalPersons >= 4);
-    }
+    // Checkboxes for number of additional persons - ALWAYS set them (true or false)
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person', additionalPersons > 0);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 1. Person', additionalPersons >= 1);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 2. Person', additionalPersons >= 2);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 3. Person', additionalPersons >= 3);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 4. Person', additionalPersons >= 4);
 
     // ============================================================
     // SECTION IV: Kindergeld (259 EUR per child - 2025)
     // ============================================================
     let totalKindergeld = 0;
     let kindergeldCount = 0;
+
+    // Clear all Kindergeld fields first (for first 5 children)
+    for (let i = 1; i <= 5; i++) {
+      setTextField(`Kindergeld 255 ${i}. Person`, '');
+      setTextField(`${i}. Kind Monat`, '');
+      setTextField(`${i}. Kind Jahr`, '');
+      setCheckBox(`Kontrollkästchen Kindergeld mehrere Person / ${i}. Person`, false);
+    }
+    setTextField('Kindergeld weitere Kinder Anzahl', '');
+    setTextField('Kindergeld weitere Kinder Anzahl (Betrag)', '');
+    setCheckBox('Kontrollkästchen Kindergeld mehrere Person / weitere Person', false);
 
     if (calculationData.children && calculationData.children.length > 0) {
       // Process first 5 children
@@ -220,14 +229,12 @@ const fillPdfForm = async (application) => {
           setCheckBox('Kontrollkästchen Kindergeld mehrere Person / weitere Person', true);
         }
       }
-
-      // Set total Kindergeld
-      if (kindergeldCount > 0) {
-        setTextField('Kindergeld zusammen', formatCurrency(totalKindergeld));
-        setCheckBox('Kontrollkästchen Kindergeld mehrere Person', true);
-        setCheckBox('Kontrollkästchen Kindergeld mehrere Person / 1. Person', true);
-      }
     }
+
+    // ALWAYS set total Kindergeld and checkboxes (even if 0)
+    setTextField('Kindergeld zusammen', kindergeldCount > 0 ? formatCurrency(totalKindergeld) : '0,00');
+    setCheckBox('Kontrollkästchen Kindergeld mehrere Person', kindergeldCount > 0);
+    setCheckBox('Kontrollkästchen Kindergeld mehrere Person / 1. Person', kindergeldCount > 0);
 
     // ============================================================
     // TOTAL FREIBETRAG
