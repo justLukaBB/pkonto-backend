@@ -1958,11 +1958,12 @@ function restoreFormDataFromLocalStorage() {
         window.pkontoFormData = formData;
         console.log('✅ Restored to window.pkontoFormData');
 
-        // Ensure childrenCount is synchronized with children array length
-        if (formData.calculationData && formData.calculationData.children) {
-            formData.calculationData.childrenCount = formData.calculationData.children.length;
-            console.log('🔄 Synchronized childrenCount:', formData.calculationData.childrenCount, 'from children array length');
-        }
+        // NOTE: Do NOT synchronize childrenCount with children.length!
+        // childrenCount = TOTAL children (for 326.04 EUR calculation)
+        // children.length = children with Kindergeld (for 259 EUR calculation)
+        // They are intentionally different values!
+        console.log('📊 Restored childrenCount (total):', formData.calculationData?.childrenCount);
+        console.log('📊 Restored children.length (with Kindergeld):', formData.calculationData?.children?.length);
 
         // Update summary boxes in step 4
         if (typeof updateSummary === 'function') {
@@ -2973,15 +2974,14 @@ window.submitForm = async function() {
         window.pkontoFormData.payment.method = 'mandant-code';
         window.pkontoFormData.payment.status = 'completed';
 
-        // Ensure childrenCount is synchronized with children array length before sending
-        if (window.pkontoFormData.calculationData && window.pkontoFormData.calculationData.children) {
-            window.pkontoFormData.calculationData.childrenCount = window.pkontoFormData.calculationData.children.length;
-            console.log('Pre-submit: Synchronized childrenCount to', window.pkontoFormData.calculationData.childrenCount);
-        }
+        // NOTE: Do NOT synchronize childrenCount with children.length!
+        // childrenCount = TOTAL children (for 326.04 EUR calculation)
+        // children.length = children with Kindergeld (for 259 EUR calculation)
+        // They are intentionally different values!
 
         console.log('FormData für Mandant:', window.pkontoFormData);
-        console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
-        console.log('  - children.length:', window.pkontoFormData.calculationData.children?.length);
+        console.log('  - childrenCount (total):', window.pkontoFormData.calculationData.childrenCount);
+        console.log('  - children.length (with Kindergeld):', window.pkontoFormData.calculationData.children?.length);
         console.log('  - married:', window.pkontoFormData.calculationData.married);
 
         // Send data to backend for email
@@ -3569,15 +3569,14 @@ setTimeout(function() {
             window.pkontoFormData.payment.method = 'mandant-code';
             window.pkontoFormData.payment.status = 'completed';
 
-            // Ensure childrenCount is synchronized with children array length before sending
-            if (window.pkontoFormData.calculationData && window.pkontoFormData.calculationData.children) {
-                window.pkontoFormData.calculationData.childrenCount = window.pkontoFormData.calculationData.children.length;
-                console.log('Pre-submit (OVERRIDE): Synchronized childrenCount to', window.pkontoFormData.calculationData.childrenCount);
-            }
+            // NOTE: Do NOT synchronize childrenCount with children.length!
+            // childrenCount = TOTAL children (for 326.04 EUR calculation)
+            // children.length = children with Kindergeld (for 259 EUR calculation)
+            // They are intentionally different values!
 
             console.log('FormData für Mandant (OVERRIDE):', window.pkontoFormData);
-            console.log('  - childrenCount:', window.pkontoFormData.calculationData.childrenCount);
-            console.log('  - children.length:', window.pkontoFormData.calculationData.children?.length);
+            console.log('  - childrenCount (total):', window.pkontoFormData.calculationData.childrenCount);
+            console.log('  - children.length (with Kindergeld):', window.pkontoFormData.calculationData.children?.length);
             console.log('  - married:', window.pkontoFormData.calculationData.married);
 
             // Send data to backend for email
