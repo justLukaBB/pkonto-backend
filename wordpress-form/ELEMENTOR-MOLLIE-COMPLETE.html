@@ -2637,14 +2637,15 @@ function calculateFreibetrag() {
         console.log('  +', additionalChildren, 'weitere Kind(er): ' + childBonus.toFixed(2) + ' EUR (je 326.04 EUR)');
     }
 
-    // NOTE: Kindergeld (259 EUR) is NOT included in calculatedFreibetrag.amount
-    // The PDF form fields handle Kindergeld separately and add it to the total automatically
+    // Kindergeld bonus: 259 EUR per child receiving Kindergeld
+    // This IS included in calculatedFreibetrag.amount
     const kindergeldCountSelect = document.getElementById('kindergeld-count');
     const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
 
     if (kindergeldCount > 0) {
         const kindergeldBonus = kindergeldCount * 259;
-        console.log('  INFO:', kindergeldCount, 'Kind(er) mit Kindergeld: ' + kindergeldBonus.toFixed(2) + ' EUR (je 259.00 EUR) - wird in PDF separat hinzugefügt');
+        amount += kindergeldBonus;
+        console.log('  +', kindergeldCount, 'Kind(er) mit Kindergeld: ' + kindergeldBonus.toFixed(2) + ' EUR (je 259.00 EUR)');
     }
 
     if (data.calculationData.healthCompensation > 0) {
@@ -2655,11 +2656,7 @@ function calculateFreibetrag() {
     data.calculatedFreibetrag.amount = amount;
 
     console.log('  =========================================');
-    console.log('  FREIBETRAG (ohne Kindergeld):', amount.toFixed(2), 'EUR');
-    if (kindergeldCount > 0) {
-        console.log('  + Kindergeld wird in PDF hinzugefügt:', (kindergeldCount * 259).toFixed(2), 'EUR');
-        console.log('  TOTAL MIT KINDERGELD:', (amount + kindergeldCount * 259).toFixed(2), 'EUR');
-    }
+    console.log('  GESAMT FREIBETRAG:', amount.toFixed(2), 'EUR');
     console.log('  =========================================');
 
     updateResultBox();
@@ -2678,17 +2675,8 @@ function updateResultBox() {
     const resultAmount = document.getElementById('result-amount');
     console.log('🔍 resultAmount element:', resultAmount);
     if (resultAmount) {
-        let amount = window.pkontoFormData.calculatedFreibetrag.amount;
-
-        // Add Kindergeld to displayed amount (but not to stored amount)
-        const kindergeldCountSelect = document.getElementById('kindergeld-count');
-        const kindergeldCount = kindergeldCountSelect ? parseInt(kindergeldCountSelect.value) || 0 : 0;
-        if (kindergeldCount > 0) {
-            const kindergeldBonus = kindergeldCount * 259;
-            amount += kindergeldBonus;
-            console.log('🔍 Amount with Kindergeld:', amount, '(+', kindergeldBonus, 'EUR Kindergeld)');
-        }
-
+        // calculatedFreibetrag.amount already includes Kindergeld
+        const amount = window.pkontoFormData.calculatedFreibetrag.amount;
         console.log('🔍 Total amount to display:', amount);
         const formatted = amount.toFixed(2).replace('.', ',') + ' EUR';
         console.log('🔍 Formatted amount:', formatted);
