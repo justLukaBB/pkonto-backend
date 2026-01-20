@@ -4,7 +4,8 @@ const {
   submitApplication,
   getApplication,
   updatePaymentStatus,
-  getAllApplications
+  getAllApplications,
+  resendCertificateEmail
 } = require('../controllers/application.controller');
 const { validateApplication } = require('../middleware/validation');
 
@@ -31,5 +32,11 @@ router.get('/:id', getApplication);
  * Update payment status (for Stripe webhooks)
  */
 router.put('/:id/payment', updatePaymentStatus);
+
+/**
+ * POST /api/applications/:id/resend-email
+ * Resend certificate email for a paid application
+ */
+router.post('/:id/resend-email', resendCertificateEmail);
 
 module.exports = router;

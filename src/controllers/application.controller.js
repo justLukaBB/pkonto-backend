@@ -1,5 +1,6 @@
 const Application = require('../models/Application.model');
 const { calculateFreibetrag } = require('../services/calculation.service');
+const { processApplication } = require('../services/processing.service');
 
 /**
  * Submit a new P-Konto application
@@ -179,9 +180,54 @@ const getAllApplications = async (req, res) => {
   }
 };
 
+/**
+ * Resend certificate email for an application
+ * POST /api/applications/:id/resend-email
+ */
+const resendCertificateEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const application = await Application.findById(id);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: 'Antrag nicht gefunden'
+      });
+    }
+
+    // Check if application is paid
+    if (application.payment.status !== 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'Antrag wurde noch nicht bezahlt'
+      });
+    }
+
+    console.log(`Resending certificate email for application ${id}`);
+
+    // Process application (regenerate PDF and send email)
+    await processApplication(id);
+
+    res.json({
+      success: true,
+      message: 'E-Mail wurde erfolgreich erneut versendet'
+    });
+  } catch (error) {
+    console.error('Resend email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Fehler beim erneuten Versenden der E-Mail',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   submitApplication,
   getApplication,
   updatePaymentStatus,
-  getAllApplications
+  getAllApplications,
+  resendCertificateEmail
 };
