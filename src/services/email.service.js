@@ -37,7 +37,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: application.personalData.email,
-      bcc: 'info@ra-scuric.de',
+      bcc: ['info@ra-scuric.de', 'justlukax@gmail.com'],
       subject: 'Ihre P-Konto Bescheinigung nach § 850k ZPO',
       html: `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
