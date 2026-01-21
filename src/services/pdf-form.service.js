@@ -148,6 +148,7 @@ const fillPdfForm = async (application) => {
     // Additional persons (weitere Personen):
     // - If married: ALL children are additional persons
     // - If not married: remaining children (total - 1) are additional persons
+    // - MAXIMUM: 4 children for 326.04 EUR calculation
     let additionalPersons = 0;
     if (calculationData.married) {
       additionalPersons = totalChildren; // All children
@@ -159,16 +160,21 @@ const fillPdfForm = async (application) => {
       console.log('  Logic: no additional persons');
     }
 
-    // Calculate amount for additional persons
-    const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '0,00';
+    // Cap at maximum 4 children for 326.04 EUR calculation
+    const additionalPersonsForCalculation = Math.min(additionalPersons, 4);
+    console.log('  additionalPersonsForCalculation (capped at 4):', additionalPersonsForCalculation);
+
+    // Calculate amount for additional persons (max 4)
+    const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 326.04) : '0,00';
     setTextField('Erhöhun 2. Person', erhöhungWeiterePers); // Note: Field name has typo
 
     // Checkboxes for number of additional persons - ALWAYS set them (true or false)
-    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person', additionalPersons > 0);
-    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 1. Person', additionalPersons >= 1);
-    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 2. Person', additionalPersons >= 2);
-    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 3. Person', additionalPersons >= 3);
-    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 4. Person', additionalPersons >= 4);
+    // Based on capped value (max 4)
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person', additionalPersonsForCalculation > 0);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 1. Person', additionalPersonsForCalculation >= 1);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 2. Person', additionalPersonsForCalculation >= 2);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 3. Person', additionalPersonsForCalculation >= 3);
+    setCheckBox('Kontrollkästchen Erhöhungsbetrag mehrere Person / 4. Person', additionalPersonsForCalculation >= 4);
 
     // ============================================================
     // SECTION IV: Kindergeld (259 EUR per child - 2025)

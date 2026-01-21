@@ -57,6 +57,7 @@ function calculateFreibetrag(data) {
   // Additional persons (weitere Personen): 326.04 EUR each
   // - If married: ALL children are additional persons
   // - If NOT married: remaining children (total - 1) are additional persons
+  // - MAXIMUM: 4 children for 326.04 EUR calculation
   let additionalChildren = 0;
   if (data.married) {
     additionalChildren = totalChildren; // All children
@@ -64,11 +65,14 @@ function calculateFreibetrag(data) {
     additionalChildren = totalChildren - 1; // First child already counted
   }
 
-  if (additionalChildren > 0) {
-    const childrenTotal = additionalChildren * FREIBETRAG_CONSTANTS.ADDITIONAL_PERSON;
+  // Cap at maximum 4 children for 326.04 EUR calculation
+  const additionalChildrenForCalculation = Math.min(additionalChildren, 4);
+
+  if (additionalChildrenForCalculation > 0) {
+    const childrenTotal = additionalChildrenForCalculation * FREIBETRAG_CONSTANTS.ADDITIONAL_PERSON;
     total += childrenTotal;
     breakdown.push({
-      label: `${additionalChildren} weitere${additionalChildren > 1 ? '' : 's'} Kind${additionalChildren > 1 ? 'er' : ''}`,
+      label: `${additionalChildrenForCalculation} weitere${additionalChildrenForCalculation > 1 ? '' : 's'} Kind${additionalChildrenForCalculation > 1 ? 'er' : ''} (max. 4)`,
       amount: childrenTotal
     });
   }

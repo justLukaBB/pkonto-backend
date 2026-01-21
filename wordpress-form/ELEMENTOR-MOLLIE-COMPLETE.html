@@ -2624,6 +2624,7 @@ function calculateFreibetrag() {
     // Additional persons (weitere Personen): 326.04 EUR each
     // - If married: ALL children are additional persons
     // - If NOT married: remaining children (total - 1) are additional persons
+    // - MAXIMUM: 4 children for 326.04 EUR calculation
     let additionalChildren = 0;
     if (data.calculationData.married) {
         additionalChildren = totalChildren; // All children
@@ -2631,10 +2632,13 @@ function calculateFreibetrag() {
         additionalChildren = totalChildren - 1; // First child already counted
     }
 
-    if (additionalChildren > 0) {
-        const childBonus = additionalChildren * 326.04;
+    // Cap at maximum 4 children for 326.04 EUR calculation
+    const additionalChildrenForCalculation = Math.min(additionalChildren, 4);
+
+    if (additionalChildrenForCalculation > 0) {
+        const childBonus = additionalChildrenForCalculation * 326.04;
         amount += childBonus;
-        console.log('  +', additionalChildren, 'weitere Kind(er): ' + childBonus.toFixed(2) + ' EUR (je 326.04 EUR)');
+        console.log('  +', additionalChildrenForCalculation, 'weitere Kind(er) (max. 4): ' + childBonus.toFixed(2) + ' EUR (je 326.04 EUR)');
     }
 
     // Kindergeld bonus: 259 EUR per child receiving Kindergeld

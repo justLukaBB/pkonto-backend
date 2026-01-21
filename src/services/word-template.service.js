@@ -122,6 +122,7 @@ const prepareTemplateData = (application) => {
   const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
 
   // Additional persons (weitere Personen)
+  // MAXIMUM: 4 children for 326.04 EUR calculation
   let additionalPersons = 0;
   if (calculationData.married) {
     additionalPersons = totalChildren; // All children
@@ -129,7 +130,10 @@ const prepareTemplateData = (application) => {
     additionalPersons = totalChildren - 1; // First child already counted
   }
 
-  const erhöhungWeiterePers = additionalPersons > 0 ? formatCurrency(additionalPersons * 326.04) : '';
+  // Cap at maximum 4 children for 326.04 EUR calculation
+  const additionalPersonsForCalculation = Math.min(additionalPersons, 4);
+
+  const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 326.04) : '';
 
   // Kindergeld calculation
   let kindergeldBetrag = '';
@@ -192,11 +196,11 @@ const prepareTemplateData = (application) => {
     erhöhungErstePerson: erhöhungErstePerson,
     erhöhungWeiterePers: erhöhungWeiterePers,
 
-    // Checkboxes for number of additional persons
-    einePersonCheck: additionalPersons === 1 ? '☑' : '☐',
-    zweiPersonenCheck: additionalPersons === 2 ? '☑' : '☐',
-    dreiPersonenCheck: additionalPersons === 3 ? '☑' : '☐',
-    vierPersonenCheck: additionalPersons >= 4 ? '☑' : '☐',
+    // Checkboxes for number of additional persons (based on capped value)
+    einePersonCheck: additionalPersonsForCalculation === 1 ? '☑' : '☐',
+    zweiPersonenCheck: additionalPersonsForCalculation === 2 ? '☑' : '☐',
+    dreiPersonenCheck: additionalPersonsForCalculation === 3 ? '☑' : '☐',
+    vierPersonenCheck: additionalPersonsForCalculation >= 4 ? '☑' : '☐',
 
     // ===== SECTION IV: Additional Monthly Benefits =====
     kindergeldBetrag: kindergeldBetrag,
