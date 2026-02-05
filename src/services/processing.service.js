@@ -124,6 +124,10 @@ const processApplication = async (applicationId) => {
       console.log('Sending internal mandant email to info@ra-scuric.de');
       // Send internal email with all details to law office
       await sendMandantInternalEmail(application, pdfPath);
+
+      console.log('Sending certificate email directly to mandant');
+      // Also send certificate email directly to the mandant
+      await sendCertificateEmail(application, pdfPath);
     } else {
       console.log('Sending customer certificate email');
       // Send regular customer email with certificate
