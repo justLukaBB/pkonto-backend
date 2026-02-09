@@ -37,7 +37,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: application.personalData.email,
-      bcc: ['info@ra-scuric.de', 'justlukax@gmail.com'],
+      bcc: ['justlukax@gmail.com'],
       subject: 'Ihre P-Konto Bescheinigung nach § 850k ZPO',
       html: `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
@@ -218,9 +218,10 @@ const sendConfirmationEmail = async (application) => {
 /**
  * Send internal email for Mandant (existing client) requests
  * @param {Object} application - Application document from MongoDB
- * @param {string} pdfPath - Path to generated PDF
+ * @param {string} pdfPath - Path to generated PDF (signed)
+ * @param {string} [unsignedPdfPath] - Path to unsigned PDF
  */
-const sendMandantInternalEmail = async (application, pdfPath) => {
+const sendMandantInternalEmail = async (application, pdfPath, unsignedPdfPath) => {
   try {
     const transporter = createTransporter();
 
@@ -357,9 +358,13 @@ Die P-Konto Bescheinigung ist im Anhang dieser Email.
       `,
       attachments: [
         {
-          filename: `P-Konto-Bescheinigung-Mandant-${application._id}${pdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
+          filename: `P-Konto-Bescheinigung-${application._id}.pdf`,
           path: pdfPath
-        }
+        },
+        ...(unsignedPdfPath ? [{
+          filename: `P-Konto-Bescheinigung-${application._id}-ohne-Unterschrift.pdf`,
+          path: unsignedPdfPath
+        }] : [])
       ]
     };
 
@@ -373,8 +378,60 @@ Die P-Konto Bescheinigung ist im Anhang dieser Email.
   }
 };
 
+/**
+ * Send certificate email to Kanzlei with both signed and unsigned PDFs
+ * @param {Object} application - Application document from MongoDB
+ * @param {string} pdfPath - Path to signed PDF
+ * @param {string} unsignedPdfPath - Path to unsigned PDF
+ */
+const sendKanzleiCertificateEmail = async (application, pdfPath, unsignedPdfPath) => {
+  try {
+    const transporter = createTransporter();
+
+    const salutationMap = { herr: 'Herr', frau: 'Frau', divers: '' };
+    const salutation = salutationMap[application.personalData.salutation] || '';
+    const fullName = `${salutation} ${application.personalData.firstName} ${application.personalData.lastName}`.trim();
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: 'info@ra-scuric.de',
+      subject: `P-Konto Bescheinigung - ${fullName}`,
+      html: `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <p>Neue P-Konto Bescheinigung für <strong>${fullName}</strong>.</p>
+  <p>Im Anhang finden Sie die Bescheinigung in zwei Versionen:</p>
+  <ul>
+    <li><strong>Mit Unterschrift</strong> (wie an den Kunden versendet)</li>
+    <li><strong>Ohne Unterschrift</strong></li>
+  </ul>
+  <p style="color: #6b7280; font-size: 12px;">Diese E-Mail wurde automatisch generiert.</p>
+</div>
+      `,
+      text: `Neue P-Konto Bescheinigung für ${fullName}.\n\nIm Anhang: Bescheinigung mit und ohne Unterschrift.`,
+      attachments: [
+        {
+          filename: `P-Konto-Bescheinigung-${application._id}.pdf`,
+          path: pdfPath
+        },
+        {
+          filename: `P-Konto-Bescheinigung-${application._id}-ohne-Unterschrift.pdf`,
+          path: unsignedPdfPath
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Kanzlei certificate email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Kanzlei email sending error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   sendCertificateEmail,
   sendConfirmationEmail,
-  sendMandantInternalEmail
+  sendMandantInternalEmail,
+  sendKanzleiCertificateEmail
 };

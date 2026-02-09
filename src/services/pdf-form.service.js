@@ -8,19 +8,21 @@ const { PDFDocument } = require('pdf-lib');
  * @param {Object} application - Application document from MongoDB
  * @returns {string} - Path to generated filled PDF file
  */
-const fillPdfForm = async (application) => {
+const fillPdfForm = async (application, { unsigned = false } = {}) => {
   try {
-    const templatePath = path.join(__dirname, '../templates/certificate-template-form.pdf');
+    const templateFile = unsigned ? 'certificate-template-form-unsigned.pdf' : 'certificate-template-form.pdf';
+    const templatePath = path.join(__dirname, '../templates/' + templateFile);
 
     // Use /tmp for Vercel serverless, local uploads otherwise
     const isVercel = process.env.VERCEL === '1';
     const outputDir = isVercel ? '/tmp' : path.join(__dirname, '../../uploads');
-    const outputPath = path.join(outputDir, `certificate-${application._id}.pdf`);
+    const suffix = unsigned ? '-unsigned' : '';
+    const outputPath = path.join(outputDir, `certificate-${application._id}${suffix}.pdf`);
 
     // Ensure output directory exists
     await fs.mkdir(outputDir, { recursive: true });
 
-    console.log('Loading NEW PDF form template...');
+    console.log(`Loading PDF form template (${unsigned ? 'unsigned' : 'signed'})...`);
 
     // Load PDF template
     const existingPdfBytes = await fs.readFile(templatePath);

@@ -96,7 +96,8 @@ const generateCertificate = async (application, options = {}) => {
     const {
       method = 'pdf-form', // Default back to PDF form
       convertToPdf: shouldConvertToPdf = true,
-      keepDocx = false
+      keepDocx = false,
+      generateUnsigned = false
     } = options;
 
     // ============================================================
@@ -108,6 +109,15 @@ const generateCertificate = async (application, options = {}) => {
       const pdfPath = await fillPdfForm(application);
 
       console.log('Certificate generated (PDF):', pdfPath);
+
+      // Also generate unsigned version for Kanzlei
+      if (generateUnsigned) {
+        console.log('Generating unsigned certificate for Kanzlei...');
+        const unsignedPdfPath = await fillPdfForm(application, { unsigned: true });
+        console.log('Unsigned certificate generated:', unsignedPdfPath);
+        return { pdfPath, unsignedPdfPath };
+      }
+
       return pdfPath;
     }
 

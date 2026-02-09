@@ -1,6 +1,6 @@
 const Application = require('../models/Application.model');
 const { generateCertificate } = require('./pdf.service');
-const { sendCertificateEmail, sendMandantInternalEmail } = require('./email.service');
+const { sendCertificateEmail, sendMandantInternalEmail, sendKanzleiCertificateEmail } = require('./email.service');
 
 /**
  * Send order confirmation to Make.com webhook for Slack notification
@@ -105,8 +105,10 @@ const processApplication = async (applicationId) => {
 
     console.log(`Processing application ${applicationId}...`);
 
-    // Generate PDF certificate
-    const pdfPath = await generateCertificate(application);
+    // Generate PDF certificate (signed + unsigned for Kanzlei)
+    const result = await generateCertificate(application, { generateUnsigned: true });
+    const pdfPath = result.pdfPath;
+    const unsignedPdfPath = result.unsignedPdfPath;
 
     // Update application with PDF path
     application.certificate.pdfPath = pdfPath;
@@ -121,17 +123,21 @@ const processApplication = async (applicationId) => {
     const isMandant = application.payment.method === 'mandant-code';
 
     if (isMandant) {
-      console.log('Sending internal mandant email to info@ra-scuric.de');
-      // Send internal email with all details to law office
-      await sendMandantInternalEmail(application, pdfPath);
+      console.log('Sending internal mandant email to info@ra-scuric.de (with signed + unsigned PDF)');
+      // Send internal email with all details to law office (both PDFs)
+      await sendMandantInternalEmail(application, pdfPath, unsignedPdfPath);
 
       console.log('Sending certificate email directly to mandant');
-      // Also send certificate email directly to the mandant
+      // Also send certificate email directly to the mandant (signed only)
       await sendCertificateEmail(application, pdfPath);
     } else {
       console.log('Sending customer certificate email');
-      // Send regular customer email with certificate
+      // Send regular customer email with certificate (signed only)
       await sendCertificateEmail(application, pdfPath);
+
+      console.log('Sending Kanzlei email with signed + unsigned PDF');
+      // Send separate email to Kanzlei with both PDFs
+      await sendKanzleiCertificateEmail(application, pdfPath, unsignedPdfPath);
     }
 
     // Update application status
