@@ -40,7 +40,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
       bcc: ['justlukax@gmail.com'],
       subject: 'Ihre P-Konto Bescheinigung nach § 850k ZPO',
       html: `
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+<div dir="ltr" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; direction: ltr; text-align: left;">
   <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
     <img src="https://www.anwalt-privatinsolvenz-online.de/wp-content/uploads/2015/08/Logo-T-Scuric.png" alt="Scuric Logo" style="height: 40px; display: block;">
   </div>
@@ -253,7 +253,7 @@ const sendMandantInternalEmail = async (application, pdfPath, unsignedPdfPath) =
       to: 'info@ra-scuric.de',
       subject: `MANDANT - P-Konto Bescheinigung Anfrage - ${fullName}`,
       html: `
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #ffffff;">
+<div dir="ltr" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #ffffff; direction: ltr; text-align: left;">
   <div style="padding: 20px; background-color: #961919; color: white; border-radius: 8px 8px 0 0;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 600;">🔔 Neue Mandanten-Anfrage</h1>
     <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">P-Konto Bescheinigung für bestehenden Mandanten</p>
@@ -398,7 +398,7 @@ const sendKanzleiCertificateEmail = async (application, pdfPath, unsignedPdfPath
       to: 'info@ra-scuric.de',
       subject: `P-Konto Bescheinigung - ${fullName}`,
       html: `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+<div dir="ltr" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; direction: ltr; text-align: left;">
   <p>Neue P-Konto Bescheinigung für <strong>${fullName}</strong>.</p>
   <p>Im Anhang finden Sie die Bescheinigung in zwei Versionen:</p>
   <ul>
