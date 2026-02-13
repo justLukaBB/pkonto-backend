@@ -123,21 +123,53 @@ const processApplication = async (applicationId) => {
     const isMandant = application.payment.method === 'mandant-code';
 
     if (isMandant) {
-      console.log('Sending internal mandant email to info@ra-scuric.de (with signed + unsigned PDF)');
-      // Send internal email with all details to law office (both PDFs)
-      await sendMandantInternalEmail(application, pdfPath, unsignedPdfPath);
+      // Send both emails independently - one failure should not block the other
+      let kanzleiEmailSent = false;
+      let mandantEmailSent = false;
 
-      console.log('Sending certificate email directly to mandant');
-      // Also send certificate email directly to the mandant (signed only)
-      await sendCertificateEmail(application, pdfPath);
+      try {
+        console.log('Sending internal mandant email to info@ra-scuric.de (with signed + unsigned PDF)');
+        await sendMandantInternalEmail(application, pdfPath, unsignedPdfPath);
+        kanzleiEmailSent = true;
+      } catch (emailError) {
+        console.error('Kanzlei email failed, continuing with mandant email:', emailError.message);
+      }
+
+      try {
+        console.log('Sending certificate email directly to mandant');
+        await sendCertificateEmail(application, pdfPath);
+        mandantEmailSent = true;
+      } catch (emailError) {
+        console.error('Mandant email failed:', emailError.message);
+      }
+
+      if (!kanzleiEmailSent && !mandantEmailSent) {
+        throw new Error('Both emails failed to send');
+      }
     } else {
-      console.log('Sending customer certificate email');
-      // Send regular customer email with certificate (signed only)
-      await sendCertificateEmail(application, pdfPath);
+      // Send both emails independently - one failure should not block the other
+      let customerEmailSent = false;
+      let kanzleiEmailSent = false;
 
-      console.log('Sending Kanzlei email with signed + unsigned PDF');
-      // Send separate email to Kanzlei with both PDFs
-      await sendKanzleiCertificateEmail(application, pdfPath, unsignedPdfPath);
+      try {
+        console.log('Sending customer certificate email');
+        await sendCertificateEmail(application, pdfPath);
+        customerEmailSent = true;
+      } catch (emailError) {
+        console.error('Customer email failed, continuing with Kanzlei email:', emailError.message);
+      }
+
+      try {
+        console.log('Sending Kanzlei email with signed + unsigned PDF');
+        await sendKanzleiCertificateEmail(application, pdfPath, unsignedPdfPath);
+        kanzleiEmailSent = true;
+      } catch (emailError) {
+        console.error('Kanzlei email failed:', emailError.message);
+      }
+
+      if (!customerEmailSent && !kanzleiEmailSent) {
+        throw new Error('Both emails failed to send');
+      }
     }
 
     // Update application status
