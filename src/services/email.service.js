@@ -138,12 +138,13 @@ ${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME}
       ]
     };
 
+    console.log('Sending certificate email to:', application.personalData.email);
     const info = await transporter.sendMail(mailOptions);
 
-    console.log('Email sent:', info.messageId);
+    console.log('Email sent to', application.personalData.email, ':', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('Email sending error to', application.personalData.email, ':', error);
     throw error;
   }
 };
