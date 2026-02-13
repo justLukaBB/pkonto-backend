@@ -2959,10 +2959,9 @@ window.submitForm = async function() {
     console.log('  - familienstand:', window.pkontoFormData?.calculationData?.familienstand);
     console.log('  - childrenCount:', window.pkontoFormData?.calculationData?.childrenCount);
 
-    // If mandant, change email to kanzlei and send to backend without payment
+    // If mandant, send to backend without payment (keep original email for direct delivery)
     if (isMandant) {
-        console.log('Mandanten-Modus: Email wird an Kanzlei gesendet');
-        window.pkontoFormData.personalData.email = 'info@ra-scuric.de';
+        console.log('Mandanten-Modus: Email bleibt', window.pkontoFormData.personalData.email);
         window.pkontoFormData.payment.method = 'mandant-code';
         window.pkontoFormData.payment.status = 'completed';
 
@@ -3554,10 +3553,9 @@ setTimeout(function() {
         console.log('  - familienstand:', window.pkontoFormData?.calculationData?.familienstand);
         console.log('  - childrenCount:', window.pkontoFormData?.calculationData?.childrenCount);
 
-        // If mandant, change email to kanzlei and send to backend without payment
+        // If mandant, send to backend without payment (keep original email for direct delivery)
         if (isMandant) {
-            console.log('Mandanten-Modus (OVERRIDE): Email wird an Kanzlei gesendet');
-            window.pkontoFormData.personalData.email = 'info@ra-scuric.de';
+            console.log('Mandanten-Modus (OVERRIDE): Email bleibt', window.pkontoFormData.personalData.email);
             window.pkontoFormData.payment.method = 'mandant-code';
             window.pkontoFormData.payment.status = 'completed';
 
