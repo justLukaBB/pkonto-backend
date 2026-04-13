@@ -120,14 +120,13 @@ const processApplication = async (applicationId) => {
     // Check if this is a Mandant request - send different email
     const isMandant = application.payment.method === 'mandant-code';
 
+    // Always send certificate to customer
+    console.log('Sending customer certificate email');
+    await sendCertificateEmail(application, pdfPath);
+
     if (isMandant) {
       console.log('Sending internal mandant email to info@ra-scuric.de');
-      // Send internal email with all details to law office
       await sendMandantInternalEmail(application, pdfPath);
-    } else {
-      console.log('Sending customer certificate email');
-      // Send regular customer email with certificate
-      await sendCertificateEmail(application, pdfPath);
     }
 
     // Update application status
