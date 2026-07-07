@@ -11,9 +11,9 @@
  */
 
 const FREIBETRAG_CONSTANTS = {
-  BASE_AMOUNT: 1560.00,          // Grundfreibetrag (2025)
-  FIRST_PERSON: 585.23,          // Erste Person (Ehepartner oder 1. Kind)
-  ADDITIONAL_PERSON: 326.04,     // Weitere Personen (weitere Kinder)
+  BASE_AMOUNT: 1590.00,          // Grundfreibetrag (2026)
+  FIRST_PERSON: 597.42,          // Erste Person (Ehepartner oder 1. Kind)
+  ADDITIONAL_PERSON: 332.83,     // Weitere Personen (weitere Kinder)
   KINDERGELD_BONUS: 259.00,      // Kindergeld pro Kind (2025)
   SOCIAL_PERSON_AMOUNT: 326.04   // Pro weitere Person mit Sozialleistungen
 };
