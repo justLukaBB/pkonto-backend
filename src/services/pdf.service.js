@@ -91,7 +91,7 @@ const convertToPdf = async (docxPath) => {
  * @param {boolean} options.keepDocx - Whether to keep DOCX file after conversion (default: false, only for word-template)
  * @returns {string} - Path to generated document (PDF or DOCX)
  */
-const generateCertificate = async (application, options = {}) => {
+const generateCertificate = async (application, options = {}, certificate = true) => {
   try {
     const {
       method = 'pdf-form', // Default back to PDF form
@@ -105,7 +105,7 @@ const generateCertificate = async (application, options = {}) => {
     if (method === 'pdf-form') {
       console.log('Generating certificate using PDF form template...');
 
-      const pdfPath = await fillPdfForm(application);
+      const pdfPath = await fillPdfForm(application, certificate);
 
       console.log('Certificate generated (PDF):', pdfPath);
       return pdfPath;

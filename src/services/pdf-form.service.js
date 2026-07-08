@@ -8,9 +8,13 @@ const { PDFDocument } = require('pdf-lib');
  * @param {Object} application - Application document from MongoDB
  * @returns {string} - Path to generated filled PDF file
  */
-const fillPdfForm = async (application) => {
+const fillPdfForm = async (application, certificate = true) => {
   try {
-    const templatePath = path.join(__dirname, '../templates/certificate-template-form.pdf');
+    let templatePath = path.join(__dirname, '../templates/certificate-template-form-new.pdf');
+
+    if(!certificate) {
+      templatePath = path.join(__dirname, '../templates/nocertificate-template-form.pdf');
+    }
 
     // Use /tmp for Vercel serverless, local uploads otherwise
     const isVercel = process.env.VERCEL === '1';

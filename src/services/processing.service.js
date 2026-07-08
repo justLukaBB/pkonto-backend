@@ -1,6 +1,6 @@
 const Application = require('../models/Application.model');
 const { generateCertificate } = require('./pdf.service');
-const { sendCertificateEmail, sendMandantInternalEmail } = require('./email.service');
+const { sendCertificateEmail, sendMandantInternalEmail, sendWithoutCertificateEmail } = require('./email.service');
 
 /**
  * Send order confirmation to Make.com webhook for Slack notification
@@ -107,6 +107,7 @@ const processApplication = async (applicationId) => {
 
     // Generate PDF certificate
     const pdfPath = await generateCertificate(application);
+    const pdfPathWithoutCertificate = await generateCertificate(application, {}, false);
 
     // Update application with PDF path
     application.certificate.pdfPath = pdfPath;
@@ -123,6 +124,7 @@ const processApplication = async (applicationId) => {
     // Always send certificate to customer
     console.log('Sending customer certificate email');
     await sendCertificateEmail(application, pdfPath);
+    await sendWithoutCertificateEmail(application, pdfPathWithoutCertificate);
 
     if (isMandant) {
       console.log('Sending internal mandant email to info@ra-scuric.de');
