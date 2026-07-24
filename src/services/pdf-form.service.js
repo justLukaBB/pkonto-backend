@@ -138,9 +138,9 @@ const fillPdfForm = async (application, certificate = true) => {
     const totalChildren = calculationData.childrenCount || 0;
     const childrenWithKindergeld = calculationData.children?.length || 0;
     const hasFirstPerson = calculationData.married || totalChildren > 0;
-    const erhöhungErstePerson = hasFirstPerson ? '585,23' : '0,00';
+    const erhöhungErstePerson = hasFirstPerson ? '597,42' : '0,00';
 
-    console.log('  totalChildren (for 326.04 calculation):', totalChildren);
+    console.log('  totalChildren (for 332,83 calculation):', totalChildren);
     console.log('  childrenWithKindergeld (for 259 Kindergeld):', childrenWithKindergeld);
     console.log('  hasFirstPerson:', hasFirstPerson);
 
@@ -169,7 +169,7 @@ const fillPdfForm = async (application, certificate = true) => {
     console.log('  additionalPersonsForCalculation (capped at 4):', additionalPersonsForCalculation);
 
     // Calculate amount for additional persons (max 4)
-    const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 326.04) : '0,00';
+    const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 332.83) : '0,00';
     setTextField('Erhöhun 2. Person', erhöhungWeiterePers); // Note: Field name has typo
 
     // Checkboxes for number of additional persons - ALWAYS set them (true or false)

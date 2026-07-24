@@ -15,7 +15,7 @@ const FREIBETRAG_CONSTANTS = {
   FIRST_PERSON: 597.42,          // Erste Person (Ehepartner oder 1. Kind)
   ADDITIONAL_PERSON: 332.83,     // Weitere Personen (weitere Kinder)
   KINDERGELD_BONUS: 259.00,      // Kindergeld pro Kind (2025)
-  SOCIAL_PERSON_AMOUNT: 326.04   // Pro weitere Person mit Sozialleistungen
+  SOCIAL_PERSON_AMOUNT: 332.83    // Pro weitere Person mit Sozialleistungen
 };
 
 /**

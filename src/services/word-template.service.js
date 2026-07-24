@@ -119,7 +119,7 @@ const prepareTemplateData = (application) => {
   const hasFirstPerson = calculationData.married || totalChildren > 0;
 
   // First person logic (spouse or first child)
-  const erhöhungErstePerson = hasFirstPerson ? '585,23' : '';
+  const erhöhungErstePerson = hasFirstPerson ? '597,42' : '';
 
   // Additional persons (weitere Personen)
   // MAXIMUM: 4 children for 326.04 EUR calculation
@@ -133,7 +133,7 @@ const prepareTemplateData = (application) => {
   // Cap at maximum 4 children for 326.04 EUR calculation
   const additionalPersonsForCalculation = Math.min(additionalPersons, 4);
 
-  const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 326.04) : '';
+  const erhöhungWeiterePers = additionalPersonsForCalculation > 0 ? formatCurrency(additionalPersonsForCalculation * 332.83) : '';
 
   // Kindergeld calculation
   let kindergeldBetrag = '';

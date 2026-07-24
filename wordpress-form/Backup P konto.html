@@ -2364,12 +2364,12 @@ function calculateFreibetrag() {
     console.log('  Basis:', amount.toFixed(2), 'EUR');
 
     if (data.calculationData.married) {
-        amount += 585.23;
-        console.log('  + Verheiratet/Lebenspartnerschaft: 585.23 EUR');
+        amount += 597.42;
+        console.log('  + Verheiratet/Lebenspartnerschaft: 597.42 EUR');
     }
 
     if (data.calculationData.childrenCount > 0) {
-        const childBonus = data.calculationData.childrenCount * 326.04;
+        const childBonus = data.calculationData.childrenCount * 332.83;
         amount += childBonus;
         console.log('  +', data.calculationData.childrenCount, 'Kind(er):', childBonus.toFixed(2), 'EUR');
     }
