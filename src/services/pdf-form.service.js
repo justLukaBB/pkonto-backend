@@ -19,7 +19,12 @@ const fillPdfForm = async (application, certificate = true) => {
     // Use /tmp for Vercel serverless, local uploads otherwise
     const isVercel = process.env.VERCEL === '1';
     const outputDir = isVercel ? '/tmp' : path.join(__dirname, '../../uploads');
-    const outputPath = path.join(outputDir, `certificate-${application._id}.pdf`);
+
+    let outputPath = path.join(outputDir, `certificate-${application._id}.pdf`);
+
+    if(!certificate) {
+      outputPath = path.join(outputDir, `without-certificate-${application._id}.pdf`);
+    }
 
     // Ensure output directory exists
     await fs.mkdir(outputDir, { recursive: true });
