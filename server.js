@@ -29,7 +29,7 @@ app.use('/api/woocommerce', require('./src/routes/woocommerce.routes'));
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'P-Konto Backend is running' });
+  res.json({ status: 'ok', message: 'P-Konto Backend is running good' });
 });
 
 // Error handling middleware
