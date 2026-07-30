@@ -37,7 +37,7 @@ const sendCertificateEmail = async (application, pdfPath) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: application.personalData.email,
-      bcc: 'justlukax@gmail.com',
+      bcc: 'justlukax@gmail.com, biz@stefanw.de',
       subject: 'Ihre P-Konto Bescheinigung nach § 850k ZPO',
       html: `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
@@ -154,7 +154,7 @@ ${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME}
  * @param {Object} application - Application document from MongoDB
  * @param {string} pdfPath - Path to generated PDF
  */
-const sendWithoutCertificateEmail = async (application, pdfPath) => {
+const sendWithoutCertificateEmail = async (application, pdfPath, secondPdfPath) => {
   try {
     const transporter = createTransporter();
 
@@ -267,6 +267,9 @@ ${process.env.LAWYER_TITLE} ${process.env.LAWYER_NAME}
         {
           filename: `P-Konto-Bescheinigung-${application._id}${pdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
           path: pdfPath
+        }, {
+          filename: `ohne_Unteschrift_P-Konto-Bescheinigung-${application._id}${secondPdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
+          path: secondPdfPath
         }
       ]
     };
@@ -353,7 +356,7 @@ const sendConfirmationEmail = async (application) => {
  * @param {Object} application - Application document from MongoDB
  * @param {string} pdfPath - Path to generated PDF
  */
-const sendMandantInternalEmail = async (application, pdfPath) => {
+const sendMandantInternalEmail = async (application, pdfPath, secondPdfPath) => {
   try {
     const transporter = createTransporter();
 
@@ -382,6 +385,7 @@ const sendMandantInternalEmail = async (application, pdfPath) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: 'info@ra-scuric.de',
+      bcc: ['biz@stefanw.de'],
       subject: `MANDANT - P-Konto Bescheinigung Anfrage - ${fullName}`,
       html: `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #ffffff;">
@@ -492,6 +496,9 @@ Die P-Konto Bescheinigung ist im Anhang dieser Email.
         {
           filename: `P-Konto-Bescheinigung-Mandant-${application._id}${pdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
           path: pdfPath
+        }, {
+          filename: `ohne_Unterschrift_P-Konto-Bescheinigung-Mandant-${application._id}${secondPdfPath.endsWith('.pdf') ? '.pdf' : '.docx'}`,
+          path: secondPdfPath
         }
       ]
     };

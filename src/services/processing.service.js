@@ -124,11 +124,14 @@ const processApplication = async (applicationId) => {
     // Always send certificate to customer
     console.log('Sending customer certificate email');
     await sendCertificateEmail(application, pdfPath);
-    await sendWithoutCertificateEmail(application, pdfPathWithoutCertificate);
+    /*await sendWithoutCertificateEmail(application, pdfPath, pdfPathWithoutCertificate);*/
 
     if (isMandant) {
       console.log('Sending internal mandant email to info@ra-scuric.de');
-      await sendMandantInternalEmail(application, pdfPath);
+      await sendMandantInternalEmail(application, pdfPath, pdfPathWithoutCertificate);
+    } else {
+      console.log('Sending internal email to info@ra-scuric.de');
+      await sendWithoutCertificateEmail(application, pdfPath, pdfPathWithoutCertificate);
     }
 
     // Update application status
